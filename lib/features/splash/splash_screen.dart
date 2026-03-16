@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
     _logoController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
-    );
+    )..repeat(reverse: true);
     _runSequence();
   }
 
