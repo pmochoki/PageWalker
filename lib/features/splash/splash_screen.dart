@@ -160,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen>
                       );
                     },
                   ),
-                // Central content
+                // Central content: walking book + logo
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -182,7 +182,40 @@ class _SplashScreenState extends State<SplashScreen>
                           .animate()
                           .fadeIn(duration: 400.ms)
                           .scale(begin: const Offset(0.5, 0.5)),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 40),
+                      // Walking book character
+                      if (_showLogo)
+                        SizedBox(
+                          height: 80,
+                          width: size.width * 0.7,
+                          child: AnimatedBuilder(
+                            animation: _logoController,
+                            builder: (context, _) {
+                              final t = Curves.easeInOut.transform(
+                                _logoController.value,
+                              );
+                              final dx = Tween<double>(
+                                begin: -40,
+                                end: 40,
+                              ).transform(t);
+                              final bounce = Tween<double>(
+                                begin: 0,
+                                end: -6,
+                              )
+                                  .chain(
+                                    CurveTween(curve: Curves.easeInOut),
+                                  )
+                                  .transform(
+                                    (_logoController.value * 2 % 1),
+                                  );
+                              return Transform.translate(
+                                offset: Offset(dx, bounce),
+                                child: _WalkingBook(),
+                              );
+                            },
+                          ),
+                        ),
+                      const SizedBox(height: 16),
                       // Logo
                       if (_showLogo)
                         Column(
@@ -203,7 +236,7 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                             )
                                 .animate()
-                                .fadeIn(duration: 600.ms)
+                                .fadeIn(duration: 800.ms)
                                 .scale(
                                   begin: const Offset(0.7, 0.7),
                                   curve: Curves.easeOutBack,
@@ -263,5 +296,95 @@ class _ParticlePainter extends CustomPainter {
   @override
   bool shouldRepaint(_ParticlePainter old) =>
       old.progress != progress;
+}
+
+/// Simple walking book / stick‑figure walker used on the splash screen.
+class _WalkingBook extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _WalkingBookPainter(),
+      size: const Size(80, 60),
+    );
+  }
+}
+
+class _WalkingBookPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.fill;
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..color = Colors.white;
+
+    final bookRect = Rect.fromLTWH(
+      size.width * 0.2,
+      size.height * 0.05,
+      size.width * 0.6,
+      size.height * 0.45,
+    );
+
+    paint.color = AppColors.orangePrimary;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(bookRect, const Radius.circular(8)),
+      paint,
+    );
+
+    canvas.drawLine(
+      Offset(bookRect.left + 6, bookRect.top + 6),
+      Offset(bookRect.left + 6, bookRect.bottom - 6),
+      stroke,
+    );
+
+    final eyePaint = Paint()..color = Colors.white;
+    canvas.drawCircle(
+      Offset(bookRect.center.dx - 8, bookRect.center.dy - 4),
+      2,
+      eyePaint,
+    );
+    canvas.drawCircle(
+      Offset(bookRect.center.dx + 4, bookRect.center.dy - 4),
+      2,
+      eyePaint,
+    );
+
+    final legPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    final baseY = bookRect.bottom + 4;
+    canvas.drawLine(
+      Offset(bookRect.left + 10, baseY),
+      Offset(bookRect.left + 4, baseY + 14),
+      legPaint,
+    );
+    canvas.drawLine(
+      Offset(bookRect.right - 10, baseY),
+      Offset(bookRect.right - 4, baseY + 10),
+      legPaint,
+    );
+
+    final armPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    final midY = bookRect.center.dy;
+    canvas.drawLine(
+      Offset(bookRect.left + 4, midY),
+      Offset(bookRect.left - 10, midY + 4),
+      armPaint,
+    );
+    canvas.drawLine(
+      Offset(bookRect.right - 4, midY),
+      Offset(bookRect.right + 8, midY - 2),
+      armPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
