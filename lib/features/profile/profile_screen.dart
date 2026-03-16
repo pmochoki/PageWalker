@@ -10,7 +10,7 @@ import '../../core/theme/app_text.dart';
 import '../../core/widgets/book_cover_widget.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -71,19 +71,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              children: [
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            children: [
                 _Header(controller: _avatarGlowController)
                     .animate()
                     .fadeIn(duration: 500.ms),
@@ -143,15 +135,15 @@ class _Header extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary
+                      color: AppColors.orangePrimary
                           .withOpacity(glow * 0.6),
                       blurRadius: 30,
                     ),
                   ],
                   gradient: const RadialGradient(
                     colors: [
-                      AppColors.primary,
-                      AppColors.primaryDark,
+                      AppColors.orangePrimary,
+                      AppColors.orangeDeep,
                     ],
                   ),
                 ),
@@ -160,7 +152,7 @@ class _Header extends StatelessWidget {
             },
             child: const CircleAvatar(
               radius: 40,
-              backgroundColor: AppColors.bgDeep,
+              backgroundColor: AppColors.darkBg,
               child: Text(
                 'PW',
                 style: TextStyle(
@@ -180,7 +172,7 @@ class _Header extends StatelessWidget {
             '@bookishdreamer',
             style: AppText.body(
               13,
-              color: AppColors.textSecondary,
+              context: context,
             ),
           ),
           const SizedBox(height: 8),
@@ -265,7 +257,7 @@ class _ReadingWrapSection extends StatelessWidget {
       children: [
         Text(
           'Reading Wraps',
-          style: AppText.display(18),
+          style: AppText.display(18, context: context),
         ),
         const SizedBox(height: 10),
         Row(
@@ -288,18 +280,17 @@ class _ReadingWrapSection extends StatelessWidget {
                         BorderRadius.circular(999),
                     gradient: selected
                         ? const LinearGradient(
-                            colors:
-                                AppColors.gradientMystic,
+                            colors: AppColors.gradientOrange,
                           )
                         : null,
                     border: Border.all(
                       color: selected
                           ? Colors.transparent
-                          : AppColors.primary
+                          : AppColors.orangePrimary
                               .withOpacity(0.4),
                     ),
                     color:
-                        selected ? null : AppColors.bgCard,
+                        selected ? null : AppColors.darkCard,
                   ),
                   child: Center(
                     child: Text(
@@ -308,7 +299,7 @@ class _ReadingWrapSection extends StatelessWidget {
                         12,
                         color: selected
                             ? Colors.white
-                            : AppColors.textSecondary,
+                            : AppColors.darkTextSecondary,
                       ),
                     ),
                   ),
@@ -347,14 +338,14 @@ class _ReadingWrapSection extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   'This period in stories',
-                  style: AppText.bodySemiBold(14),
+                  style: AppText.bodySemiBold(14, context: context),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '9 books · 3,214 pages · 4.5 avg rating',
                   style: AppText.body(
                     12,
-                    color: AppColors.textSecondary,
+                    context: context,
                   ),
                 ),
               ],
@@ -386,7 +377,7 @@ class _TierListSection extends StatelessWidget {
       children: [
         Text(
           'Tier List',
-          style: AppText.display(18),
+          style: AppText.display(18, context: context),
         ),
         const SizedBox(height: 8),
         ...tiers.map(

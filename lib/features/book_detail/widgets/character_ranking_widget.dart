@@ -48,7 +48,7 @@ class _CharacterRankingWidgetState
                 },
                 icon: const Icon(
                   Icons.add_rounded,
-                  color: AppColors.moonlight,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -85,7 +85,7 @@ class _CharacterRankingWidgetState
                         index: index,
                         child: const Icon(
                           Icons.drag_handle_rounded,
-                          color: AppColors.textMuted,
+                          color: AppColors.darkTextMuted,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -104,8 +104,7 @@ class _CharacterRankingWidgetState
                                 character.note,
                                 style: AppText.body(
                                   12,
-                                  color: AppColors
-                                      .textSecondary,
+                                  context: context,
                                 ),
                               ),
                           ],
@@ -121,7 +120,7 @@ class _CharacterRankingWidgetState
                         icon: const Icon(
                           Icons.close,
                           size: 18,
-                          color: AppColors.textMuted,
+                          color: AppColors.darkTextMuted,
                         ),
                       ),
                     ],

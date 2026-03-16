@@ -8,7 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -86,18 +86,10 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 16,
@@ -110,7 +102,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: AppText.script(48).copyWith(
                         shadows: const [
                           Shadow(
-                            color: AppColors.primary,
+                            color: AppColors.orangePrimary,
                             blurRadius: 30,
                           ),
                         ],
@@ -131,20 +123,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     if (_errorMessage != null)
                       GlassCard(
                         padding: const EdgeInsets.all(12),
-                        borderColor: AppColors.error.withOpacity(0.5),
+                        borderColor: Colors.red.withOpacity(0.5),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: AppColors.error,
+                              color: Colors.red,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
-                                style: AppText.body(13,
-                                    color: AppColors.textPrimary),
+                                style: AppText.body(13, context: context),
                               ),
                             ),
                           ],
@@ -164,7 +155,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           children: [
                             Text(
                               'Create your Pagewalker profile',
-                              style: AppText.display(20),
+                              style: AppText.display(20, context: context),
                             )
                                 .animate()
                                 .fadeIn(duration: 400.ms),
@@ -173,7 +164,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               'Choose a name and handle the BookTok gods would approve.',
                               style: AppText.body(
                                 14,
-                                color: AppColors.textSecondary,
+                                context: context,
                               ),
                             )
                                 .animate()
@@ -184,7 +175,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Display Name',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -202,7 +193,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Username',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -225,7 +216,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Email',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -247,7 +238,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Password',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -281,7 +272,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   'Already have an account? Sign In',
                                   style: AppText.body(
                                     13,
-                                    color: AppColors.moonlight,
+                                    context: context,
                                   ),
                                 ),
                               ),

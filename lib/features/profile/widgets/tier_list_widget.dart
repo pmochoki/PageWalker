@@ -20,7 +20,7 @@ class TierListWidget extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: Text(
         title,
-        style: AppText.bodySemiBold(14),
+        style: AppText.bodySemiBold(14, context: context),
       ),
       children: [
         GlassCard(
@@ -32,7 +32,7 @@ class TierListWidget extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.drag_handle_rounded,
-                        color: AppColors.textMuted,
+                        color: AppColors.darkTextMuted,
                       ),
                       const SizedBox(width: 6),
                       Text(

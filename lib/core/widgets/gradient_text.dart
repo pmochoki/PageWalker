@@ -13,14 +13,14 @@ class GradientText extends StatelessWidget {
     this.text, {
     super.key,
     required this.size,
-    this.colors = AppColors.gradientMystic,
+    this.colors = AppColors.gradientOrange,
     this.italic = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final baseStyle =
-        italic ? AppText.displayItalic(size) : AppText.display(size);
+        italic ? AppText.displayItalic(size, context: context) : AppText.display(size, context: context);
 
     return ShaderMask(
       shaderCallback: (bounds) => LinearGradient(
@@ -30,7 +30,7 @@ class GradientText extends StatelessWidget {
       ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
       child: Text(
         text,
-        style: baseStyle.copyWith(color: AppColors.textPrimary),
+        style: baseStyle,
       ),
     );
   }

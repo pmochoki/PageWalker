@@ -48,10 +48,10 @@ class CurrentlyReadingTab extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: 0.3 + index * 0.2,
                           minHeight: 6,
-                          backgroundColor: AppColors.bgSurface,
+                          backgroundColor: AppColors.darkSurface,
                           valueColor:
                               const AlwaysStoppedAnimation(
-                            AppColors.primary,
+                            AppColors.orangePrimary,
                           ),
                         ),
                       ),

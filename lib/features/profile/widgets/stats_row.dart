@@ -29,14 +29,14 @@ class StatsRow extends StatelessWidget {
                   children: [
                     Text(
                       s.$2,
-                      style: AppText.display(18),
+                      style: AppText.display(18, context: context),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       s.$1,
                       style: AppText.body(
                         11,
-                        color: AppColors.textSecondary,
+                        context: context,
                       ),
                     ),
                   ],

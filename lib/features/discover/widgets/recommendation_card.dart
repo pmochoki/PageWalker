@@ -34,14 +34,14 @@ class RecommendationCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppText.bodySemiBold(15),
+                  style: AppText.bodySemiBold(15, context: context),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   author,
                   style: AppText.body(
                     12,
-                    color: AppColors.textSecondary,
+                    context: context,
                   ),
                 ),
                 const SizedBox(height: 6),

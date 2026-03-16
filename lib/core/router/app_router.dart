@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../theme/app_colors.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
@@ -151,18 +152,20 @@ class _PagewalkerNavBar extends StatelessWidget {
       ),
       (Icons.person_rounded, Icons.person_outline_rounded, 'Profile'),
     ];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0D0B1A),
+        color: isDark ? AppColors.darkBg : AppColors.lightBg,
         border: Border(
           top: BorderSide(
-            color: const Color(0xFFC084FC).withOpacity(0.2),
+            color: AppColors.orangePrimary.withOpacity(0.2),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFC084FC).withOpacity(0.1),
+            color: AppColors.orangePrimary.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -187,7 +190,7 @@ class _PagewalkerNavBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: selected
-                        ? const Color(0xFFC084FC).withOpacity(0.15)
+                        ? AppColors.orangePrimary.withOpacity(0.12)
                         : Colors.transparent,
                   ),
                   child: Column(
@@ -196,8 +199,10 @@ class _PagewalkerNavBar extends StatelessWidget {
                       Icon(
                         selected ? items[i].$1 : items[i].$2,
                         color: selected
-                            ? const Color(0xFFC084FC)
-                            : const Color(0xFF6B5F8A),
+                            ? AppColors.orangePrimary
+                            : (isDark
+                                ? AppColors.darkTextMuted
+                                : AppColors.lightTextMuted),
                         size: 24,
                         shadows: selected
                             ? const [
@@ -214,8 +219,10 @@ class _PagewalkerNavBar extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           color: selected
-                              ? const Color(0xFFC084FC)
-                              : const Color(0xFF6B5F8A),
+                              ? AppColors.orangePrimary
+                              : (isDark
+                                  ? AppColors.darkTextMuted
+                                  : AppColors.lightTextMuted),
                           fontWeight: selected
                               ? FontWeight.w700
                               : FontWeight.w400,

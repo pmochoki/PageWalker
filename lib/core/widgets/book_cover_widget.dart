@@ -34,7 +34,7 @@ class BookCoverWidget extends StatelessWidget {
             offset: const Offset(-4, 8),
           ),
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.orangePrimary.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -67,11 +67,11 @@ class BookCoverWidget extends StatelessWidget {
 
   Widget _placeholder() {
     return Container(
-      color: AppColors.bgCard,
+      color: AppColors.darkCard,
       child: const Center(
         child: Icon(
           Icons.book,
-          color: AppColors.textMuted,
+          color: AppColors.darkTextMuted,
           size: 32,
         ),
       ),

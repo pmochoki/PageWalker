@@ -6,7 +6,7 @@ import '../../core/theme/app_text.dart';
 import '../../core/widgets/book_cover_widget.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 import '../../core/widgets/star_rating_widget.dart';
 
 class SocialScreen extends StatefulWidget {
@@ -37,33 +37,24 @@ class _SocialScreenState extends State<SocialScreen> {
         ),
         onPressed: _openWriteReview,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return GlassCard(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(14),
-                  child: _ReviewCard(index: index),
-                )
-                    .animate()
-                    .fadeIn(
-                      delay: (index * 60).ms,
-                      duration: 400.ms,
-                    )
-                    .slideY(begin: 0.1, end: 0);
-              },
-            ),
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return GlassCard(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(14),
+                child: _ReviewCard(index: index),
+              )
+                  .animate()
+                  .fadeIn(
+                    delay: (index * 60).ms,
+                    duration: 400.ms,
+                  )
+                  .slideY(begin: 0.1, end: 0);
+            },
           ),
         ),
       ),
@@ -116,10 +107,10 @@ class _ReviewCardState extends State<_ReviewCard>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const LinearGradient(
-                  colors: AppColors.gradientMystic,
+                  colors: AppColors.gradientOrange,
                 ),
                 border: Border.all(
-                  color: AppColors.gold.withOpacity(0.8),
+                  color: AppColors.orangeAmber.withOpacity(0.8),
                   width: 2,
                 ),
               ),
@@ -139,13 +130,13 @@ class _ReviewCardState extends State<_ReviewCard>
               children: [
                 Text(
                   '@reader${widget.index}',
-                  style: AppText.bodySemiBold(13),
+                  style: AppText.bodySemiBold(13, context: context),
                 ),
                 Text(
                   'Bookwyrm in her feels',
                   style: AppText.body(
                     11,
-                    color: AppColors.textSecondary,
+                    context: context,
                   ),
                 ),
               ],
@@ -187,14 +178,14 @@ class _ReviewCardState extends State<_ReviewCard>
                   if (!_showSpoiler)
                     Positioned.fill(
                       child: Container(
-                        color: AppColors.bgCard
+                        color: AppColors.darkCard
                             .withOpacity(0.8),
                         child: Center(
                           child: Text(
                             'Tap to reveal spoilers',
                             style: AppText.body(
                               12,
-                              color: AppColors.moonlight,
+                              context: context,
                             ),
                           ),
                         ),
@@ -225,8 +216,8 @@ class _ReviewCardState extends State<_ReviewCard>
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
                   color: _liked
-                      ? AppColors.secondary
-                      : AppColors.textMuted,
+                      ? AppColors.orangeBright
+                      : AppColors.darkTextMuted,
                 ),
               ),
             ),
@@ -235,7 +226,7 @@ class _ReviewCardState extends State<_ReviewCard>
               _liked ? 'You and 238 others' : '238 likes',
               style: AppText.body(
                 11,
-                color: AppColors.textSecondary,
+                context: context,
               ),
             ),
           ],

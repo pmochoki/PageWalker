@@ -9,38 +9,70 @@ class AppTheme {
 
   static ThemeData get dark => ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColors.bgDeep,
+        scaffoldBackgroundColor: AppColors.darkBg,
         colorScheme: const ColorScheme.dark(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.bgSurface,
-          background: AppColors.bgDeep,
-          error: AppColors.error,
+          primary: AppColors.orangePrimary,
+          secondary: AppColors.orangeBright,
+          surface: AppColors.darkSurface,
+          background: AppColors.darkBg,
+          error: Color(0xFFFF4444),
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: AppColors.bgDeep,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textMuted,
-        ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: AppColors.bgCard,
-          hintStyle: AppText.body(14, color: AppColors.textMuted),
+          fillColor: AppColors.darkCard,
+          hintStyle: AppText.body(14, color: AppColors.darkTextMuted),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(
-              color: AppColors.primary.withOpacity(0.2),
+              color: AppColors.orangePrimary.withOpacity(0.25),
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(
-              color: AppColors.primary,
+              color: AppColors.orangePrimary,
+              width: 1.5,
+            ),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      );
+
+  static ThemeData get light => ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: AppColors.lightBg,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.orangePrimary,
+          secondary: AppColors.orangeBright,
+          surface: AppColors.lightSurface,
+          background: AppColors.lightBg,
+          error: Color(0xFFCC2200),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.lightCard,
+          hintStyle: AppText.body(14, color: AppColors.lightTextMuted),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(
+              color: AppColors.orangePrimary.withOpacity(0.3),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(
+              color: AppColors.orangePrimary,
               width: 1.5,
             ),
           ),

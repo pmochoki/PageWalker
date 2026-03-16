@@ -77,9 +77,9 @@ class _SpinWheelModalState extends State<SpinWheelModal>
       height: size.height * 0.9,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.gradientHero,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.gradientDark,
         ),
       ),
       child: Stack(
@@ -94,9 +94,9 @@ class _SpinWheelModalState extends State<SpinWheelModal>
               numberOfParticles: 24,
               gravity: 0.2,
               colors: const [
-                AppColors.primary,
-                AppColors.secondary,
-                AppColors.gold,
+                AppColors.orangePrimary,
+                AppColors.orangeBright,
+                AppColors.orangeAmber,
               ],
             ),
           ),
@@ -121,7 +121,7 @@ class _SpinWheelModalState extends State<SpinWheelModal>
                             Navigator.of(context).pop(),
                         icon: const Icon(
                           Icons.close,
-                          color: AppColors.moonlight,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -308,10 +308,10 @@ class _WheelPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill;
     final colors = [
-      AppColors.primary,
-      AppColors.secondary,
-      AppColors.mystic,
-      AppColors.primaryDark,
+      AppColors.orangePrimary,
+      AppColors.orangeBright,
+      AppColors.orangeEmber,
+      AppColors.orangeAmber,
     ];
 
     for (int i = 0; i < books.length; i++) {
@@ -358,7 +358,7 @@ class _WheelPainter extends CustomPainter {
 class _ArrowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.gold;
+    final paint = Paint()..color = AppColors.orangeAmber;
     final path = Path()
       ..moveTo(size.width / 2, 0)
       ..lineTo(size.width, size.height)
@@ -368,7 +368,7 @@ class _ArrowPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(size.width / 2, size.height),
       6,
-      Paint()..color = AppColors.goldDark,
+      Paint()..color = AppColors.orangeDeep,
     );
   }
 

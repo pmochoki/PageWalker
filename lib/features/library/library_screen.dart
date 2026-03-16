@@ -6,7 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 import 'widgets/currently_reading_tab.dart';
 import 'widgets/dnf_tab.dart';
 import 'widgets/read_tab.dart';
@@ -59,18 +59,10 @@ class _LibraryScreenState extends State<LibraryScreen>
           );
         },
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: Column(
-              children: [
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                   child: Row(

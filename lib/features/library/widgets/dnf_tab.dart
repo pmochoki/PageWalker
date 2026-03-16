@@ -37,26 +37,26 @@ class _DnfTabState extends State<DnfTab> {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        'The one that got away ${index + 1}',
-                        style: AppText.bodySemiBold(15),
-                      ),
+                  child: Text(
+                    'The one that got away ${index + 1}',
+                    style: AppText.bodySemiBold(15, context: context),
+                  ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
-                  child: Text(
-                    checked
-                        ? 'Maybe we just met at the wrong time.'
-                        : 'A dramatic little rant about why this didn’t work out right now.',
-                    key: ValueKey(checked),
-                    style: AppText.body(
-                      13,
-                      color: AppColors.textSecondary,
+                    child: Text(
+                      checked
+                          ? 'Maybe we just met at the wrong time.'
+                          : 'A dramatic little rant about why this didn’t work out right now.',
+                      key: ValueKey(checked),
+                      style: AppText.body(
+                        13,
+                        context: context,
+                      ),
                     ),
-                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -79,7 +79,7 @@ class _DnfTabState extends State<DnfTab> {
                       child: Switch(
                         key: ValueKey(checked),
                         value: checked,
-                        activeColor: AppColors.primary,
+                        activeColor: AppColors.orangePrimary,
                         onChanged: (v) {
                           setState(() {
                             _maybeReturn[index] = v;

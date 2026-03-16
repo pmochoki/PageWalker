@@ -30,7 +30,9 @@ class PagewalkerApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Pagewalker',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       routerConfig: appRouter,
     );
   }

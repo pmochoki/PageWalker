@@ -8,7 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -71,18 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 16,
@@ -95,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: AppText.script(52).copyWith(
                         shadows: const [
                           Shadow(
-                            color: AppColors.primary,
+                            color: AppColors.orangePrimary,
                             blurRadius: 30,
                           ),
                         ],
@@ -118,20 +110,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (_errorMessage != null)
                       GlassCard(
                         padding: const EdgeInsets.all(12),
-                        borderColor: AppColors.error.withOpacity(0.5),
+                        borderColor: Colors.red.withOpacity(0.5),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: AppColors.error,
+                              color: Colors.red,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
-                                style: AppText.body(13,
-                                    color: AppColors.textPrimary),
+                                style: AppText.body(13, context: context),
                               ),
                             ),
                           ],
@@ -151,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Text(
                               'Welcome back, dreamer ✦',
-                              style: AppText.display(22),
+                              style: AppText.display(22, context: context),
                             )
                                 .animate()
                                 .fadeIn(duration: 400.ms),
@@ -160,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Sign in to keep walking through your worlds.',
                               style: AppText.body(
                                 14,
-                                color: AppColors.textSecondary,
+                                context: context,
                               ),
                             )
                                 .animate()
@@ -172,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Email',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -194,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Password',
                               ),
-                              style: AppText.body(14),
+                              style: AppText.body(14, context: context),
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty) {
@@ -228,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Don’t have an account? Sign Up',
                                   style: AppText.body(
                                     13,
-                                    color: AppColors.moonlight,
+                                    context: context,
                                   ),
                                 ),
                               ),

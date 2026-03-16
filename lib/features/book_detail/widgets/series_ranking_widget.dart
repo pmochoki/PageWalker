@@ -52,7 +52,7 @@ class _SeriesRankingWidgetState
                 padding: const EdgeInsets.symmetric(
                   vertical: 4,
                 ),
-                child: GlassCard(
+                    child: GlassCard(
                   borderRadius: 12,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -64,7 +64,7 @@ class _SeriesRankingWidgetState
                         index: index,
                         child: const Icon(
                           Icons.drag_handle_rounded,
-                          color: AppColors.textMuted,
+                              color: AppColors.darkTextMuted,
                         ),
                       ),
                       const SizedBox(width: 8),

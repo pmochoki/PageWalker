@@ -39,10 +39,11 @@ class _SplashScreenState extends State<SplashScreen>
   bool _showLogo = false;
   bool _showTagline = false;
   final _colors = [
-    AppColors.primary,
-    AppColors.secondary,
-    AppColors.gold,
-    AppColors.moonlight,
+    AppColors.orangePrimary,
+    AppColors.orangeBright,
+    AppColors.orangeAmber,
+    AppColors.orangeEmber,
+    const Color(0xFFFFFFFF),
   ];
 
   @override
@@ -134,12 +135,12 @@ class _SplashScreenState extends State<SplashScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   Color.lerp(
-                        const Color(0xFF0D0B1A),
-                        const Color(0xFF1A0533),
+                        const Color(0xFF0A0A0A),
+                        const Color(0xFF1A0500),
                         _bgController.value,
                       ) ??
-                      const Color(0xFF0D0B1A),
-                  const Color(0xFF0D0B1A),
+                      const Color(0xFF0A0A0A),
+                  const Color(0xFF0A0A0A),
                 ],
               ),
             ),
@@ -169,10 +170,10 @@ class _SplashScreenState extends State<SplashScreen>
                         '✦',
                         style: TextStyle(
                           fontSize: 24,
-                          color: AppColors.gold,
+                          color: AppColors.orangeAmber,
                           shadows: [
                             Shadow(
-                              color: AppColors.gold,
+                              color: AppColors.orangeAmber,
                               blurRadius: 20,
                             ),
                           ],
@@ -191,8 +192,12 @@ class _SplashScreenState extends State<SplashScreen>
                               style: AppText.script(52).copyWith(
                                 shadows: const [
                                   Shadow(
-                                    color: AppColors.primary,
+                                    color: AppColors.orangePrimary,
                                     blurRadius: 30,
+                                  ),
+                                  Shadow(
+                                    color: AppColors.orangeGlow,
+                                    blurRadius: 60,
                                   ),
                                 ],
                               ),

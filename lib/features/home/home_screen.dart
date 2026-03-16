@@ -7,7 +7,7 @@ import '../../core/theme/app_text.dart';
 import '../../core/widgets/book_cover_widget.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 import '../../core/widgets/trope_chip.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -59,18 +59,10 @@ class _HomeScreenState extends State<HomeScreen>
     const name = 'Reader'; // Could be wired to profile later
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: CustomScrollView(
-              slivers: [
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),

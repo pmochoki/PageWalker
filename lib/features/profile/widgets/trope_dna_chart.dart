@@ -12,22 +12,22 @@ class TropeDnaChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final sections = [
       PieChartSectionData(
-        color: AppColors.primary,
+        color: AppColors.orangePrimary,
         value: 35,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.secondary,
+        color: AppColors.orangeBright,
         value: 25,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.mystic,
+        color: AppColors.orangeEmber,
         value: 20,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.gold,
+        color: AppColors.orangeAmber,
         value: 20,
         title: '',
       ),

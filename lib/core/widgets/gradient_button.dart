@@ -54,7 +54,7 @@ class _GradientButtonState extends State<GradientButton>
 
   @override
   Widget build(BuildContext context) {
-    final colors = widget.gradientColors ?? AppColors.gradientButton;
+    final colors = widget.gradientColors ?? AppColors.gradientOrange;
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) {
@@ -76,7 +76,7 @@ class _GradientButtonState extends State<GradientButton>
             borderRadius: BorderRadius.circular(widget.borderRadius),
             boxShadow: [
               BoxShadow(
-                color: colors.first.withOpacity(0.5),
+                color: AppColors.orangePrimary.withOpacity(0.5),
                 blurRadius: 20,
                 offset: const Offset(0, 6),
               ),

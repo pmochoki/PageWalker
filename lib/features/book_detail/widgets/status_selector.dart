@@ -35,15 +35,15 @@ class _StatusSelectorState extends State<StatusSelector> {
                 borderRadius: BorderRadius.circular(999),
                 gradient: selected
                     ? const LinearGradient(
-                        colors: AppColors.gradientButton,
+                        colors: AppColors.gradientOrange,
                       )
                     : null,
                 border: Border.all(
                   color: selected
                       ? Colors.transparent
-                      : AppColors.primary.withOpacity(0.4),
+                      : AppColors.orangePrimary.withOpacity(0.4),
                 ),
-                color: selected ? null : AppColors.bgCard,
+                color: selected ? null : AppColors.darkCard,
               ),
               child: Center(
                 child: Text(
@@ -52,7 +52,7 @@ class _StatusSelectorState extends State<StatusSelector> {
                     13,
                     color: selected
                         ? Colors.white
-                        : AppColors.textSecondary,
+                        : AppColors.darkTextSecondary,
                   ),
                 ),
               ),

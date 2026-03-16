@@ -54,16 +54,16 @@ class ReadTab extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Finished gem ${index + 1}',
-                        style: AppText.bodySemiBold(15),
-                      ),
+                    Text(
+                      'Finished gem ${index + 1}',
+                      style: AppText.bodySemiBold(15, context: context),
+                    ),
                       const SizedBox(height: 4),
                       Text(
                         'Placed in $tierLabel',
                         style: AppText.body(
                           13,
-                          color: AppColors.textSecondary,
+                          context: context,
                         ),
                       ),
                     ],

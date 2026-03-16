@@ -95,12 +95,13 @@ class _StarRatingWidgetState extends State<StarRatingWidget>
                           : Icons.star_outline_rounded,
                   size: widget.size,
                   color: filled || half
-                      ? AppColors.gold
-                      : AppColors.textMuted,
+                      ? AppColors.orangeAmber
+                      : AppColors.darkTextMuted,
                   shadows: filled || half
                       ? [
                           Shadow(
-                            color: AppColors.gold.withOpacity(0.6),
+                            color:
+                                AppColors.orangeAmber.withOpacity(0.6),
                             blurRadius: 8,
                           )
                         ]

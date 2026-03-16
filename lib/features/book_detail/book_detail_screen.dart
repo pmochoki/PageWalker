@@ -27,9 +27,9 @@ class BookDetailScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.gradientDark,
           ),
         ),
         child: CustomScrollView(
@@ -107,7 +107,7 @@ class _Header extends StatelessWidget {
           child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: AppColors.gradientSurface,
+                colors: AppColors.gradientEmber,
               ),
             ),
           ),
@@ -168,7 +168,7 @@ class _RatersDigest extends StatelessWidget {
             children: const [
               _TierChip(
                 label: 'God Tier',
-                gradient: AppColors.gradientGold,
+                gradient: AppColors.gradientAmber,
               ),
               _TierChip(label: 'A Class'),
               _TierChip(label: '✦ B Class'),

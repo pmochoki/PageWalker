@@ -74,7 +74,7 @@ class _QuoteList extends StatelessWidget {
                 onPressed: () {},
                 icon: const Icon(
                   Icons.add_rounded,
-                  color: AppColors.moonlight,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -118,7 +118,7 @@ class _QuoteList extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.bgSurface,
+                          color: AppColors.darkSurface,
                           borderRadius:
                               BorderRadius.circular(999),
                         ),
@@ -126,8 +126,7 @@ class _QuoteList extends StatelessWidget {
                           'p.${index * 20 + 5}',
                           style: AppText.body(
                             11,
-                            color: AppColors
-                                .textSecondary,
+                            context: context,
                           ),
                         ),
                       ),

@@ -19,29 +19,32 @@ class TropeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           gradient: selected
               ? const LinearGradient(
-                  colors: AppColors.gradientButton,
+                  colors: AppColors.gradientOrange,
                 )
               : null,
-          color: selected ? null : AppColors.bgCard,
+          color: selected
+              ? null
+              : (isDark ? AppColors.darkCard : AppColors.lightCard),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
                 ? Colors.transparent
-                : AppColors.primary.withOpacity(0.3),
+                : AppColors.orangePrimary.withOpacity(0.3),
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.4),
+                    color: AppColors.orangePrimary.withOpacity(0.4),
                     blurRadius: 10,
                   )
                 ]
@@ -54,9 +57,10 @@ class TropeChip extends StatelessWidget {
               label,
               style: AppText.bodySemiBold(
                 13,
+                context: context,
                 color: selected
                     ? Colors.white
-                    : AppColors.textSecondary,
+                    : null,
               ),
             ),
             if (onDelete != null) ...[

@@ -7,7 +7,7 @@ import '../../core/theme/app_text.dart';
 import '../../core/widgets/book_cover_widget.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/sparkle_background.dart';
+import '../../core/widgets/dynamic_sky_background.dart';
 import '../../core/widgets/trope_chip.dart';
 import '../../data/repositories/book_repository.dart';
 
@@ -66,24 +66,16 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.gradientHero,
-          ),
-        ),
-        child: SparkleBackground(
-          child: SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(
-                16,
-                16,
-                16,
-                24,
-              ),
-              children: [
+      body: DynamicSkyBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              24,
+            ),
+            children: [
                 Text(
                   'What’s your vibe?',
                   style: AppText.display(26),

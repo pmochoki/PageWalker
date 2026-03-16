@@ -29,15 +29,15 @@ class BingoCardWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               gradient: completed
                   ? const LinearGradient(
-                      colors: AppColors.gradientMystic,
+                      colors: AppColors.gradientOrange,
                     )
                   : null,
               border: Border.all(
                 color: completed
                     ? Colors.transparent
-                    : AppColors.primary.withOpacity(0.4),
+                    : AppColors.orangePrimary.withOpacity(0.4),
               ),
-              color: completed ? null : AppColors.bgCard,
+              color: completed ? null : AppColors.darkCard,
             ),
             child: Center(
               child: Text(
@@ -46,7 +46,7 @@ class BingoCardWidget extends StatelessWidget {
                   10,
                   color: completed
                       ? Colors.white
-                      : AppColors.textSecondary,
+                      : AppColors.darkTextSecondary,
                 ),
               ),
             ),
