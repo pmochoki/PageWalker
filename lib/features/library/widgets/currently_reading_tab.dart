@@ -39,7 +39,7 @@ class CurrentlyReadingTab extends StatelessWidget {
                         'By a beloved author',
                         style: AppText.body(
                           13,
-                          color: AppColors.textSecondary,
+                          context: context,
                         ),
                       ),
                       const SizedBox(height: 8),

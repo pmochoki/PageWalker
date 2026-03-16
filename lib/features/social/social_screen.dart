@@ -275,7 +275,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.textMuted,
+                    color: AppColors.darkTextMuted,
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -332,7 +332,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
                     onChanged: (v) {
                       setState(() => _spoiler = v);
                     },
-                    activeColor: AppColors.primary,
+                    activeColor: AppColors.orangePrimary,
                   ),
                 ],
               ),

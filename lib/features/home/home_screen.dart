@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   'Start something magical from your TBR.',
                                   style: AppText.body(
                                     13,
-                                    color: AppColors.textSecondary,
+                                    context: context,
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -113,11 +113,10 @@ class _HomeScreenState extends State<HomeScreen>
                                   child: LinearProgressIndicator(
                                     value: 0.2,
                                     minHeight: 6,
-                                    backgroundColor: AppColors
-                                        .bgSurface,
+                                    backgroundColor: AppColors.darkSurface,
                                     valueColor:
                                         const AlwaysStoppedAnimation(
-                                      AppColors.primary,
+                                      AppColors.orangePrimary,
                                     ),
                                   ),
                                 ),
@@ -150,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen>
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.secondary
+                                color: AppColors.orangePrimary
                                     .withOpacity(opacity * 0.4),
                                 blurRadius: 30,
                                 spreadRadius: 1,
@@ -235,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen>
                         const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       'Recently Added',
-                      style: AppText.display(20),
+                      style: AppText.display(20, context: context),
                     )
                         .animate()
                         .fadeIn(delay: 260.ms, duration: 400.ms),
@@ -267,13 +266,16 @@ class _HomeScreenState extends State<HomeScreen>
                                   Text(
                                     'Untitled adventure',
                                     style:
-                                        AppText.bodySemiBold(15),
+                                        AppText.bodySemiBold(15, context: context),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     'TBR',
-                                    style: AppText.label(11,
-                                        color: AppColors.gold),
+                                    style: AppText.label(
+                                      11,
+                                      color: AppColors.orangeAmber,
+                                      context: context,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -286,9 +288,9 @@ class _HomeScreenState extends State<HomeScreen>
                               decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.circular(999),
-                                color: AppColors.bgSurface,
+                                color: AppColors.darkSurface,
                                 border: Border.all(
-                                  color: AppColors.primary
+                                  color: AppColors.orangePrimary
                                       .withOpacity(0.4),
                                 ),
                               ),
@@ -296,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 'Just added',
                                 style: AppText.body(
                                   11,
-                                  color: AppColors.moonlight,
+                                  context: context,
                                 ),
                               ),
                             ),

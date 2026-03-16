@@ -213,17 +213,17 @@ class _StatsRow extends StatelessWidget {
                   children: [
                     Text(
                       s.$2,
-                      style: AppText.display(18),
+                      style: AppText.display(18, context: context),
                     )
                         .animate()
                         .fadeIn(duration: 600.ms)
-                        .tint(color: AppColors.gold),
+                        .tint(color: AppColors.orangeAmber),
                     const SizedBox(height: 2),
                     Text(
                       s.$1,
                       style: AppText.body(
                         11,
-                        color: AppColors.textSecondary,
+                        context: context,
                       ),
                     ),
                   ],
@@ -403,7 +403,7 @@ class _TierListSection extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.drag_handle_rounded,
-                            color: AppColors.textMuted,
+                            color: AppColors.darkTextMuted,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -429,22 +429,22 @@ class _TropeDnaSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final sections = [
       PieChartSectionData(
-        color: AppColors.primary,
+        color: AppColors.orangePrimary,
         value: 35,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.secondary,
+        color: AppColors.orangeBright,
         value: 25,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.mystic,
+        color: AppColors.orangeEmber,
         value: 20,
         title: '',
       ),
       PieChartSectionData(
-        color: AppColors.gold,
+        color: AppColors.orangeAmber,
         value: 20,
         title: '',
       ),
@@ -476,19 +476,19 @@ class _TropeDnaSection extends StatelessWidget {
             runSpacing: 4,
             children: [
               _LegendDot(
-                color: AppColors.primary,
+                color: AppColors.orangePrimary,
                 label: 'Romance',
               ),
               _LegendDot(
-                color: AppColors.secondary,
+                color: AppColors.orangeBright,
                 label: 'Angst',
               ),
               _LegendDot(
-                color: AppColors.mystic,
+                color: AppColors.orangeEmber,
                 label: 'Magic',
               ),
               _LegendDot(
-                color: AppColors.gold,
+                color: AppColors.orangeAmber,
                 label: 'Joy',
               ),
             ],
@@ -526,7 +526,7 @@ class _LegendDot extends StatelessWidget {
           label,
           style: AppText.body(
             11,
-            color: AppColors.textSecondary,
+            context: context,
           ),
         ),
       ],
@@ -565,17 +565,17 @@ class _BingoSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   gradient: completed
                       ? const LinearGradient(
-                          colors: AppColors.gradientMystic,
+                          colors: AppColors.gradientOrange,
                         )
                       : null,
                   border: Border.all(
                     color: completed
                         ? Colors.transparent
-                        : AppColors.primary
+                        : AppColors.orangePrimary
                             .withOpacity(0.4),
                   ),
                   color:
-                      completed ? null : AppColors.bgCard,
+                      completed ? null : AppColors.darkCard,
                 ),
                 child: Center(
                   child: Text(
@@ -584,7 +584,7 @@ class _BingoSection extends StatelessWidget {
                       10,
                       color: completed
                           ? Colors.white
-                          : AppColors.textSecondary,
+                            : AppColors.darkTextSecondary,
                     ),
                   ),
                 ),

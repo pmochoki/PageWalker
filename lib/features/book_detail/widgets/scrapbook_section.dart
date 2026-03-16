@@ -90,8 +90,7 @@ class _QuoteList extends StatelessWidget {
                 padding:
                     const EdgeInsets.only(right: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.error
-                      .withOpacity(0.5),
+                  color: Colors.red.withOpacity(0.5),
                   borderRadius:
                       BorderRadius.circular(12),
                 ),
@@ -174,7 +173,7 @@ class _TagChip extends StatelessWidget {
         label,
         style: AppText.body(
           12,
-          color: AppColors.textSecondary,
+          context: context,
         ),
       ),
     );

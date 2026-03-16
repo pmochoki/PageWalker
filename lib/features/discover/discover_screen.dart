@@ -152,8 +152,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                           'Consulting the story stars...',
                           style: AppText.body(
                             14,
-                            color:
-                                AppColors.textSecondary,
+                            context: context,
                           ),
                         ),
                       ],
@@ -239,7 +238,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 const SizedBox(height: 24),
                 Text(
                   'Curated for you',
-                  style: AppText.display(20),
+                  style: AppText.display(20, context: context),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
@@ -294,7 +293,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 const SizedBox(height: 24),
                 Text(
                   'Hot right now',
-                  style: AppText.display(20),
+                  style: AppText.display(20, context: context),
                 ),
                 const SizedBox(height: 12),
                 ...List.generate(
@@ -324,8 +323,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                 '#BookTok made me do it',
                                 style: AppText.body(
                                   13,
-                                  color:
-                                      AppColors.textSecondary,
+                                  context: context,
                                 ),
                               ),
                             ],

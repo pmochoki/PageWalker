@@ -221,8 +221,7 @@ class _SpinWheelModalState extends State<SpinWheelModal>
                                             'A randomly selected adventure from your TBR.',
                                             style: AppText.body(
                                               13,
-                                              color: AppColors
-                                                  .textSecondary,
+                                              context: context,
                                             ),
                                           ),
                                         ],
@@ -245,13 +244,9 @@ class _SpinWheelModalState extends State<SpinWheelModal>
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: OutlinedButton(
-                                        style:
-                                            OutlinedButton
-                                                .styleFrom(
-                                          side:
-                                              const BorderSide(
-                                            color: AppColors
-                                                .primary,
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                            color: AppColors.orangePrimary,
                                           ),
                                           shape:
                                               RoundedRectangleBorder(
@@ -265,11 +260,9 @@ class _SpinWheelModalState extends State<SpinWheelModal>
                                         onPressed: _spin,
                                         child: Text(
                                           'Spin Again',
-                                          style:
-                                              AppText.bodySemiBold(
+                                          style: AppText.bodySemiBold(
                                             14,
-                                            color: AppColors
-                                                .primary,
+                                            color: AppColors.orangePrimary,
                                           ),
                                         ),
                                       ),

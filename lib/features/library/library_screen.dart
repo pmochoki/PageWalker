@@ -71,11 +71,11 @@ class _LibraryScreenState extends State<LibraryScreen>
                     children: [
                       Text(
                         'Your Library',
-                        style: AppText.display(24),
+                        style: AppText.display(24, context: context),
                       ),
                       const Icon(
                         Icons.auto_stories_rounded,
-                        color: AppColors.moonlight,
+                        color: Colors.white,
                       ),
                     ],
                   ),
@@ -111,8 +111,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                                           13,
                                           color: selected
                                               ? Colors.white
-                                              : AppColors
-                                                  .textSecondary,
+                                              : AppColors.darkTextSecondary,
                                         ),
                                       ),
                                     ),
@@ -135,11 +134,11 @@ class _LibraryScreenState extends State<LibraryScreen>
                               borderRadius:
                                   BorderRadius.circular(999),
                               gradient: const LinearGradient(
-                                colors: AppColors.gradientButton,
+                                colors: AppColors.gradientOrange,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary
+                                  color: AppColors.orangePrimary
                                       .withOpacity(0.4),
                                   blurRadius: 18,
                                 ),
@@ -234,11 +233,11 @@ class _SpinFabState extends State<_SpinFab>
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: AppColors.gradientButton,
+              colors: AppColors.gradientOrange,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.secondary,
+                color: AppColors.orangePrimary,
                 blurRadius: 28,
                 offset: Offset(0, 10),
               ),
