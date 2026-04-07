@@ -1,0 +1,22 @@
+# Only ship static site + serverless API (avoid uploading full Flutter tree).
+pagewalker/android
+pagewalker/ios
+pagewalker/linux
+pagewalker/macos
+pagewalker/windows
+pagewalker/.dart_tool
+pagewalker/build
+pagewalker/test
+pagewalker/integration_test
+pagewalker/lib
+pagewalker/pubspec.yaml
+pagewalker/pubspec.lock
+pagewalker/analysis_options.yaml
+pagewalker/devtools_options.yaml
+pagewalker/supabase
+repo
+lib
+ios
+android
+web
+tmp_remote
