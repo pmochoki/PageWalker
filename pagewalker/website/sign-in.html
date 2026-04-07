@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-pw-page="sign-in">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Sign in to Pagewalker — same account as the mobile app." />
+    <title>Sign in — Pagewalker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap inner">
+        <a class="logo" href="/">Pagewalker</a>
+        <nav class="nav" aria-label="Main">
+          <a href="/">Home</a>
+          <a href="/updates">Updates</a>
+          <a href="/sign-in">Sign in</a>
+          <a href="/sign-up">Sign up</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap page-auth">
+      <h1>Sign in</h1>
+      <p class="muted">Use the same email and password as the Pagewalker Android app.</p>
+      <div id="pw-err" class="pw-banner" hidden></div>
+      <div id="pw-ok" class="pw-banner pw-banner--success" hidden></div>
+      <form id="pw-form-signin" class="form-stack">
+        <label>
+          Email
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" class="btn">Sign in</button>
+      </form>
+      <p class="subnav">
+        <a href="/forgot-password">Forgot password?</a>
+        ·
+        <a href="/sign-up">Create an account</a>
+      </p>
+    </main>
+
+    <footer>
+      <div class="wrap inner">
+        <div class="links">
+          <a href="/updates">Updates</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
+        </div>
+        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+      </div>
+    </footer>
+    <script type="module" src="/js/pw-app.js"></script>
+  </body>
+</html>

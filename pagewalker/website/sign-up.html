@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-pw-page="sign-up">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Create a Pagewalker account — works with the mobile app." />
+    <title>Sign up — Pagewalker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap inner">
+        <a class="logo" href="/">Pagewalker</a>
+        <nav class="nav" aria-label="Main">
+          <a href="/">Home</a>
+          <a href="/updates">Updates</a>
+          <a href="/sign-in">Sign in</a>
+          <a href="/sign-up">Sign up</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap page-auth">
+      <h1>Create account</h1>
+      <p class="muted">You can sign in on the app with this email and password.</p>
+      <div id="pw-err" class="pw-banner" hidden></div>
+      <div id="pw-ok" class="pw-banner pw-banner--success" hidden></div>
+      <form id="pw-form-signup" class="form-stack">
+        <label>
+          Display name (optional)
+          <input name="display_name" type="text" autocomplete="name" maxlength="80" />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" autocomplete="new-password" required minlength="6" />
+        </label>
+        <label>
+          Confirm password
+          <input name="password2" type="password" autocomplete="new-password" required minlength="6" />
+        </label>
+        <button type="submit" class="btn">Sign up</button>
+      </form>
+      <p class="subnav">Already have an account? <a href="/sign-in">Sign in</a></p>
+    </main>
+
+    <footer>
+      <div class="wrap inner">
+        <div class="links">
+          <a href="/updates">Updates</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
+        </div>
+        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+      </div>
+    </footer>
+    <script type="module" src="/js/pw-app.js"></script>
+  </body>
+</html>
