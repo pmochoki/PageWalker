@@ -12,11 +12,7 @@ function hideBanner(el) {
 }
 
 function configHelpHtml() {
-  return (
-    "Supabase is not configured for this deployment. " +
-    "In Vercel, add environment variables SUPABASE_URL and SUPABASE_ANON_KEY, then redeploy. " +
-    "See the comment at the top of api/config.js in the repo."
-  );
+  return "We couldn’t load account settings. Refresh the page, or try again in a moment.";
 }
 
 async function initSignIn() {
