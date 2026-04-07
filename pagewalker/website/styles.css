@@ -537,43 +537,6 @@ footer .copy {
   outline: 3px solid var(--blue);
 }
 
-/* Dedication */
-.dedication-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0 0 1.25rem;
-  padding: 0.45rem 1rem;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 182, 220, 0.45),
-    rgba(147, 197, 253, 0.4)
-  );
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 2px 12px rgba(255, 79, 163, 0.12);
-}
-
-.dedication-pill__heart {
-  color: var(--pink);
-  font-size: 1rem;
-  line-height: 1;
-  animation: heart-soft 2.2s ease-in-out infinite;
-}
-
-@keyframes heart-soft {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.12);
-  }
-}
-
 .card-emoji {
   display: block;
   font-size: 1.5rem;
@@ -674,22 +637,6 @@ footer .copy {
   min-width: 10rem;
 }
 
-/* Footer dedication */
-.footer-dedication {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  background: linear-gradient(120deg, var(--pink), var(--blue));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  margin: 0 0 0.75rem;
-  max-width: 28rem;
-  margin-inline: auto;
-  line-height: 1.4;
-}
-
 /* Scroll reveal */
 .reveal {
   opacity: 0;
@@ -722,9 +669,6 @@ footer .copy {
     animation: none;
     opacity: 1;
     transform: none;
-  }
-  .dedication-pill__heart {
-    animation: none;
   }
   .card:hover,
   .quote-card:hover {

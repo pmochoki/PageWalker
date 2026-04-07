@@ -1,7 +1,7 @@
 {
   "name": "Pagewalker",
   "short_name": "Pagewalker",
-  "description": "Book discovery, reading tracking, and reader friends — for Kimberely and every book lover.",
+  "description": "Book discovery, reading tracking, and reader friends — your shelves, your story.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff8fc",
