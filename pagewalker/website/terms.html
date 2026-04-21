@@ -4,115 +4,70 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Pagewalker terms and conditions of use." />
-    <meta name="theme-color" content="#ff4fa3" />
+    <meta name="theme-color" content="#ff6b1a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>Terms of use — Pagewalker</title>
+    <title data-i18n-title="terms.title">Terms of use — Pagewalker</title>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem("pw-theme");
+          var v = m === "light" || m === "dark" ? m
+            : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", v);
+        } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body class="page-legal">
+    <a class="skip-link" href="#main" data-i18n="common.skip">Skip to content</a>
     <header class="site-header">
       <div class="wrap inner">
         <a class="logo" href="/">Pagewalker</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
-          <a href="/sign-up">Sign up</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <a href="mailto:nkimwalker@gmail.com">Support</a>
+          <a href="/" data-i18n="nav.home">Home</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/sign-up" data-i18n="nav.signUp">Sign up</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com" data-i18n="nav.support">Support</a>
+          <div class="site-controls">
+            <select class="pw-select pw-lang-select" data-i18n-attr="aria-label:toolbar.language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hu">Magyar</option>
+            </select>
+            <button type="button" class="pw-theme-toggle" data-i18n-attr="aria-label:toolbar.theme" aria-label="Theme">
+              <svg data-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg data-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+              <svg data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>
 
     <div id="main" class="wrap content" tabindex="-1">
-      <a class="back" href="/">← Back to home</a>
-      <h1>Terms and conditions of use</h1>
-      <p class="updated">Last updated: March 2026</p>
-      <div class="legal-text">TERMS AND CONDITIONS OF USE
-
-Welcome to Pagewalker. By downloading, installing, or using the Pagewalker mobile application, you agree to be bound by these Terms and Conditions. Please read them carefully. If you do not agree to these terms, do not use the app.
-
-1. ABOUT PAGEWALKER
-Pagewalker is a book discovery and social discussion platform. It allows users to search for books, view book information, share opinions and reviews, track their personal reading, and connect with other readers.
-Pagewalker does not sell, distribute, or host copyrighted book content. All book information displayed (titles, authors, summaries, cover images) is sourced from publicly available APIs including Google Books API and Open Library, and is used for informational and discussion purposes only.
-External links to third-party platforms (Amazon, Google Play Books, Project Gutenberg, local libraries) are provided as a convenience. Pagewalker is not responsible for content on external websites.
-
-2. ELIGIBILITY
-You must be at least 13 years old to create a Pagewalker account. By creating an account, you confirm that you meet this age requirement.
-Users between 13 and 17 years old should have parental permission before using the app.
-
-3. USER ACCOUNTS
-3.1 You are responsible for maintaining the confidentiality of your account credentials. Do not share your password with anyone.
-3.2 You are responsible for all activity that occurs under your account.
-3.3 You must provide accurate information when creating your account.
-3.4 One person may only maintain one active account. Creating multiple accounts to circumvent bans or restrictions is prohibited.
-3.5 You may delete your account at any time from the Profile Settings screen. Upon deletion, your personal data will be removed within 30 days.
-
-4. USER CONTENT
-4.1 Ownership — You retain full ownership of all content you create on Pagewalker, including reviews, comments, ratings, quotes, and profile information.
-4.2 Licence to Pagewalker — By posting content on Pagewalker, you grant us a non-exclusive, worldwide, royalty-free licence to display your content to other users within the app. This licence ends when you delete your content or your account.
-4.3 Content Standards — You agree that your content will NOT: be offensive, abusive, hateful, or discriminatory; harass, bully, or threaten other users; contain sexually explicit material; promote violence or illegal activities; infringe on the intellectual property of others; contain spam, advertisements, or promotional material; reveal private information about others without consent; contain false or misleading information.
-4.4 Spoiler Policy — When posting content that reveals major plot points, you must use the spoiler toggle. Repeatedly posting unmarked spoilers may result in account suspension.
-4.5 Moderation — Pagewalker reserves the right to remove any content that violates these terms without notice. We reserve the right to suspend or permanently ban accounts that repeatedly violate our content standards.
-
-5. BOOK INFORMATION AND COPYRIGHT
-5.1 Book information displayed on Pagewalker (titles, authors, descriptions, cover images) is sourced from publicly available third-party APIs. This information is used for identification and discussion purposes.
-5.2 Pagewalker does not host, store, or distribute copyrighted book text. Users who wish to read books must obtain them through legitimate channels such as libraries, bookstores, or licensed digital platforms.
-5.3 External links to Project Gutenberg are provided for books in the public domain only. These links direct users to the external Project Gutenberg website.
-5.4 If you believe any content on Pagewalker infringes your copyright, please contact us at nkimwalker@gmail.com with details of the infringement.
-
-6. BOOK CLUB ROOMS
-6.1 Book Club administrators are responsible for moderating their rooms and ensuring members comply with these terms.
-6.2 Pagewalker reserves the right to dissolve any Book Club that is used for purposes that violate these terms.
-6.3 Invite codes must not be shared publicly without the consent of the Book Club administrator.
-
-7. PROHIBITED ACTIVITIES
-You agree NOT to: use the app for any illegal purpose; attempt to hack, disrupt, or compromise the app; use automated tools, bots, or scrapers on the platform; impersonate another person or entity; collect or harvest other users' personal information; use the app to send unsolicited messages or spam; interfere with other users' enjoyment of the app; attempt to circumvent any security measures.
-
-8. INTELLECTUAL PROPERTY
-The Pagewalker name, logo, walking book character, and app design are the intellectual property of Pagewalker and are protected by applicable intellectual property laws. You may not reproduce, distribute, or create derivative works from Pagewalker's branding, design, or character without written permission.
-
-9. DISCLAIMERS
-9.1 Pagewalker is provided "as is" without warranties of any kind, express or implied.
-9.2 We do not guarantee that the app will be available at all times or free from errors.
-9.3 We are not responsible for the accuracy of book information provided by third-party APIs.
-9.4 We are not responsible for content posted by users. Reviews and comments reflect the opinions of individual users and not Pagewalker.
-9.5 We are not responsible for any loss of data. We recommend users keep personal notes and quotes backed up.
-
-10. LIMITATION OF LIABILITY
-To the maximum extent permitted by law, Pagewalker shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app, including but not limited to loss of data, loss of reading progress, or inability to access the service.
-
-11. CHANGES TO THESE TERMS
-We may update these Terms and Conditions from time to time. We will notify users of significant changes through the app. Your continued use of Pagewalker after changes are posted constitutes your acceptance of the updated terms.
-
-12. TERMINATION
-Pagewalker reserves the right to suspend or terminate your account at any time if you violate these terms, without prior notice. You may terminate your account at any time from the Profile Settings screen.
-
-13. GOVERNING LAW
-These Terms and Conditions are governed by applicable law. Any disputes will be resolved through good faith negotiation before any legal action is taken.
-
-14. CONTACT
-For any questions about these Terms and Conditions:
-Email: nkimwalker@gmail.com
-App: Pagewalker
-We will respond to all enquiries within 30 days.
-
-© 2026 Pagewalker. All rights reserved.</div>
+      <a class="back" href="/" data-i18n="common.back">← Back to home</a>
+      <h1 data-i18n="terms.h1">Terms and conditions of use</h1>
+      <p class="updated" data-i18n="common.lastUpdated">Last updated: March 2026</p>
+      <div class="legal-text" data-i18n="terms.body">Loading…</div>
     </div>
 
     <footer>
       <div class="wrap inner">
         <div class="links">
-          <a href="/updates">Updates</a>
-          <a href="/privacy">Privacy policy</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
           <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
         </div>
-        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+        <p class="copy" data-i18n="common.copy">© 2026 Pagewalker. All rights reserved.</p>
       </div>
     </footer>
+    <script src="/js/pw-i18n.js"></script>
+    <script src="/js/pw-theme.js"></script>
   </body>
 </html>

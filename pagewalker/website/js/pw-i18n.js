@@ -1,0 +1,589 @@
+(function () {
+  "use strict";
+  var STORAGE_KEY = "pw-lang";
+  var DEFAULT_LANG = "en";
+  var SUPPORTED = ["en", "hu"];
+
+  var privacyEn = [
+    "PRIVACY POLICY",
+    "",
+    "At Pagewalker, your privacy matters to us deeply. This Privacy Policy explains what information we collect, how we use it, how we protect it, and what rights you have over your data. By using Pagewalker, you agree to the collection and use of information in accordance with this policy.",
+    "",
+    "1. INFORMATION WE COLLECT",
+    "1.1 Information You Give Us Directly — When you create an account: email address (required), display name (required), username (required). When you set up your profile (all optional): profile photo, bio, age, location (city/country — not precise GPS), favourite genre, Instagram handle, Facebook name, reading goal, whether your profile is public or private. When you use the app: books you add to your library (TBR, Reading, Read, DNF), star ratings, tier rankings, reviews and comments, quotes and scenes, characters you rank, reading sessions (reading timer), book clubs you create or join, messages you send in book clubs.",
+    "1.2 Information We Collect Automatically — App version, device type and operating system, time and date of app use, which features you use. We do NOT collect: precise GPS location, your contacts, your browsing history outside the app, or any information from other apps on your device.",
+    "",
+    "2. HOW WE USE YOUR INFORMATION",
+    "We use your information to: create and manage your account; display your profile to other users (if public); power your personal library and reading tracking; generate Reading Wraps and Yearly Wrapped; provide personalised book recommendations using AI (we send reading preferences to OpenAI — no personally identifiable information is shared); enable social features; send push notifications (only with your permission); improve the app; respond to support requests; ensure security.",
+    "",
+    "3. HOW WE SHARE YOUR INFORMATION",
+    "We do NOT sell your personal information. Ever. We share data only with: Supabase (database — see supabase.com/privacy); Google Books API (search queries only — no personal information); Open Library / Internet Archive (search queries only); OpenAI (Mood Read — mood input and genres/tropes only, not name or email — see openai.com/privacy); other Pagewalker users according to your public/private settings. Book Club messages are visible to all members of that club.",
+    "",
+    "4. DATA STORAGE AND SECURITY",
+    "Your data is stored on Supabase with HTTPS/TLS, encryption at rest, and row-level security. Passwords are never stored in plain text (bcrypt). Profile photos use Supabase Storage with secure access. We retain data while your account is active; deletion within 30 days of account deletion.",
+    "",
+    "5. CAMERA AND PHOTO LIBRARY",
+    "Camera: ISBN scanner only. Photo library: profile photo selection only — we never scan your full library.",
+    "",
+    "6. PUSH NOTIFICATIONS",
+    "Only with explicit permission. You can disable in app or device settings.",
+    "",
+    "7. CHILDREN'S PRIVACY",
+    "Not directed at children under 13. Contact nkimwalker@gmail.com if you believe a child under 13 created an account.",
+    "",
+    "8. YOUR RIGHTS AND CHOICES",
+    "Access, correct, delete your account from Profile Settings; export data by emailing nkimwalker@gmail.com (response within 30 days); control public/private profile; opt out of notifications; withdraw consent by deleting your account.",
+    "",
+    "9. THIRD PARTY LINKS",
+    "Links open in your external browser. We are not responsible for external privacy practices.",
+    "",
+    "10. CHANGES TO THIS PRIVACY POLICY",
+    "We may update this policy; we will notify you of significant changes with at least 7 days notice where required. Continued use means acceptance.",
+    "",
+    "11. CONTACT US",
+    "Email: nkimwalker@gmail.com — App: Pagewalker — We respond within 30 days. For urgent data deletion, include \"URGENT DATA DELETION\" in the subject line (response within 7 days).",
+    "",
+    "© 2026 Pagewalker. All rights reserved.",
+  ].join("\n");
+
+  var privacyHu = [
+    "ADATVÉDELMI SZABÁLYZAT",
+    "",
+    "A Pagewalker számára az adatvédelmed kiemelten fontos. Ez a szabályzat elmagyarázza, milyen adatokat gyűjtünk, hogyan használjuk és védjük azokat, valamint milyen jogaid vannak az adataiddal kapcsolatban. A Pagewalker használatával elfogadod az adatok jelen szabályzat szerinti kezelését.",
+    "",
+    "1. AZ ÁLTALUNK GYŰJTÖTT ADATOK",
+    "1.1 Közvetlenül megadott adatok — Fiók létrehozásakor: e-mail cím (kötelező), megjelenített név (kötelező), felhasználónév (kötelező). Profil beállításakor (mind opcionális): profilkép, bemutatkozás, életkor, helyszín (város/ország — nem pontos GPS), kedvenc műfaj, Instagram-név, Facebook-név, olvasási cél, a profilod nyilvános vagy privát-e. Az app használata közben: a könyvtáradhoz hozzáadott könyvek (TBR, Olvasott, Olvasás alatt, DNF), csillagok, ranglistás helyezések, értékelések és hozzászólások, idézetek és jelenetek, általad rangsorolt karakterek, olvasási szessziók (olvasási időzítő), könyvklubok, amelyeket létrehozol vagy csatlakozol, könyvklubbokba küldött üzenetek.",
+    "1.2 Automatikusan gyűjtött adatok — Alkalmazás verziója, eszköz típusa és operációs rendszer, használat időpontja, használt funkciók. NEM gyűjtünk: pontos GPS-helyet, névjegyeket, a böngészési előzményeidet az appon kívül, vagy bármilyen adatot más alkalmazásokból az eszközödön.",
+    "",
+    "2. AZ ADATOK FELHASZNÁLÁSA",
+    "Adataidat a következőkre használjuk: fiókod létrehozása és kezelése; profilod megjelenítése más felhasználóknak (ha nyilvános); személyes könyvtárad és olvasáskövetés működtetése; Reading Wraps és éves összesítő generálása; személyre szabott könyvajánlások mesterséges intelligenciával (az olvasási preferenciákat elküldjük az OpenAI-nak — személyazonosításra alkalmas adatot nem osztunk meg); közösségi funkciók; push-értesítések (csak engedéllyel); az alkalmazás fejlesztése; ügyfélszolgálat; biztonság.",
+    "",
+    "3. AZ ADATAID MEGOSZTÁSA",
+    "NEM adjuk el a személyes adataidat. Soha. Adatokat csak a következőkkel osztunk meg: Supabase (adatbázis — lásd supabase.com/privacy); Google Books API (csak keresési lekérdezések — személyes adat nélkül); Open Library / Internet Archive (csak keresési lekérdezések); OpenAI (Mood Read — csak a hangulat, műfaj és trópus adatok, név vagy e-mail nélkül — lásd openai.com/privacy); más Pagewalker felhasználókkal a nyilvános/privát beállításaid szerint. A könyvklub üzenetek az adott klub összes tagja számára láthatók.",
+    "",
+    "4. ADATTÁROLÁS ÉS BIZTONSÁG",
+    "Az adataid a Supabase-en tárolódnak HTTPS/TLS, titkosítás és sor szintű biztonság (RLS) mellett. A jelszavakat soha nem tároljuk nyílt szövegként (bcrypt). A profilképek a Supabase Storage-ban tárolódnak biztonságos hozzáféréssel. Amíg a fiókod aktív, megőrizzük az adatokat; a fiók törlését követő 30 napon belül töröljük.",
+    "",
+    "5. KAMERA ÉS FOTÓTÁR",
+    "Kamera: csak ISBN-szkenneléshez. Fotótár: csak profilkép kiválasztásához — soha nem szkenneljük a teljes tárat.",
+    "",
+    "6. PUSH-ÉRTESÍTÉSEK",
+    "Csak kifejezett engedéllyel. Bármikor kikapcsolhatod az appban vagy az eszköz beállításaiban.",
+    "",
+    "7. GYERMEKEK ADATVÉDELME",
+    "Nem 13 év alatti gyermekeknek szánt. Írj nekünk a nkimwalker@gmail.com címre, ha úgy véled, 13 év alatti gyermek hozott létre fiókot.",
+    "",
+    "8. JOGAID ÉS LEHETŐSÉGEID",
+    "A Profil beállításokban hozzáférhetsz, módosíthatod vagy törölheted a fiókodat; az adataid exportálásához írj a nkimwalker@gmail.com címre (30 napon belül válaszolunk); választhatsz a nyilvános/privát profil között; letilthatod az értesítéseket; a fiók törlésével visszavonhatod a hozzájárulásodat.",
+    "",
+    "9. HARMADIK FELES LINKEK",
+    "A linkek külső böngészőben nyílnak meg. Nem vállalunk felelősséget a külső oldalak adatvédelméért.",
+    "",
+    "10. A SZABÁLYZAT MÓDOSÍTÁSAI",
+    "Ezt a szabályzatot időről időre frissíthetjük; jelentős változásokról legalább 7 nappal előre értesítünk, ha szükséges. A további használat az elfogadást jelenti.",
+    "",
+    "11. KAPCSOLAT",
+    "E-mail: nkimwalker@gmail.com — App: Pagewalker — 30 napon belül válaszolunk. Sürgős adattörléshez írd a tárgysorba: \"URGENT DATA DELETION\" (7 napon belül válaszolunk).",
+    "",
+    "© 2026 Pagewalker. Minden jog fenntartva.",
+  ].join("\n");
+
+  var termsEn = [
+    "TERMS AND CONDITIONS OF USE",
+    "",
+    "Welcome to Pagewalker. By downloading, installing, or using the Pagewalker mobile application, you agree to be bound by these Terms and Conditions. Please read them carefully. If you do not agree to these terms, do not use the app.",
+    "",
+    "1. ABOUT PAGEWALKER",
+    "Pagewalker is a book discovery and social discussion platform. It allows users to search for books, view book information, share opinions and reviews, track their personal reading, and connect with other readers.",
+    "Pagewalker does not sell, distribute, or host copyrighted book content. All book information displayed (titles, authors, summaries, cover images) is sourced from publicly available APIs including Google Books API and Open Library, and is used for informational and discussion purposes only.",
+    "External links to third-party platforms (Amazon, Google Play Books, Project Gutenberg, local libraries) are provided as a convenience. Pagewalker is not responsible for content on external websites.",
+    "",
+    "2. ELIGIBILITY",
+    "You must be at least 13 years old to create a Pagewalker account. By creating an account, you confirm that you meet this age requirement.",
+    "Users between 13 and 17 years old should have parental permission before using the app.",
+    "",
+    "3. USER ACCOUNTS",
+    "3.1 You are responsible for maintaining the confidentiality of your account credentials. Do not share your password with anyone.",
+    "3.2 You are responsible for all activity that occurs under your account.",
+    "3.3 You must provide accurate information when creating your account.",
+    "3.4 One person may only maintain one active account. Creating multiple accounts to circumvent bans or restrictions is prohibited.",
+    "3.5 You may delete your account at any time from the Profile Settings screen. Upon deletion, your personal data will be removed within 30 days.",
+    "",
+    "4. USER CONTENT",
+    "4.1 Ownership — You retain full ownership of all content you create on Pagewalker, including reviews, comments, ratings, quotes, and profile information.",
+    "4.2 Licence to Pagewalker — By posting content on Pagewalker, you grant us a non-exclusive, worldwide, royalty-free licence to display your content to other users within the app. This licence ends when you delete your content or your account.",
+    "4.3 Content Standards — You agree that your content will NOT: be offensive, abusive, hateful, or discriminatory; harass, bully, or threaten other users; contain sexually explicit material; promote violence or illegal activities; infringe on the intellectual property of others; contain spam, advertisements, or promotional material; reveal private information about others without consent; contain false or misleading information.",
+    "4.4 Spoiler Policy — When posting content that reveals major plot points, you must use the spoiler toggle. Repeatedly posting unmarked spoilers may result in account suspension.",
+    "4.5 Moderation — Pagewalker reserves the right to remove any content that violates these terms without notice. We reserve the right to suspend or permanently ban accounts that repeatedly violate our content standards.",
+    "",
+    "5. BOOK INFORMATION AND COPYRIGHT",
+    "5.1 Book information displayed on Pagewalker (titles, authors, descriptions, cover images) is sourced from publicly available third-party APIs. This information is used for identification and discussion purposes.",
+    "5.2 Pagewalker does not host, store, or distribute copyrighted book text. Users who wish to read books must obtain them through legitimate channels such as libraries, bookstores, or licensed digital platforms.",
+    "5.3 External links to Project Gutenberg are provided for books in the public domain only. These links direct users to the external Project Gutenberg website.",
+    "5.4 If you believe any content on Pagewalker infringes your copyright, please contact us at nkimwalker@gmail.com with details of the infringement.",
+    "",
+    "6. BOOK CLUB ROOMS",
+    "6.1 Book Club administrators are responsible for moderating their rooms and ensuring members comply with these terms.",
+    "6.2 Pagewalker reserves the right to dissolve any Book Club that is used for purposes that violate these terms.",
+    "6.3 Invite codes must not be shared publicly without the consent of the Book Club administrator.",
+    "",
+    "7. PROHIBITED ACTIVITIES",
+    "You agree NOT to: use the app for any illegal purpose; attempt to hack, disrupt, or compromise the app; use automated tools, bots, or scrapers on the platform; impersonate another person or entity; collect or harvest other users' personal information; use the app to send unsolicited messages or spam; interfere with other users' enjoyment of the app; attempt to circumvent any security measures.",
+    "",
+    "8. INTELLECTUAL PROPERTY",
+    "The Pagewalker name, logo, walking book character, and app design are the intellectual property of Pagewalker and are protected by applicable intellectual property laws. You may not reproduce, distribute, or create derivative works from Pagewalker's branding, design, or character without written permission.",
+    "",
+    "9. DISCLAIMERS",
+    "9.1 Pagewalker is provided \"as is\" without warranties of any kind, express or implied.",
+    "9.2 We do not guarantee that the app will be available at all times or free from errors.",
+    "9.3 We are not responsible for the accuracy of book information provided by third-party APIs.",
+    "9.4 We are not responsible for content posted by users. Reviews and comments reflect the opinions of individual users and not Pagewalker.",
+    "9.5 We are not responsible for any loss of data. We recommend users keep personal notes and quotes backed up.",
+    "",
+    "10. LIMITATION OF LIABILITY",
+    "To the maximum extent permitted by law, Pagewalker shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app, including but not limited to loss of data, loss of reading progress, or inability to access the service.",
+    "",
+    "11. CHANGES TO THESE TERMS",
+    "We may update these Terms and Conditions from time to time. We will notify users of significant changes through the app. Your continued use of Pagewalker after changes are posted constitutes your acceptance of the updated terms.",
+    "",
+    "12. TERMINATION",
+    "Pagewalker reserves the right to suspend or terminate your account at any time if you violate these terms, without prior notice. You may terminate your account at any time from the Profile Settings screen.",
+    "",
+    "13. GOVERNING LAW",
+    "These Terms and Conditions are governed by applicable law. Any disputes will be resolved through good faith negotiation before any legal action is taken.",
+    "",
+    "14. CONTACT",
+    "For any questions about these Terms and Conditions:",
+    "Email: nkimwalker@gmail.com",
+    "App: Pagewalker",
+    "We will respond to all enquiries within 30 days.",
+    "",
+    "© 2026 Pagewalker. All rights reserved.",
+  ].join("\n");
+
+  var termsHu = [
+    "FELHASZNÁLÁSI FELTÉTELEK",
+    "",
+    "Üdvözlünk a Pagewalkerben. A Pagewalker mobilalkalmazás letöltésével, telepítésével vagy használatával elfogadod a jelen felhasználási feltételeket. Kérjük, olvasd át figyelmesen. Ha nem értesz egyet, ne használd az alkalmazást.",
+    "",
+    "1. A PAGEWALKERRŐL",
+    "A Pagewalker egy könyvfelfedező és közösségi beszélgetőfelület. Lehetővé teszi a felhasználók számára, hogy könyveket keressenek, megtekintsék a könyvinformációkat, megosszák véleményüket és értékeléseiket, kövessék személyes olvasásukat és kapcsolatba lépjenek más olvasókkal.",
+    "A Pagewalker nem ad el, terjeszt vagy tárol szerzői jogi védelem alatt álló könyvtartalmat. Minden megjelenített könyvinformáció (címek, szerzők, összefoglalók, borítóképek) nyilvánosan elérhető API-kból származik (Google Books API, Open Library), és kizárólag tájékoztatási és beszélgetési célokra használható.",
+    "A harmadik fél platformjaira mutató külső linkek (Amazon, Google Play Books, Project Gutenberg, helyi könyvtárak) kényelmi szolgáltatásként érhetők el. A Pagewalker nem felelős a külső webhelyek tartalmáért.",
+    "",
+    "2. JOGOSULTSÁG",
+    "Pagewalker fiók létrehozásához legalább 13 évesnek kell lenned. A fiók létrehozásával megerősíted, hogy megfelelsz ennek a korhatárnak.",
+    "A 13 és 17 év közötti felhasználóknak szülői engedéllyel kell rendelkezniük az alkalmazás használatához.",
+    "",
+    "3. FELHASZNÁLÓI FIÓKOK",
+    "3.1 Te felelsz a fiókod hitelesítő adatainak titokban tartásáért. Ne oszd meg senkivel a jelszavadat.",
+    "3.2 Te felelsz a fiókod alatt történő minden tevékenységért.",
+    "3.3 A fiók létrehozásakor pontos adatokat kell megadnod.",
+    "3.4 Egy személy csak egy aktív fiókot tarthat fenn. Több fiók létrehozása korlátozások vagy tiltások megkerülése céljából tilos.",
+    "3.5 Fiókodat bármikor törölheted a Profil beállítások oldalon. Törlést követően személyes adataid 30 napon belül eltávolításra kerülnek.",
+    "",
+    "4. FELHASZNÁLÓI TARTALOM",
+    "4.1 Tulajdonjog — A Pagewalkeren általad létrehozott tartalmak (értékelések, hozzászólások, csillagok, idézetek, profil) tulajdonjoga teljes mértékben nálad marad.",
+    "4.2 Licenc a Pagewalker felé — A Pagewalkeren való közzététellel nem kizárólagos, világszerte érvényes, jogdíjmentes licencet biztosítasz nekünk a tartalom megjelenítésére az app többi felhasználója számára. Ez a licenc megszűnik, amikor törlöd a tartalmat vagy a fiókodat.",
+    "4.3 Tartalmi szabályok — Vállalod, hogy a tartalmad NEM lesz: sértő, bántalmazó, gyűlölködő vagy diszkriminatív; nem zaklat, nem fenyeget másokat; nem tartalmaz szexuálisan explicit anyagot; nem népszerűsít erőszakot vagy illegális tevékenységet; nem sérti mások szellemi tulajdonát; nem spam vagy reklám; nem tár fel mások személyes adatait engedély nélkül; nem tartalmaz hamis információt.",
+    "4.4 Spoiler szabály — Ha jelentős cselekményi fordulatokat osztasz meg, használd a spoiler kapcsolót. A jelöletlen spoilerek ismétlődő közzététele a fiók felfüggesztéséhez vezethet.",
+    "4.5 Moderálás — A Pagewalker fenntartja a jogot, hogy előzetes értesítés nélkül eltávolítson bármely szabálysértő tartalmat. Fenntartjuk a jogot, hogy a szabályokat ismétlődően megszegő fiókokat felfüggesszük vagy véglegesen letiltsuk.",
+    "",
+    "5. KÖNYVINFORMÁCIÓK ÉS SZERZŐI JOG",
+    "5.1 A Pagewalkeren megjelenített könyvinformációk (címek, szerzők, leírások, borítóképek) nyilvánosan elérhető harmadik féltől származó API-kból származnak. Ezek az adatok azonosítási és beszélgetési célokra használhatók.",
+    "5.2 A Pagewalker nem tárol, nem tárol el és nem terjeszt szerzői jogi védelem alatt álló könyvszöveget. Aki könyveket szeretne olvasni, azt legitim csatornákon keresztül kell beszereznie (könyvtárak, könyvesboltok, licencelt digitális platformok).",
+    "5.3 A Project Gutenberghez mutató külső linkek kizárólag közkinccsé vált könyvekhez érhetők el. Ezek a linkek a külső Project Gutenberg webhelyre irányítanak.",
+    "5.4 Ha úgy érzed, hogy a Pagewalker tartalma sérti a szerzői jogodat, jelezd nekünk a nkimwalker@gmail.com címen a jogsértés részleteivel.",
+    "",
+    "6. KÖNYVKLUB SZOBÁK",
+    "6.1 A könyvklub adminok felelősek szobájuk moderálásáért és azért, hogy a tagok betartsák a jelen feltételeket.",
+    "6.2 A Pagewalker fenntartja a jogot, hogy feloszlasson bármely könyvklubot, amelyet a jelen feltételeket sértő célokra használnak.",
+    "6.3 A meghívókódokat csak a könyvklub admin hozzájárulásával lehet nyilvánosan megosztani.",
+    "",
+    "7. TILTOTT TEVÉKENYSÉGEK",
+    "Vállalod, hogy NEM teszed a következőket: nem használod az appot illegális célra; nem próbálod meg feltörni, megzavarni vagy veszélyeztetni az appot; nem használsz automatizált eszközöket, botokat vagy scrapereket a platformon; nem adod ki magad másnak; nem gyűjtöd más felhasználók személyes adatait; nem küldesz kéretlen üzeneteket vagy spamet; nem zavarod mások élvezetét; nem próbálod megkerülni a biztonsági intézkedéseket.",
+    "",
+    "8. SZELLEMI TULAJDON",
+    "A Pagewalker név, logó, sétáló könyv karakter és app-dizájn a Pagewalker szellemi tulajdona, és a vonatkozó szellemi tulajdonjogi törvények védik. Írásos engedély nélkül nem reprodukálhatod, terjesztheted vagy készíthetsz származékos műveket a Pagewalker márkájából, dizájnjából vagy karakteréből.",
+    "",
+    "9. FELELŐSSÉG KIZÁRÁSA",
+    "9.1 A Pagewalker „jelen állapotában\" kerül biztosításra, bármilyen kifejezett vagy hallgatólagos garancia nélkül.",
+    "9.2 Nem garantáljuk, hogy az app minden időben elérhető lesz, vagy hibamentes lesz.",
+    "9.3 Nem vagyunk felelősek a harmadik féltől származó API-k által szolgáltatott könyvinformációk pontosságáért.",
+    "9.4 Nem vagyunk felelősek a felhasználók által közzétett tartalmakért. Az értékelések és hozzászólások az egyes felhasználók véleményét tükrözik, nem a Pagewalkerét.",
+    "9.5 Nem vagyunk felelősek az adatvesztésért. Javasoljuk, hogy a felhasználók készítsenek biztonsági másolatot a személyes jegyzeteikről és idézeteikről.",
+    "",
+    "10. FELELŐSSÉG KORLÁTOZÁSA",
+    "A törvény által megengedett legnagyobb mértékben a Pagewalker nem felelős semmilyen közvetett, véletlen, különleges vagy következményes kárért, amely az app használatából ered, beleértve, de nem kizárólagosan az adatvesztést, olvasási előrehaladás elvesztését vagy a szolgáltatáshoz való hozzáférés lehetetlenségét.",
+    "",
+    "11. A FELTÉTELEK MÓDOSÍTÁSA",
+    "A jelen felhasználási feltételeket időről időre frissíthetjük. A jelentős változásokról az appon keresztül értesítjük a felhasználókat. A módosítások közzétételét követő további használat azok elfogadását jelenti.",
+    "",
+    "12. MEGSZÜNTETÉS",
+    "A Pagewalker fenntartja a jogot, hogy a feltételek megsértése esetén bármikor előzetes értesítés nélkül felfüggessze vagy megszüntesse a fiókodat. Te bármikor megszüntetheted a fiókodat a Profil beállítások oldalon.",
+    "",
+    "13. IRÁNYADÓ JOG",
+    "A jelen feltételekre a vonatkozó jog az irányadó. Bármely vita esetén először jóhiszemű tárgyalások útján próbáljuk rendezni a helyzetet, jogi lépések előtt.",
+    "",
+    "14. KAPCSOLAT",
+    "A feltételekkel kapcsolatos kérdésekhez:",
+    "E-mail: nkimwalker@gmail.com",
+    "App: Pagewalker",
+    "Minden megkeresésre 30 napon belül válaszolunk.",
+    "",
+    "© 2026 Pagewalker. Minden jog fenntartva.",
+  ].join("\n");
+
+  var DICT = {
+    en: {
+      "meta.lang": "en",
+      "common.skip": "Skip to content",
+      "common.back": "← Back to home",
+      "common.copy": "© 2026 Pagewalker. All rights reserved.",
+      "common.copyShort": "© 2026 Pagewalker",
+      "common.lastUpdated": "Last updated: March 2026",
+      "common.supportEmail": "nkimwalker@gmail.com",
+
+      "nav.home": "Home",
+      "nav.updates": "Updates",
+      "nav.signIn": "Sign in",
+      "nav.signUp": "Sign up",
+      "nav.privacy": "Privacy",
+      "nav.terms": "Terms",
+      "nav.support": "Support",
+
+      "toolbar.language": "Language",
+      "toolbar.theme": "Theme",
+      "toolbar.themeAria.light": "Light theme — click to switch to dark",
+      "toolbar.themeAria.dark": "Dark theme — click to switch to system",
+      "toolbar.themeAria.system": "System theme — click to switch to light",
+
+      "home.title": "Pagewalker — Reading, together",
+      "home.metaDescription": "Pagewalker — discover books, track reading, join book clubs, and connect with readers. Official site.",
+      "home.heroLine1": "Walk your shelves.",
+      "home.heroLine2": "Share the story.",
+      "home.heroLede": "Your cozy corner for TBR piles, reading streaks, spicy reviews, and book-club chaos — all the bookish energy, none of the pirated pages.",
+      "home.playAlt": "Get it on Google Play",
+      "home.heroTagline": "Free on Google Play · same login here & in the app",
+      "home.whatsNew": "What's new",
+      "home.signInWeb": "Sign in on the web",
+      "home.featuresHeading": "Your reading universe",
+      "home.feature1Title": "Discover & stack",
+      "home.feature1Desc": "Hunt your next obsession, curate your TBR, and flex your finished pile like the main character you are.",
+      "home.feature2Title": "Track the vibe",
+      "home.feature2Desc": "Sessions, streaks, and yearly wraps so your reading era gets the spotlight.",
+      "home.feature3Title": "Gossip & clubs",
+      "home.feature3Desc": "Hot takes, profiles, and book-club rooms for when you need to process that ending together.",
+      "home.quotesHeading": "Little reading joys",
+      "home.quotesIntro": "Tiny reminders for when you need one more chapter.",
+      "home.quote1": "Stack the TBR. Slay the slump. Repeat.",
+      "home.quote1Cap": "— The Pagewalker mood",
+      "home.quote2": "Your plot-twist era starts on page one.",
+      "home.quote2Cap": "— For night-owl readers",
+      "home.quote3": "Stars, shelves, and a little bit of chaos.",
+      "home.quote3Cap": "— Book club optional, drama guaranteed",
+      "home.ctaHeading": "Start your next chapter",
+      "home.ctaLede": "Get the app on Google Play, read release notes, or reach out for support.",
+      "home.ctaPlay": "Get it on Google Play",
+      "home.ctaUpdates": "Read updates",
+      "home.ctaHello": "Say hello",
+
+      "signin.title": "Sign in — Pagewalker",
+      "signin.h1": "Sign in",
+      "signin.muted": "Use the same email and password as the Pagewalker Android app.",
+      "signin.email": "Email",
+      "signin.password": "Password",
+      "signin.submit": "Sign in",
+      "signin.forgot": "Forgot password?",
+      "signin.createAccount": "Create an account",
+
+      "signup.title": "Sign up — Pagewalker",
+      "signup.h1": "Create account",
+      "signup.muted": "You can sign in on the app with this email and password.",
+      "signup.displayName": "Display name (optional)",
+      "signup.email": "Email",
+      "signup.password": "Password",
+      "signup.confirmPassword": "Confirm password",
+      "signup.submit": "Sign up",
+      "signup.haveAccount": "Already have an account?",
+
+      "forgot.title": "Forgot password — Pagewalker",
+      "forgot.h1": "Reset password",
+      "forgot.muted": "We'll email you a link to choose a new password.",
+      "forgot.email": "Email",
+      "forgot.submit": "Send reset link",
+      "forgot.back": "Back to sign in",
+
+      "up.title": "New password — Pagewalker",
+      "up.h1": "Set new password",
+      "up.muted": "Open this page from the link in your email.",
+      "up.pending": "Verifying your reset link…",
+      "up.password": "New password",
+      "up.confirm": "Confirm new password",
+      "up.submit": "Update password",
+      "up.back": "Sign in",
+
+      "updates.title": "Updates — Pagewalker",
+      "updates.h1": "Updates",
+      "updates.mutedBefore": "Product news, reading features, and community notes. For support, email",
+      "updates.mutedAfter": ".",
+      "updates.i1.date": "April 2026",
+      "updates.i1.datetime": "2026-04-21",
+      "updates.i1.title": "Hello, pagewalker.org",
+      "updates.i1.body": "Pagewalker now lives at its own address and has a fresh black, orange, and white look. Light, dark, and system theme are all in the top-right corner.",
+      "updates.i2.date": "April 2026",
+      "updates.i2.datetime": "2026-04-21",
+      "updates.i2.title": "English & Hungarian",
+      "updates.i2.body": "Pick your language at the top of every page. Angolul és magyarul — pick whichever feels like home.",
+      "updates.i3.date": "March 2026",
+      "updates.i3.datetime": "2026-03-31",
+      "updates.i3.title": "Website & account tools",
+      "updates.i3.body": "This site adds web sign-in, sign-up, and password reset so you can manage your Supabase-backed account from a browser as well as the Android app. Reading, clubs, and your library stay in the app — the web is for account access and policies.",
+      "updates.i4.date": "March 2026",
+      "updates.i4.datetime": "2026-03-01",
+      "updates.i4.title": "Built for readers",
+      "updates.i4.body": "Pagewalker focuses on discovery, TBR and finished stacks, reading sessions, reviews, and book clubs — with book metadata from public catalogs, not pirated text.",
+
+      "privacy.title": "Privacy policy — Pagewalker",
+      "privacy.h1": "Privacy policy",
+      "privacy.body": privacyEn,
+
+      "terms.title": "Terms of use — Pagewalker",
+      "terms.h1": "Terms and conditions of use",
+      "terms.body": termsEn,
+
+      "e404.title": "Page not found — Pagewalker",
+      "e404.kicker": "404",
+      "e404.h1": "This page wandered off",
+      "e404.text": "Like a bookmark that slipped out — let's get you back to something good to read.",
+      "e404.backHome": "Back home",
+      "e404.latest": "Latest updates",
+
+      "app.signedIn": "You're signed in on the web. Open the Pagewalker app and sign in with the same email and password to use your account on your phone.",
+      "app.passwordShort": "Password must be at least 6 characters.",
+      "app.passwordMismatch": "Passwords do not match.",
+      "app.signupCheckEmail": "Check your email to confirm your account, then sign in here or in the Pagewalker app.",
+      "app.signupReady": "Account ready. You can open the Pagewalker app and sign in with the same email and password.",
+      "app.resetSent": "If an account exists for that email, we sent a reset link. Check your inbox and spam folder.",
+      "app.resetInvalid": "This reset link is invalid or expired. Request a new link from Forgot password.",
+      "app.passwordUpdated": "Password updated. Sign in on the Pagewalker app with your new password.",
+      "app.configError": "We couldn't load account settings. Refresh the page, or try again in a moment.",
+    },
+    hu: {
+      "meta.lang": "hu",
+      "common.skip": "Ugrás a tartalomhoz",
+      "common.back": "← Vissza a kezdőlapra",
+      "common.copy": "© 2026 Pagewalker. Minden jog fenntartva.",
+      "common.copyShort": "© 2026 Pagewalker",
+      "common.lastUpdated": "Utolsó frissítés: 2026. március",
+      "common.supportEmail": "nkimwalker@gmail.com",
+
+      "nav.home": "Kezdőlap",
+      "nav.updates": "Frissítések",
+      "nav.signIn": "Bejelentkezés",
+      "nav.signUp": "Regisztráció",
+      "nav.privacy": "Adatvédelem",
+      "nav.terms": "Feltételek",
+      "nav.support": "Támogatás",
+
+      "toolbar.language": "Nyelv",
+      "toolbar.theme": "Téma",
+      "toolbar.themeAria.light": "Világos téma — kattints a sötétre váltáshoz",
+      "toolbar.themeAria.dark": "Sötét téma — kattints a rendszerre váltáshoz",
+      "toolbar.themeAria.system": "Rendszer téma — kattints a világosra váltáshoz",
+
+      "home.title": "Pagewalker — Olvass velünk",
+      "home.metaDescription": "Pagewalker — könyvek felfedezése, olvasáskövetés, könyvklubok és olvasók egy helyen. Hivatalos oldal.",
+      "home.heroLine1": "Járd be a polcaidat.",
+      "home.heroLine2": "Oszd meg a történetet.",
+      "home.heroLede": "A meghitt sarok a TBR listáidnak, olvasási sorozataidnak, szókimondó értékeléseidnek és könyvklub káoszodnak — minden könyves energia, kalózpéldány nélkül.",
+      "home.playAlt": "Letöltés a Google Play-ről",
+      "home.heroTagline": "Ingyenes a Google Play-en · ugyanaz a fiók itt és az appban",
+      "home.whatsNew": "Mi az újdonság",
+      "home.signInWeb": "Bejelentkezés a weben",
+      "home.featuresHeading": "Az olvasási univerzumod",
+      "home.feature1Title": "Fedezz fel és gyűjts",
+      "home.feature1Desc": "Vadászd le a következő kedvencedet, állítsd össze a TBR-edet, és mutasd meg a befejezett kupacot.",
+      "home.feature2Title": "Kövesd a hangulatot",
+      "home.feature2Desc": "Szessziók, sorozatok és éves összefoglalók, hogy az olvasási korszakod reflektorfénybe kerüljön.",
+      "home.feature3Title": "Pletyka és klubok",
+      "home.feature3Desc": "Forró vélemények, profilok és könyvklub-szobák, amikor közösen kell feldolgozni a végkifejletet.",
+      "home.quotesHeading": "Apró olvasási örömök",
+      "home.quotesIntro": "Kicsi emlékeztetők, amikor még egy fejezetre van szükséged.",
+      "home.quote1": "Építsd a TBR-t. Győzd le a holtidőt. Ismételd.",
+      "home.quote1Cap": "— A Pagewalker hangulat",
+      "home.quote2": "A csavaros fordulat már az első oldalon elkezdődik.",
+      "home.quote2Cap": "— Éjszakai olvasóknak",
+      "home.quote3": "Csillagok, polcok és egy kis káosz.",
+      "home.quote3Cap": "— A könyvklub opcionális, a dráma garantált",
+      "home.ctaHeading": "Kezdd el a következő fejezetedet",
+      "home.ctaLede": "Töltsd le az appot a Google Play-ről, olvasd a frissítéseket, vagy írj nekünk.",
+      "home.ctaPlay": "Letöltés a Google Play-ről",
+      "home.ctaUpdates": "Frissítések olvasása",
+      "home.ctaHello": "Írj nekünk",
+
+      "signin.title": "Bejelentkezés — Pagewalker",
+      "signin.h1": "Bejelentkezés",
+      "signin.muted": "Ugyanazt az e-mailt és jelszót használd, mint a Pagewalker Android appban.",
+      "signin.email": "E-mail",
+      "signin.password": "Jelszó",
+      "signin.submit": "Bejelentkezés",
+      "signin.forgot": "Elfelejtetted a jelszót?",
+      "signin.createAccount": "Új fiók létrehozása",
+
+      "signup.title": "Regisztráció — Pagewalker",
+      "signup.h1": "Fiók létrehozása",
+      "signup.muted": "Ugyanezzel az e-maillel és jelszóval be tudsz jelentkezni az appban is.",
+      "signup.displayName": "Megjelenített név (opcionális)",
+      "signup.email": "E-mail",
+      "signup.password": "Jelszó",
+      "signup.confirmPassword": "Jelszó megerősítése",
+      "signup.submit": "Regisztráció",
+      "signup.haveAccount": "Van már fiókod?",
+
+      "forgot.title": "Elfelejtett jelszó — Pagewalker",
+      "forgot.h1": "Jelszó visszaállítása",
+      "forgot.muted": "E-mailben küldünk egy linket az új jelszó választásához.",
+      "forgot.email": "E-mail",
+      "forgot.submit": "Visszaállító link küldése",
+      "forgot.back": "Vissza a bejelentkezéshez",
+
+      "up.title": "Új jelszó — Pagewalker",
+      "up.h1": "Új jelszó beállítása",
+      "up.muted": "Nyisd meg ezt az oldalt az e-mailben kapott linkről.",
+      "up.pending": "A visszaállító link ellenőrzése…",
+      "up.password": "Új jelszó",
+      "up.confirm": "Új jelszó megerősítése",
+      "up.submit": "Jelszó frissítése",
+      "up.back": "Bejelentkezés",
+
+      "updates.title": "Frissítések — Pagewalker",
+      "updates.h1": "Frissítések",
+      "updates.mutedBefore": "Termékhírek, olvasási funkciók és közösségi jegyzetek. Támogatásért írj a",
+      "updates.mutedAfter": " címre.",
+      "updates.i1.date": "2026. április",
+      "updates.i1.datetime": "2026-04-21",
+      "updates.i1.title": "Üdv, pagewalker.org",
+      "updates.i1.body": "A Pagewalker mostantól saját címen él, és új fekete-narancs-fehér külsőt kapott. Világos, sötét és rendszer témák a jobb felső sarokban.",
+      "updates.i2.date": "2026. április",
+      "updates.i2.datetime": "2026-04-21",
+      "updates.i2.title": "Angol és magyar",
+      "updates.i2.body": "Válaszd ki a nyelvet minden oldal tetején. Angolul és magyarul — amelyik otthonosabb.",
+      "updates.i3.date": "2026. március",
+      "updates.i3.datetime": "2026-03-31",
+      "updates.i3.title": "Webhely és fiókeszközök",
+      "updates.i3.body": "Az oldal webes bejelentkezést, regisztrációt és jelszó-visszaállítást kínál, így böngészőből is kezelheted a Supabase-alapú fiókodat. Az olvasás, a klubok és a könyvtárad az appban marad — a web a fiókkezelésért és az irányelvekért felel.",
+      "updates.i4.date": "2026. március",
+      "updates.i4.datetime": "2026-03-01",
+      "updates.i4.title": "Olvasóknak készült",
+      "updates.i4.body": "A Pagewalker a felfedezésre, TBR- és befejezett polcokra, olvasási szessziókra, értékelésekre és könyvklubokra összpontosít — a könyvadatok nyilvános katalógusokból érkeznek, nem kalóz szövegből.",
+
+      "privacy.title": "Adatvédelmi szabályzat — Pagewalker",
+      "privacy.h1": "Adatvédelmi szabályzat",
+      "privacy.body": privacyHu,
+
+      "terms.title": "Felhasználási feltételek — Pagewalker",
+      "terms.h1": "Felhasználási feltételek",
+      "terms.body": termsHu,
+
+      "e404.title": "Oldal nem található — Pagewalker",
+      "e404.kicker": "404",
+      "e404.h1": "Ez az oldal eltévedt",
+      "e404.text": "Mint egy kiesett könyvjelző — vigyünk vissza valami olvasnivalóra.",
+      "e404.backHome": "Vissza a kezdőlapra",
+      "e404.latest": "Legújabb frissítések",
+
+      "app.signedIn": "Bejelentkeztél a weben. Nyisd meg a Pagewalker appot, és ugyanazzal az e-maillel és jelszóval jelentkezz be, hogy a telefonon is használhasd a fiókodat.",
+      "app.passwordShort": "A jelszónak legalább 6 karakter hosszúnak kell lennie.",
+      "app.passwordMismatch": "A jelszavak nem egyeznek.",
+      "app.signupCheckEmail": "Nézd meg az e-mailedet a fiók megerősítéséhez, majd jelentkezz be itt vagy a Pagewalker appban.",
+      "app.signupReady": "A fiók készen áll. Nyisd meg a Pagewalker appot, és ugyanazzal az e-maillel és jelszóval jelentkezz be.",
+      "app.resetSent": "Ha létezik fiók ezzel az e-mail címmel, küldtünk egy visszaállító linket. Nézd meg a beérkező leveleket és a spam mappát is.",
+      "app.resetInvalid": "Ez a visszaállító link érvénytelen vagy lejárt. Kérj új linket az Elfelejtett jelszó oldalon.",
+      "app.passwordUpdated": "A jelszót frissítettük. Jelentkezz be a Pagewalker appban az új jelszóval.",
+      "app.configError": "Nem tudtuk betölteni a fiókbeállításokat. Frissítsd az oldalt, vagy próbáld újra egy pillanat múlva.",
+    },
+  };
+
+  function getLang() {
+    try {
+      var v = localStorage.getItem(STORAGE_KEY);
+      if (v && SUPPORTED.indexOf(v) !== -1) return v;
+    } catch (_) {}
+    var nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
+    if (nav.indexOf("hu") === 0) return "hu";
+    return DEFAULT_LANG;
+  }
+
+  function t(key) {
+    var lang = getLang();
+    var table = DICT[lang] || DICT[DEFAULT_LANG];
+    if (key in table) return table[key];
+    if (key in DICT[DEFAULT_LANG]) return DICT[DEFAULT_LANG][key];
+    return key;
+  }
+
+  function apply() {
+    var lang = getLang();
+    document.documentElement.setAttribute("lang", lang);
+    var nodes = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var key = el.getAttribute("data-i18n");
+      el.textContent = t(key);
+    }
+    var attrNodes = document.querySelectorAll("[data-i18n-attr]");
+    for (var j = 0; j < attrNodes.length; j++) {
+      var node = attrNodes[j];
+      var spec = node.getAttribute("data-i18n-attr") || "";
+      var parts = spec.split(",");
+      for (var k = 0; k < parts.length; k++) {
+        var pair = parts[k].trim();
+        if (!pair) continue;
+        var idx = pair.indexOf(":");
+        if (idx === -1) continue;
+        var attr = pair.slice(0, idx).trim();
+        var key2 = pair.slice(idx + 1).trim();
+        if (attr && key2) node.setAttribute(attr, t(key2));
+      }
+    }
+    var metaNodes = document.querySelectorAll("[data-i18n-meta]");
+    for (var m = 0; m < metaNodes.length; m++) {
+      var mn = metaNodes[m];
+      mn.setAttribute("content", t(mn.getAttribute("data-i18n-meta")));
+    }
+    var titleNode = document.querySelector("title[data-i18n-title]");
+    if (titleNode) document.title = t(titleNode.getAttribute("data-i18n-title"));
+
+    var selects = document.querySelectorAll(".pw-lang-select");
+    for (var s = 0; s < selects.length; s++) {
+      if (selects[s].value !== lang) selects[s].value = lang;
+    }
+    document.dispatchEvent(new CustomEvent("pw:i18n-ready", { detail: { lang: lang } }));
+  }
+
+  function setLang(lang) {
+    if (SUPPORTED.indexOf(lang) === -1) lang = DEFAULT_LANG;
+    try { localStorage.setItem(STORAGE_KEY, lang); } catch (_) {}
+    apply();
+  }
+
+  window.pwT = t;
+  window.pwI18n = { get: getLang, set: setLang, apply: apply, supported: SUPPORTED };
+
+  function boot() {
+    apply();
+    var selects = document.querySelectorAll(".pw-lang-select");
+    for (var i = 0; i < selects.length; i++) {
+      selects[i].addEventListener("change", function (e) {
+        setLang(e.target.value);
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();

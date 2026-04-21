@@ -3,40 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Page not found — Pagewalker</title>
+    <title data-i18n-title="e404.title">Page not found — Pagewalker</title>
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#ff4fa3" />
+    <meta name="theme-color" content="#ff6b1a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem("pw-theme");
+          var v = m === "light" || m === "dark" ? m
+            : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", v);
+        } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" data-i18n="common.skip">Skip to content</a>
     <header class="site-header">
       <div class="wrap inner">
         <a class="logo" href="/">Pagewalker</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
+          <a href="/" data-i18n="nav.home">Home</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <div class="site-controls">
+            <select class="pw-select pw-lang-select" data-i18n-attr="aria-label:toolbar.language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hu">Magyar</option>
+            </select>
+            <button type="button" class="pw-theme-toggle" data-i18n-attr="aria-label:toolbar.theme" aria-label="Theme">
+              <svg data-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg data-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+              <svg data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>
     <main class="wrap page-404" id="main">
-      <p class="e404-kicker">404</p>
-      <h1>This page wandered off</h1>
-      <p class="e404-text">
-        Like a bookmark that slipped out — let’s get you back to something good to read.
-      </p>
+      <p class="e404-kicker" data-i18n="e404.kicker">404</p>
+      <h1 data-i18n="e404.h1">This page wandered off</h1>
+      <p class="e404-text" data-i18n="e404.text">Like a bookmark that slipped out — let's get you back to something good to read.</p>
       <p class="e404-actions">
-        <a class="btn" href="/">Back home</a>
-        <a class="btn btn-outline" href="/updates">Latest updates</a>
+        <a class="btn" href="/" data-i18n="e404.backHome">Back home</a>
+        <a class="btn btn-outline" href="/updates" data-i18n="e404.latest">Latest updates</a>
       </p>
     </main>
     <footer>
       <div class="wrap inner">
-        <p class="copy">© 2026 Pagewalker</p>
+        <p class="copy" data-i18n="common.copyShort">© 2026 Pagewalker</p>
       </div>
     </footer>
+    <script src="/js/pw-i18n.js"></script>
+    <script src="/js/pw-theme.js"></script>
   </body>
 </html>

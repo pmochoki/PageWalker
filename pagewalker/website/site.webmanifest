@@ -1,11 +1,11 @@
 {
   "name": "Pagewalker",
   "short_name": "Pagewalker",
-  "description": "Book discovery, reading tracking, and reader friends — your shelves, your story.",
+  "description": "Book discovery, reading tracking, and reader friends.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff8fc",
-  "theme_color": "#ff4fa3",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ff6b1a",
   "icons": [
     {
       "src": "/favicon.svg",

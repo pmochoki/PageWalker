@@ -1,5 +1,10 @@
 import { getSupabase } from "./pw-supabase.js";
 
+function tr(key, fallback) {
+  if (window.pwT) return window.pwT(key);
+  return fallback || key;
+}
+
 function showBanner(el, type, text) {
   if (!el) return;
   el.hidden = false;
@@ -9,10 +14,6 @@ function showBanner(el, type, text) {
 
 function hideBanner(el) {
   if (el) el.hidden = true;
-}
-
-function configHelpHtml() {
-  return "We couldn’t load account settings. Refresh the page, or try again in a moment.";
 }
 
 async function initSignIn() {
@@ -32,11 +33,7 @@ async function initSignIn() {
       showBanner(err, "error", error.message);
       return;
     }
-    showBanner(
-      ok,
-      "success",
-      "You’re signed in on the web. Open the Pagewalker app and sign in with the same email and password to use your account on your phone."
-    );
+    showBanner(ok, "success", tr("app.signedIn"));
   });
 }
 
@@ -55,11 +52,11 @@ async function initSignUp() {
     const password2 = String(fd.get("password2") || "");
     const displayName = String(fd.get("display_name") || "").trim();
     if (password.length < 6) {
-      showBanner(err, "error", "Password must be at least 6 characters.");
+      showBanner(err, "error", tr("app.passwordShort"));
       return;
     }
     if (password !== password2) {
-      showBanner(err, "error", "Passwords do not match.");
+      showBanner(err, "error", tr("app.passwordMismatch"));
       return;
     }
     const { data, error } = await supabase.auth.signUp({
@@ -74,18 +71,10 @@ async function initSignUp() {
       return;
     }
     if (data.user && !data.session) {
-      showBanner(
-        ok,
-        "success",
-        "Check your email to confirm your account, then sign in here or in the Pagewalker app."
-      );
+      showBanner(ok, "success", tr("app.signupCheckEmail"));
       return;
     }
-    showBanner(
-      ok,
-      "success",
-      "Account ready. You can open the Pagewalker app and sign in with the same email and password."
-    );
+    showBanner(ok, "success", tr("app.signupReady"));
   });
 }
 
@@ -106,20 +95,14 @@ async function initForgot() {
       showBanner(err, "error", error.message);
       return;
     }
-    showBanner(
-      ok,
-      "success",
-      "If an account exists for that email, we sent a reset link. Check your inbox and spam folder."
-    );
+    showBanner(ok, "success", tr("app.resetSent"));
   });
 }
 
 async function waitForSession(supabase, maxMs) {
   const step = 250;
   for (let t = 0; t < maxMs; t += step) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
     if (session) return session;
     await new Promise((r) => setTimeout(r, step));
   }
@@ -138,11 +121,7 @@ async function initUpdatePassword() {
   if (pending) pending.hidden = true;
 
   if (!session) {
-    showBanner(
-      err,
-      "error",
-      "This reset link is invalid or expired. Request a new link from Forgot password."
-    );
+    showBanner(err, "error", tr("app.resetInvalid"));
     if (form) form.style.display = "none";
     return;
   }
@@ -155,11 +134,11 @@ async function initUpdatePassword() {
     const password = String(fd.get("password") || "");
     const password2 = String(fd.get("password2") || "");
     if (password.length < 6) {
-      showBanner(err, "error", "Password must be at least 6 characters.");
+      showBanner(err, "error", tr("app.passwordShort"));
       return;
     }
     if (password !== password2) {
-      showBanner(err, "error", "Passwords do not match.");
+      showBanner(err, "error", tr("app.passwordMismatch"));
       return;
     }
     const { error } = await supabase.auth.updateUser({ password });
@@ -167,11 +146,7 @@ async function initUpdatePassword() {
       showBanner(err, "error", error.message);
       return;
     }
-    showBanner(
-      ok,
-      "success",
-      "Password updated. Sign in on the Pagewalker app with your new password."
-    );
+    showBanner(ok, "success", tr("app.passwordUpdated"));
     if (form) form.style.display = "none";
   });
 }
@@ -183,7 +158,7 @@ async function boot() {
   try {
     await getSupabase();
   } catch (e) {
-    showBanner(err, "error", configHelpHtml());
+    showBanner(err, "error", tr("app.configError"));
     return;
   }
   switch (page) {

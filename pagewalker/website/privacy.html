@@ -4,85 +4,70 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Pagewalker privacy policy." />
-    <meta name="theme-color" content="#ff4fa3" />
+    <meta name="theme-color" content="#ff6b1a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>Privacy policy — Pagewalker</title>
+    <title data-i18n-title="privacy.title">Privacy policy — Pagewalker</title>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem("pw-theme");
+          var v = m === "light" || m === "dark" ? m
+            : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", v);
+        } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body class="page-legal">
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" data-i18n="common.skip">Skip to content</a>
     <header class="site-header">
       <div class="wrap inner">
         <a class="logo" href="/">Pagewalker</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
-          <a href="/sign-up">Sign up</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <a href="mailto:nkimwalker@gmail.com">Support</a>
+          <a href="/" data-i18n="nav.home">Home</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/sign-up" data-i18n="nav.signUp">Sign up</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com" data-i18n="nav.support">Support</a>
+          <div class="site-controls">
+            <select class="pw-select pw-lang-select" data-i18n-attr="aria-label:toolbar.language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hu">Magyar</option>
+            </select>
+            <button type="button" class="pw-theme-toggle" data-i18n-attr="aria-label:toolbar.theme" aria-label="Theme">
+              <svg data-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg data-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+              <svg data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>
 
-    <div class="wrap content">
-      <a class="back" href="/">← Back to home</a>
-      <h1>Privacy policy</h1>
-      <p class="updated">Last updated: March 2026</p>
-      <div class="legal-text">PRIVACY POLICY
-
-At Pagewalker, your privacy matters to us deeply. This Privacy Policy explains what information we collect, how we use it, how we protect it, and what rights you have over your data. By using Pagewalker, you agree to the collection and use of information in accordance with this policy.
-
-1. INFORMATION WE COLLECT
-1.1 Information You Give Us Directly — When you create an account: email address (required), display name (required), username (required). When you set up your profile (all optional): profile photo, bio, age, location (city/country — not precise GPS), favourite genre, Instagram handle, Facebook name, reading goal, whether your profile is public or private. When you use the app: books you add to your library (TBR, Reading, Read, DNF), star ratings, tier rankings, reviews and comments, quotes and scenes, characters you rank, reading sessions (reading timer), book clubs you create or join, messages you send in book clubs.
-1.2 Information We Collect Automatically — App version, device type and operating system, time and date of app use, which features you use. We do NOT collect: precise GPS location, your contacts, your browsing history outside the app, or any information from other apps on your device.
-
-2. HOW WE USE YOUR INFORMATION
-We use your information to: create and manage your account; display your profile to other users (if public); power your personal library and reading tracking; generate Reading Wraps and Yearly Wrapped; provide personalised book recommendations using AI (we send reading preferences to OpenAI — no personally identifiable information is shared); enable social features; send push notifications (only with your permission); improve the app; respond to support requests; ensure security.
-
-3. HOW WE SHARE YOUR INFORMATION
-We do NOT sell your personal information. Ever. We share data only with: Supabase (database — see supabase.com/privacy); Google Books API (search queries only — no personal information); Open Library / Internet Archive (search queries only); OpenAI (Mood Read — mood input and genres/tropes only, not name or email — see openai.com/privacy); other Pagewalker users according to your public/private settings. Book Club messages are visible to all members of that club.
-
-4. DATA STORAGE AND SECURITY
-Your data is stored on Supabase with HTTPS/TLS, encryption at rest, and row-level security. Passwords are never stored in plain text (bcrypt). Profile photos use Supabase Storage with secure access. We retain data while your account is active; deletion within 30 days of account deletion.
-
-5. CAMERA AND PHOTO LIBRARY
-Camera: ISBN scanner only. Photo library: profile photo selection only — we never scan your full library.
-
-6. PUSH NOTIFICATIONS
-Only with explicit permission. You can disable in app or device settings.
-
-7. CHILDREN'S PRIVACY
-Not directed at children under 13. Contact nkimwalker@gmail.com if you believe a child under 13 created an account.
-
-8. YOUR RIGHTS AND CHOICES
-Access, correct, delete your account from Profile Settings; export data by emailing nkimwalker@gmail.com (response within 30 days); control public/private profile; opt out of notifications; withdraw consent by deleting your account.
-
-9. THIRD PARTY LINKS
-Links open in your external browser. We are not responsible for external privacy practices.
-
-10. CHANGES TO THIS PRIVACY POLICY
-We may update this policy; we will notify you of significant changes with at least 7 days notice where required. Continued use means acceptance.
-
-11. CONTACT US
-Email: nkimwalker@gmail.com — App: Pagewalker — We respond within 30 days. For urgent data deletion, include "URGENT DATA DELETION" in the subject line (response within 7 days).
-
-© 2026 Pagewalker. All rights reserved.</div>
+    <div id="main" class="wrap content">
+      <a class="back" href="/" data-i18n="common.back">← Back to home</a>
+      <h1 data-i18n="privacy.h1">Privacy policy</h1>
+      <p class="updated" data-i18n="common.lastUpdated">Last updated: March 2026</p>
+      <div class="legal-text" data-i18n="privacy.body">Loading…</div>
     </div>
 
     <footer>
       <div class="wrap inner">
         <div class="links">
-          <a href="/updates">Updates</a>
-          <a href="/terms">Terms of use</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
           <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
         </div>
-        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+        <p class="copy" data-i18n="common.copy">© 2026 Pagewalker. All rights reserved.</p>
       </div>
     </footer>
+    <script src="/js/pw-i18n.js"></script>
+    <script src="/js/pw-theme.js"></script>
   </body>
 </html>

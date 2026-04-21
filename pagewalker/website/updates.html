@@ -3,69 +3,80 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Pagewalker news — app updates, reading features, and book community notes."
-    />
-    <title>Updates — Pagewalker</title>
-    <meta name="theme-color" content="#ff4fa3" />
+    <meta name="description" content="Pagewalker news — app updates, reading features, and book community notes." />
+    <title data-i18n-title="updates.title">Updates — Pagewalker</title>
+    <meta name="theme-color" content="#ff6b1a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem("pw-theme");
+          var v = m === "light" || m === "dark" ? m
+            : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", v);
+        } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" data-i18n="common.skip">Skip to content</a>
     <header class="site-header">
       <div class="wrap inner">
         <a class="logo" href="/">Pagewalker</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
-          <a href="/sign-up">Sign up</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <a href="mailto:nkimwalker@gmail.com">Support</a>
+          <a href="/" data-i18n="nav.home">Home</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/sign-up" data-i18n="nav.signUp">Sign up</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com" data-i18n="nav.support">Support</a>
+          <div class="site-controls">
+            <select class="pw-select pw-lang-select" data-i18n-attr="aria-label:toolbar.language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hu">Magyar</option>
+            </select>
+            <button type="button" class="pw-theme-toggle" data-i18n-attr="aria-label:toolbar.theme" aria-label="Theme">
+              <svg data-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg data-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+              <svg data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>
 
-    <main class="wrap page-updates">
-      <h1>Updates</h1>
+    <main id="main" class="wrap page-updates">
+      <h1 data-i18n="updates.h1">Updates</h1>
       <p class="muted">
-        Product news, reading features, and community notes. For support, email
-        <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>.
+        <span data-i18n="updates.mutedBefore">Product news, reading features, and community notes. For support, email</span>
+        <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a><span data-i18n="updates.mutedAfter">.</span>
       </p>
 
       <ul class="updates-list">
         <li>
-          <time datetime="2026-03-31">March 2026</time>
-          <h2>A brighter home on the web</h2>
-          <p>
-            The marketing site has a brighter layout, bookish quotes, favicon, and clearer
-            navigation — built for Play Store listings and everyday browsing.
-          </p>
+          <time data-i18n="updates.i1.date" data-i18n-attr="datetime:updates.i1.datetime" datetime="2026-04-21">April 2026</time>
+          <h2 data-i18n="updates.i1.title">Hello, pagewalker.org</h2>
+          <p data-i18n="updates.i1.body">Pagewalker now lives at its own address and has a fresh black, orange, and white look. Light, dark, and system theme are all in the top-right corner.</p>
         </li>
         <li>
-          <time datetime="2026-03-31">March 2026</time>
-          <h2>Website &amp; account tools</h2>
-          <p>
-            This site adds web sign-in, sign-up, and password reset so you can manage
-            your Supabase-backed account from a browser as well as the Android app.
-            Reading, clubs, and your library stay in the app — the web is for account
-            access and policies.
-          </p>
+          <time data-i18n="updates.i2.date" data-i18n-attr="datetime:updates.i2.datetime" datetime="2026-04-21">April 2026</time>
+          <h2 data-i18n="updates.i2.title">English &amp; Hungarian</h2>
+          <p data-i18n="updates.i2.body">Pick your language at the top of every page. Angolul és magyarul — pick whichever feels like home.</p>
         </li>
         <li>
-          <time datetime="2026-03-01">March 2026</time>
-          <h2>Built for readers</h2>
-          <p>
-            Pagewalker focuses on discovery, TBR and finished stacks, reading sessions,
-            reviews, and book clubs — with book metadata from public catalogs, not
-            pirated text.
-          </p>
+          <time data-i18n="updates.i3.date" data-i18n-attr="datetime:updates.i3.datetime" datetime="2026-03-31">March 2026</time>
+          <h2 data-i18n="updates.i3.title">Website &amp; account tools</h2>
+          <p data-i18n="updates.i3.body">This site adds web sign-in, sign-up, and password reset so you can manage your Supabase-backed account from a browser as well as the Android app.</p>
+        </li>
+        <li>
+          <time data-i18n="updates.i4.date" data-i18n-attr="datetime:updates.i4.datetime" datetime="2026-03-01">March 2026</time>
+          <h2 data-i18n="updates.i4.title">Built for readers</h2>
+          <p data-i18n="updates.i4.body">Pagewalker focuses on discovery, TBR and finished stacks, reading sessions, reviews, and book clubs — with book metadata from public catalogs, not pirated text.</p>
         </li>
       </ul>
     </main>
@@ -73,13 +84,15 @@
     <footer>
       <div class="wrap inner">
         <div class="links">
-          <a href="/sign-in">Sign in</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
           <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
         </div>
-        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+        <p class="copy" data-i18n="common.copy">© 2026 Pagewalker. All rights reserved.</p>
       </div>
     </footer>
+    <script src="/js/pw-i18n.js"></script>
+    <script src="/js/pw-theme.js"></script>
   </body>
 </html>

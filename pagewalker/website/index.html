@@ -3,47 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ff4fa3" />
-    <meta
-      name="description"
-      content="Pagewalker — discover books, track reading, join book clubs, and connect with readers. Official site."
-    />
-    <meta property="og:title" content="Pagewalker — Reading, together" />
-    <meta
-      property="og:description"
-      content="Your cozy bookish hub: TBR stacks, reviews, reading streaks, and friends who get the plot twist."
-    />
+    <meta name="theme-color" content="#ff6b1a" />
+    <meta name="description" data-i18n-meta="home.metaDescription"
+      content="Pagewalker — discover books, track reading, join book clubs, and connect with readers. Official site." />
+    <meta property="og:title" content="Pagewalker" />
+    <meta property="og:description" data-i18n-meta="home.metaDescription"
+      content="Pagewalker — discover books, track reading, join book clubs, and connect with readers." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://pagewalker.org/" />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Pagewalker" />
-    <meta
-      name="twitter:description"
-      content="Book discovery, reading tracking, and reader friends — one happy shelf at a time."
-    />
+    <meta name="twitter:description" data-i18n-meta="home.metaDescription"
+      content="Book discovery, reading tracking, and reader friends — one happy shelf at a time." />
     <link rel="canonical" href="https://pagewalker.org/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>Pagewalker — Reading, together</title>
+    <title data-i18n-title="home.title">Pagewalker — Reading, together</title>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem("pw-theme");
+          var v = m === "light" || m === "dark" ? m
+            : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", v);
+        } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" data-i18n="common.skip">Skip to content</a>
     <header class="site-header">
       <div class="wrap inner">
         <a class="logo" href="/">Pagewalker</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
-          <a href="/sign-up">Sign up</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <a href="mailto:nkimwalker@gmail.com">Support</a>
+          <a href="/" data-i18n="nav.home">Home</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/sign-up" data-i18n="nav.signUp">Sign up</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
+          <a href="mailto:nkimwalker@gmail.com" data-i18n="nav.support">Support</a>
+          <div class="site-controls">
+            <select class="pw-select pw-lang-select" data-i18n-attr="aria-label:toolbar.language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hu">Magyar</option>
+            </select>
+            <button type="button" class="pw-theme-toggle" data-i18n-attr="aria-label:toolbar.theme" aria-label="Theme">
+              <svg data-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              <svg data-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+              <svg data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>
@@ -51,100 +66,86 @@
     <main id="main">
       <section class="hero wrap">
         <div class="hero-inner reveal">
-          <h1>Walk your shelves.<br /><span class="accent">Share the story.</span></h1>
-          <p class="lede">
+          <h1>
+            <span data-i18n="home.heroLine1">Walk your shelves.</span><br />
+            <span class="accent" data-i18n="home.heroLine2">Share the story.</span>
+          </h1>
+          <p class="lede" data-i18n="home.heroLede">
             Your cozy corner for TBR piles, reading streaks, spicy reviews, and book-club
             chaos — all the bookish energy, none of the pirated pages.
           </p>
           <div class="hero-actions">
-            <a
-              class="badge-play"
+            <a class="badge-play"
               href="https://play.google.com/store/apps/details?id=com.pagewalker.app"
               rel="noopener noreferrer"
-              aria-label="Get it on Google Play"
-            >
+              data-i18n-attr="aria-label:home.playAlt"
+              aria-label="Get it on Google Play">
               <img
                 src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                data-i18n-attr="alt:home.playAlt"
                 alt="Get it on Google Play"
-                width="646"
-                height="250"
-              />
+                width="646" height="250" />
             </a>
           </div>
-          <p class="hero-tagline">Free on Google Play · same login here &amp; in the app</p>
+          <p class="hero-tagline" data-i18n="home.heroTagline">
+            Free on Google Play · same login here &amp; in the app
+          </p>
           <p class="hero-aux">
-            <a href="/updates">What’s new</a>
+            <a href="/updates" data-i18n="home.whatsNew">What's new</a>
             ·
-            <a href="/sign-in">Sign in on the web</a>
+            <a href="/sign-in" data-i18n="home.signInWeb">Sign in on the web</a>
           </p>
         </div>
       </section>
 
       <section class="features wrap" aria-labelledby="features-heading">
-        <h2 id="features-heading" class="reveal">Your reading universe</h2>
+        <h2 id="features-heading" class="reveal" data-i18n="home.featuresHeading">Your reading universe</h2>
         <div class="grid">
           <div class="card reveal reveal-delay-1">
             <span class="card-emoji" aria-hidden="true">📚</span>
-            <h3>Discover &amp; stack</h3>
-            <p>
-              Hunt your next obsession, curate your TBR, and flex your finished pile like
-              the main character you are.
-            </p>
+            <h3 data-i18n="home.feature1Title">Discover &amp; stack</h3>
+            <p data-i18n="home.feature1Desc">Hunt your next obsession, curate your TBR, and flex your finished pile like the main character you are.</p>
           </div>
           <div class="card reveal reveal-delay-2">
             <span class="card-emoji" aria-hidden="true">✨</span>
-            <h3>Track the vibe</h3>
-            <p>
-              Sessions, streaks, and yearly wraps so your reading era gets the spotlight.
-            </p>
+            <h3 data-i18n="home.feature2Title">Track the vibe</h3>
+            <p data-i18n="home.feature2Desc">Sessions, streaks, and yearly wraps so your reading era gets the spotlight.</p>
           </div>
           <div class="card reveal reveal-delay-3">
             <span class="card-emoji" aria-hidden="true">💌</span>
-            <h3>Gossip &amp; clubs</h3>
-            <p>
-              Hot takes, profiles, and book-club rooms for when you need to process that
-              ending together.
-            </p>
+            <h3 data-i18n="home.feature3Title">Gossip &amp; clubs</h3>
+            <p data-i18n="home.feature3Desc">Hot takes, profiles, and book-club rooms for when you need to process that ending together.</p>
           </div>
         </div>
       </section>
 
       <section class="quotes wrap" aria-labelledby="quotes-heading">
-        <h2 id="quotes-heading" class="reveal">Little reading joys</h2>
-        <p class="quotes-intro reveal">Tiny reminders for when you need one more chapter.</p>
+        <h2 id="quotes-heading" class="reveal" data-i18n="home.quotesHeading">Little reading joys</h2>
+        <p class="quotes-intro reveal" data-i18n="home.quotesIntro">Tiny reminders for when you need one more chapter.</p>
         <div class="quote-grid">
           <figure class="quote-card reveal reveal-delay-1">
-            <blockquote>“Stack the TBR. Slay the slump. Repeat.”</blockquote>
-            <figcaption>— The Pagewalker mood</figcaption>
+            <blockquote data-i18n="home.quote1">"Stack the TBR. Slay the slump. Repeat."</blockquote>
+            <figcaption data-i18n="home.quote1Cap">— The Pagewalker mood</figcaption>
           </figure>
           <figure class="quote-card reveal reveal-delay-2">
-            <blockquote>“Your plot-twist era starts on page one.”</blockquote>
-            <figcaption>— For night-owl readers</figcaption>
+            <blockquote data-i18n="home.quote2">"Your plot-twist era starts on page one."</blockquote>
+            <figcaption data-i18n="home.quote2Cap">— For night-owl readers</figcaption>
           </figure>
           <figure class="quote-card reveal reveal-delay-3">
-            <blockquote>“Stars, shelves, and a little bit of chaos.”</blockquote>
-            <figcaption>— Book club optional, drama guaranteed</figcaption>
+            <blockquote data-i18n="home.quote3">"Stars, shelves, and a little bit of chaos."</blockquote>
+            <figcaption data-i18n="home.quote3Cap">— Book club optional, drama guaranteed</figcaption>
           </figure>
         </div>
       </section>
 
       <section class="cta-band" aria-labelledby="cta-heading">
         <div class="wrap cta-inner reveal">
-          <h2 id="cta-heading">Start your next chapter</h2>
-          <p class="cta-lede">
-            Get the app on Google Play, read release notes, or reach out for support.
-          </p>
+          <h2 id="cta-heading" data-i18n="home.ctaHeading">Start your next chapter</h2>
+          <p class="cta-lede" data-i18n="home.ctaLede">Get the app on Google Play, read release notes, or reach out for support.</p>
           <div class="cta-actions">
-            <a
-              class="btn"
-              href="https://play.google.com/store/apps/details?id=com.pagewalker.app"
-              rel="noopener noreferrer"
-              >Get it on Google Play</a
-            >
-            <a class="btn btn-outline" href="/updates">Read updates</a>
-            <a class="btn btn-outline" href="mailto:nkimwalker@gmail.com?subject=Pagewalker"
-              >Say hello</a
-            >
+            <a class="btn" href="https://play.google.com/store/apps/details?id=com.pagewalker.app" rel="noopener noreferrer" data-i18n="home.ctaPlay">Get it on Google Play</a>
+            <a class="btn btn-outline" href="/updates" data-i18n="home.ctaUpdates">Read updates</a>
+            <a class="btn btn-outline" href="mailto:nkimwalker@gmail.com?subject=Pagewalker" data-i18n="home.ctaHello">Say hello</a>
           </div>
         </div>
       </section>
@@ -153,14 +154,17 @@
     <footer>
       <div class="wrap inner">
         <div class="links">
-          <a href="/updates">Updates</a>
-          <a href="/sign-in">Sign in</a>
-          <a href="/privacy">Privacy policy</a>
-          <a href="/terms">Terms of use</a>
+          <a href="/updates" data-i18n="nav.updates">Updates</a>
+          <a href="/sign-in" data-i18n="nav.signIn">Sign in</a>
+          <a href="/privacy" data-i18n="nav.privacy">Privacy</a>
+          <a href="/terms" data-i18n="nav.terms">Terms</a>
           <a href="mailto:nkimwalker@gmail.com">nkimwalker@gmail.com</a>
         </div>
-        <p class="copy">© 2026 Pagewalker. All rights reserved.</p>
+        <p class="copy" data-i18n="common.copy">© 2026 Pagewalker. All rights reserved.</p>
       </div>
     </footer>
+
+    <script src="/js/pw-i18n.js"></script>
+    <script src="/js/pw-theme.js"></script>
   </body>
 </html>
