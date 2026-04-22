@@ -94,11 +94,41 @@ function ensureAppPath() {
 }
 
 function setActiveRoute(route) {
-  const links = document.querySelectorAll("[data-link-route]");
-  for (let i = 0; i < links.length; i += 1) {
-    const href = links[i].getAttribute("data-link-route");
-    links[i].toggleAttribute("data-active", href === route);
+  const mainLinks = document.querySelectorAll("a.pw-drawer__item[data-link-route]");
+  for (let i = 0; i < mainLinks.length; i += 1) {
+    const href = mainLinks[i].getAttribute("data-link-route");
+    mainLinks[i].toggleAttribute("data-active", href === route);
   }
+  const discoverGroup = document.getElementById("pw-drawer-discover");
+  discoverGroup?.toggleAttribute("data-nav-active", route === "/discover");
+  const sublinks = document.querySelectorAll("a.pw-drawer__sublink");
+  const hash = String(window.location.hash || "").replace(/^#/, "");
+  for (let i = 0; i < sublinks.length; i += 1) {
+    const jump = sublinks[i].getAttribute("data-discover-jump") || "";
+    const active = route === "/discover" && Boolean(jump) && jump === hash;
+    sublinks[i].toggleAttribute("data-active", active);
+  }
+  const otherNav = document.querySelectorAll("[data-link-route]:not(a.pw-drawer__item):not(a.pw-drawer__sublink)");
+  for (let i = 0; i < otherNav.length; i += 1) {
+    const path = otherNav[i].getAttribute("data-link-route");
+    otherNav[i].toggleAttribute("data-active", path === route);
+  }
+}
+
+function scrollDiscoverToHash() {
+  const raw = String(window.location.hash || "").replace(/^#/, "");
+  if (!raw) return;
+  const id =
+    raw === "trending"
+      ? "pw-discover-trending"
+      : raw === "genre"
+        ? "pw-discover-genre"
+        : raw === "classics"
+          ? "pw-discover-classics"
+          : "";
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function escapeHtml(value) {
@@ -967,7 +997,7 @@ async function renderDiscover(supabase, session) {
         </div>
         <div id="pw-mood-results" class="pw-mood-results-below"></div>
       </div>
-      <article class="app-panel">
+      <article class="app-panel" id="pw-discover-trending">
         <h3>🔥 ${t("route.discover.trendingTitle", "Trending now")}</h3>
         <div class="pw-poster-grid">
           ${trendingRows.map((book) => renderBookPosterCard(book, {
@@ -976,7 +1006,7 @@ async function renderDiscover(supabase, session) {
         </div>
         ${trendingBooks?.hasMore ? `<div class="cta-actions"><button class="btn btn-outline" data-discover-more="trending">Load more</button></div>` : ""}
       </article>
-      <article class="app-panel">
+      <article class="app-panel" id="pw-discover-genre">
         <h3>${t("route.discover.genreTitle", "Explore by genre")}</h3>
         <div class="cta-actions">
           ${genres.map((g) => `<button class="btn btn-outline" data-genre-chip="${escapeHtml(g)}">${escapeHtml(g)}</button>`).join("")}
@@ -995,7 +1025,7 @@ async function renderDiscover(supabase, session) {
         }
       </div>
       ${activeHasMore ? `<div class="cta-actions"><button class="btn btn-outline" data-discover-more="${safeQuery ? "search" : "genre"}">Load more</button></div>` : ""}
-      <article class="app-panel">
+      <article class="app-panel" id="pw-discover-classics">
         <h3>📖 ${t("route.discover.freeClassics", "Free classics")}</h3>
         <div class="pw-poster-grid">
           ${classicsRows.map((book) => renderBookPosterCard(book, {
@@ -2677,6 +2707,11 @@ async function renderRoute(supabase, session) {
       const sc = document.getElementById("pw-club-chat-scroll");
       if (sc) sc.scrollTop = sc.scrollHeight;
     }
+    if (route === "/discover") {
+      requestAnimationFrame(() => {
+        scrollDiscoverToHash();
+      });
+    }
   });
   const rerender = () => renderRoute(supabase, session);
   if (route === "/discover") bindDiscoverActions(supabase, session, rerender);
@@ -2731,16 +2766,18 @@ function initLinks(render) {
     const link = target.closest("[data-link-route]");
     if (!link) return;
     event.preventDefault();
-    const route = link.getAttribute("data-link-route") || "/";
-    const href = link.getAttribute("href") || route;
-    let targetUrl = href;
+    const href = link.getAttribute("href") || link.getAttribute("data-link-route") || "/";
+    let nextPathWithHash = href;
+    let pathOnly = "/";
     try {
-      targetUrl = new URL(href, window.location.origin).pathname + new URL(href, window.location.origin).search;
+      const u = new URL(href, window.location.origin);
+      nextPathWithHash = u.pathname + u.search + u.hash;
+      pathOnly = u.pathname || "/";
     } catch (_) {}
-    const targetPath = targetUrl.split("?")[0] || "/";
-    if (!APP_ROUTES.has(targetPath)) return;
-    if (`${window.location.pathname}${window.location.search}` !== targetUrl) {
-      window.history.pushState({}, "", targetUrl);
+    if (!APP_ROUTES.has(pathOnly)) return;
+    const currentFull = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentFull !== nextPathWithHash) {
+      window.history.pushState({}, "", nextPathWithHash);
     }
     render();
   });

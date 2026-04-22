@@ -1211,6 +1211,106 @@ a.pw-drawer__item[data-active] {
   font-weight: 500;
 }
 
+.pw-app-drawer__nav .pw-drawer__group {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.pw-app-drawer__nav .pw-drawer__group[data-nav-active] {
+  background: var(--primary-soft);
+  border-color: var(--border-strong);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.pw-drawer__summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 0.7rem;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--text);
+}
+
+.pw-drawer__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pw-drawer__summary-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.pw-drawer__summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+  border-radius: 12px;
+}
+
+.pw-drawer__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  opacity: 0.8;
+  transition: transform 0.15s ease;
+}
+
+.pw-app-drawer__nav .pw-drawer__group[open] > .pw-drawer__summary .pw-drawer__chevron {
+  transform: rotate(180deg);
+}
+
+.pw-drawer__sub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0 0.35rem 0.55rem 0.4rem;
+  border-left: 2px solid var(--border);
+  margin: 0 0 0.2rem 0.6rem;
+}
+
+a.pw-drawer__sublink {
+  display: block;
+  padding: 0.5rem 0.5rem 0.5rem 0.65rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.1s ease, border-color 0.1s ease;
+}
+
+a.pw-drawer__sublink:hover {
+  background: var(--primary-soft);
+  text-decoration: none;
+}
+
+a.pw-drawer__sublink:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+a.pw-drawer__sublink[data-active] {
+  background: var(--card);
+  border-color: var(--border-strong);
+  font-weight: 800;
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+#pw-discover-trending,
+#pw-discover-genre,
+#pw-discover-classics {
+  scroll-margin-top: 0.75rem;
+}
+
 .app-header-right {
   display: inline-flex;
   align-items: center;
