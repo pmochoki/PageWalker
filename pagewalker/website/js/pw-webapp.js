@@ -488,6 +488,59 @@ function buildBookShareUrl(book) {
   return `${origin}/book?data=${encoded}`;
 }
 
+function buildBookPageHtml(source) {
+  const cover = fixCoverUrl(source.coverUrl);
+  const title = escapeHtml(source.title || "Untitled");
+  const author = escapeHtml(source.author || "Unknown Author");
+  const desc = String(source.description || "").trim();
+  const metaLine = [
+    source.publishedYear ? escapeHtml(String(source.publishedYear)) : "",
+    source.publisher ? escapeHtml(String(source.publisher)) : "",
+    Array.isArray(source.genres) && source.genres.length
+      ? escapeHtml(source.genres.slice(0, 3).join(", "))
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const ratingText =
+    source.googleRating != null ? `${Number(source.googleRating).toFixed(1)} / 5` : "No rating yet";
+  const shareUrl = buildBookShareUrl(source);
+  const bookForLibrary = {
+    id: source.id || null,
+    title: source.title || "Untitled",
+    author: source.author || "",
+    coverUrl: source.coverUrl || null,
+  };
+  const bookAttr = escapeHtml(JSON.stringify(bookForLibrary));
+  return `
+    <section class="app-panel">
+      <section class="pw-book-page-hero">
+        <div class="pw-modal-cover">${
+          cover
+            ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />`
+            : "<div class=\"pw-poster-fallback\">PW</div>"
+        }</div>
+        <div>
+          <h2>${title}</h2>
+          <p>${author}</p>
+          ${metaLine ? `<p class="muted">${metaLine}</p>` : ""}
+          <p class="metric">Community rating: ${escapeHtml(ratingText)}</p>
+          <div class="cta-actions">
+            <button class="btn btn-outline" id="pw-book-page-copy">Copy share link</button>
+            <a class="btn btn-outline" href="${escapeHtml(shareUrl)}">Open original link</a>
+            <button type="button" class="btn btn-outline" data-require-auth data-book-page-review data-book='${bookAttr}'>${t("route.book.giveReview", "Give a review")}</button>
+            <button type="button" class="btn" data-require-auth data-book-page-add data-book='${bookAttr}'>${t("route.discover.addTbr", "Add to TBR")}</button>
+          </div>
+        </div>
+      </section>
+      <article class="app-panel">
+        <h3>About this book</h3>
+        <p>${escapeHtml(desc || "No description yet.")}</p>
+      </article>
+    </section>
+  `;
+}
+
 function ensureBookModal() {
   let modal = document.getElementById("pw-book-modal");
   if (modal) return modal;
@@ -538,10 +591,6 @@ function openBookModal(book) {
     <section class="app-panel">
       <h4>Where to find it</h4>
       <p>Use Discover search for editions and external links, then add it to your shelf.</p>
-      <div class="pw-canonical">
-        <span class="muted">Canonical URL</span>
-        <code>${escapeHtml(shareUrl)}</code>
-      </div>
       <div class="cta-actions">
         <a class="btn btn-outline" href="${escapeHtml(shareUrl)}" data-link-route="/book">Open full page</a>
         <button class="btn btn-outline" id="pw-book-copy-link">Copy share link</button>
@@ -679,11 +728,6 @@ async function renderHome(_supabase, _session) {
           <a class="btn btn-outline" href="/about">${t("nav.about", "About")}</a>
         </div>
       </div>
-    </section>
-    <section class="app-panel">
-      <h3>${t("route.home.profilePromptTitle", "Account actions are in Profile")}</h3>
-      <p>${t("route.home.profilePromptBody", "Use the Profile tab for Guest mode, Sign in, Sign up, and Sign out.")}</p>
-      <p><a href="/profile" data-link-route="/profile">${t("appNav.profile", "Profile")}</a></p>
     </section>
   `;
 }
@@ -1298,42 +1342,7 @@ async function renderBookRoute() {
   if (stableId) {
     try {
       const fetched = await fetchJson(`/api/books?type=detail&id=${encodeURIComponent(stableId)}`);
-      const cover = fixCoverUrl(fetched.coverUrl);
-      const title = escapeHtml(fetched.title || "Untitled");
-      const author = escapeHtml(fetched.author || "Unknown Author");
-      const meta = [
-        fetched.publishedYear ? escapeHtml(String(fetched.publishedYear)) : "",
-        fetched.publisher ? escapeHtml(String(fetched.publisher)) : "",
-        Array.isArray(fetched.genres) && fetched.genres.length ? escapeHtml(fetched.genres.slice(0, 3).join(", ")) : "",
-      ].filter(Boolean).join(" · ");
-      const rating = fetched.googleRating != null ? `${Number(fetched.googleRating).toFixed(1)} / 5` : "No rating yet";
-      const shareUrl = buildBookShareUrl(fetched);
-      return `
-        <section class="app-panel">
-          <p><a class="btn btn-outline" href="/discover" data-link-route="/discover">← Back to Discover</a></p>
-          <section class="pw-book-page-hero">
-            <div class="pw-modal-cover">${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />` : "<div class=\"pw-poster-fallback\">PW</div>"}</div>
-            <div>
-              <h2>${title}</h2>
-              <p>${author}</p>
-              ${meta ? `<p class="muted">${meta}</p>` : ""}
-              <p class="metric">Community rating: ${escapeHtml(rating)}</p>
-              <div class="cta-actions">
-                <button class="btn btn-outline" id="pw-book-page-copy">Copy share link</button>
-                <a class="btn btn-outline" href="${escapeHtml(shareUrl)}">Open original link</a>
-              </div>
-              <div class="pw-canonical">
-                <span class="muted">Canonical URL</span>
-                <code>${escapeHtml(shareUrl)}</code>
-              </div>
-            </div>
-          </section>
-          <article class="app-panel">
-            <h3>About this book</h3>
-            <p>${escapeHtml(fetched.description || "No description yet.")}</p>
-          </article>
-        </section>
-      `;
+      return buildBookPageHtml(fetched);
     } catch (error) {
       const msg = String(error?.message || "");
       const notFound = msg.includes("request_failed_404");
@@ -1364,38 +1373,7 @@ async function renderBookRoute() {
       </section>
     `;
   }
-  const cover = fixCoverUrl(book.coverUrl);
-  const title = escapeHtml(book.title || "Untitled");
-  const author = escapeHtml(book.author || "Unknown Author");
-  const meta = [
-    book.publishedYear ? escapeHtml(String(book.publishedYear)) : "",
-    book.publisher ? escapeHtml(String(book.publisher)) : "",
-    Array.isArray(book.genres) && book.genres.length ? escapeHtml(book.genres.slice(0, 3).join(", ")) : "",
-  ].filter(Boolean).join(" · ");
-  const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} / 5` : "No rating yet";
-  const shareUrl = buildBookShareUrl(book);
-  return `
-    <section class="app-panel">
-      <p><a class="btn btn-outline" href="/discover" data-link-route="/discover">← Back to Discover</a></p>
-      <section class="pw-book-page-hero">
-        <div class="pw-modal-cover">${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />` : "<div class=\"pw-poster-fallback\">PW</div>"}</div>
-        <div>
-          <h2>${title}</h2>
-          <p>${author}</p>
-          ${meta ? `<p class="muted">${meta}</p>` : ""}
-          <p class="metric">Community rating: ${escapeHtml(rating)}</p>
-          <div class="cta-actions">
-            <button class="btn btn-outline" id="pw-book-page-copy">Copy share link</button>
-            <a class="btn btn-outline" href="${escapeHtml(shareUrl)}">Open original link</a>
-          </div>
-        </div>
-      </section>
-      <article class="app-panel">
-        <h3>About this book</h3>
-        <p>${escapeHtml(book.description || "No description yet.")}</p>
-      </article>
-    </section>
-  `;
+  return buildBookPageHtml(book);
 }
 
 function renderProtectedRouteGate(route) {
@@ -1572,6 +1550,51 @@ function bindLibraryActions(supabase, session, rerender) {
   const loadMoreBtn = document.querySelector("[data-library-more]");
   loadMoreBtn?.addEventListener("click", () => {
     libraryPage += 1;
+    rerender();
+  });
+}
+
+function bindBookPageActions(supabase, session, rerender) {
+  const copyBtn = document.getElementById("pw-book-page-copy");
+  copyBtn?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      showBanner("success", "Book link copied.");
+    } catch (_) {
+      showBanner("error", "Could not copy link.");
+    }
+  });
+  const addBtn = document.querySelector("[data-book-page-add]");
+  addBtn?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (!guardAuthAction(addBtn, session)) return;
+    try {
+      const raw = addBtn.getAttribute("data-book");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      await upsertUserBookStatus(supabase, session.user.id, parsed, "tbr");
+      showBanner("success", t("route.discover.saved", "Saved to your library."));
+    } catch (error) {
+      showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
+    }
+  });
+  const reviewBtn = document.querySelector("[data-book-page-review]");
+  reviewBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (!guardAuthAction(reviewBtn, session)) return;
+    const raw = reviewBtn.getAttribute("data-book");
+    if (!raw) return;
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return;
+    }
+    const bookTitle = parsed.title || "Untitled";
+    socialDraft = { title: bookTitle, body: "", rating: "5" };
+    if (window.location.pathname !== "/social") {
+      window.history.pushState({}, "", "/social");
+    }
     rerender();
   });
 }
@@ -1976,15 +1999,7 @@ async function renderRoute(supabase, session) {
     }
   }
   if (route === "/book") {
-    const copyBtn = document.getElementById("pw-book-page-copy");
-    copyBtn?.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        showBanner("success", "Book link copied.");
-      } catch (_) {
-        showBanner("error", "Could not copy link.");
-      }
-    });
+    bindBookPageActions(supabase, session, rerender);
   }
   bindBookModalActions();
 }
