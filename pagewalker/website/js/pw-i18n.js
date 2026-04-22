@@ -278,6 +278,7 @@
       "drawer.desc.clubs": "Book clubs, chat & polls",
       "drawer.desc.reader": "Timer, sessions & history",
       "drawer.desc.profile": "Account, settings & app sections",
+      "drawer.preferences": "Language & display",
 
       "toolbar.language": "Language",
       "toolbar.theme": "Theme",
@@ -590,6 +591,7 @@
       "drawer.desc.clubs": "Könyvklubok, chat, szavazás",
       "drawer.desc.reader": "Időzítő, szessziók, előzmény",
       "drawer.desc.profile": "Fiók, beállítások, szekciók",
+      "drawer.preferences": "Nyelv és megjelenés",
 
       "toolbar.language": "Nyelv",
       "toolbar.theme": "Téma",

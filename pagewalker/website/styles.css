@@ -1098,10 +1098,68 @@ body.pw-app-drawer-open {
 .pw-app-drawer__nav {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 0.4rem 0.35rem 1rem;
+  min-height: 0;
+  padding: 0.4rem 0.35rem 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+}
+
+.pw-app-drawer__footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 0.75rem 0.9rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--card-alt);
+}
+
+.pw-app-drawer__prefs-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.site-controls--drawer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.pw-drawer-pref {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pw-drawer-pref__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.site-controls--drawer .pw-select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.site-controls--drawer .pw-theme-toggle {
+  width: 100%;
+  min-height: 2.4rem;
+  height: auto;
+  min-width: 0;
+  padding: 0.45rem 0.7rem;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 0.5rem;
 }
 
 a.pw-drawer__item {
