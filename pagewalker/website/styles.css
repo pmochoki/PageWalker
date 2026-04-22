@@ -1048,6 +1048,7 @@ html[data-theme="dark"] .form-stack input {
   gap: 1rem;
 }
 
+.app-grid-2,
 .app-grid-3 {
   grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
 }

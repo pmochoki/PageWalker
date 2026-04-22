@@ -1038,7 +1038,7 @@ async function renderProfile(supabase, session) {
   }, {});
   return `
     ${authPanel}
-    <section class="app-grid app-grid-3">
+    <section class="app-grid app-grid-2">
       <article class="app-panel">
         <h2>${t("route.profile.title", "Profile")}</h2>
         <div class="profile-grid">
@@ -1058,10 +1058,6 @@ async function renderProfile(supabase, session) {
           <a class="btn btn-outline" href="/clubs" data-link-route="/clubs">${t("appNav.clubs", "Clubs")}</a>
           <a class="btn btn-outline" href="/reader" data-link-route="/reader">${t("appNav.reader", "Reader")}</a>
         </div>
-      </article>
-      <article class="app-panel">
-        <h3>${t("route.profile.securityTitle", "Guest-safe web mode")}</h3>
-        <p>${t("route.profile.securityBody", "Guests can browse public information and auth entry points; in-depth sections require sign-in.")}</p>
       </article>
     </section>
     <section class="app-panel">
