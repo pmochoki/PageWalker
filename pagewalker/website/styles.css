@@ -175,13 +175,19 @@ a:focus-visible {
 }
 
 .pw-logo-image {
-  height: 52px;
+  height: 78px;
   width: auto;
   display: block;
 }
 
 .pw-logo-fallback {
-  display: none;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.015em;
+  color: var(--text);
+  margin-left: 0.35rem;
 }
 
 .logo:hover {
@@ -933,7 +939,10 @@ html[data-theme="dark"] .form-stack input {
 /* ───── Small screens ───── */
 @media (max-width: 640px) {
   .pw-logo-image {
-    height: 42px;
+    height: 58px;
+  }
+  .pw-logo-fallback {
+    font-size: 1.65rem;
   }
   .site-header .inner {
     justify-content: center;

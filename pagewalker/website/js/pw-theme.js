@@ -84,7 +84,8 @@
             }
           }
           ctx.putImageData(data, 0, 0);
-          logoCache.dark = canvas.toDataURL("image/png");
+          var croppedDark = cropCanvasToOpaque(canvas);
+          logoCache.dark = croppedDark.toDataURL("image/png");
 
           var dataLight = ctx.getImageData(0, 0, canvas.width, canvas.height);
           var pl = dataLight.data;
@@ -97,7 +98,8 @@
             pl[j + 2] = ink + 2;
           }
           ctx.putImageData(dataLight, 0, 0);
-          logoCache.light = canvas.toDataURL("image/png");
+          var croppedLight = cropCanvasToOpaque(canvas);
+          logoCache.light = croppedLight.toDataURL("image/png");
           resolvePromise(true);
         } catch (_) {
           resolvePromise(false);
@@ -109,6 +111,45 @@
       img.src = "/logo-source.png";
     });
     return logoPromise;
+  }
+
+  function cropCanvasToOpaque(sourceCanvas) {
+    var w = sourceCanvas.width;
+    var h = sourceCanvas.height;
+    var ctx = sourceCanvas.getContext("2d", { willReadFrequently: true });
+    var imgData = ctx.getImageData(0, 0, w, h).data;
+    var minX = w;
+    var minY = h;
+    var maxX = 0;
+    var maxY = 0;
+    var found = false;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var a = imgData[(y * w + x) * 4 + 3];
+        if (a > 0) {
+          found = true;
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (!found) return sourceCanvas;
+    var padX = Math.round((maxX - minX + 1) * 0.04);
+    var padY = Math.round((maxY - minY + 1) * 0.08);
+    minX = Math.max(0, minX - padX);
+    minY = Math.max(0, minY - padY);
+    maxX = Math.min(w - 1, maxX + padX);
+    maxY = Math.min(h - 1, maxY + padY);
+    var outW = maxX - minX + 1;
+    var outH = maxY - minY + 1;
+    var out = document.createElement("canvas");
+    out.width = outW;
+    out.height = outH;
+    var octx = out.getContext("2d");
+    octx.drawImage(sourceCanvas, minX, minY, outW, outH, 0, 0, outW, outH);
+    return out;
   }
 
   function applyLogoTheme(resolvedTheme) {
