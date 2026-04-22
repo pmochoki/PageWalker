@@ -10,6 +10,7 @@ const APP_ROUTES = new Set([
   "/library",
   "/social",
   "/clubs",
+  "/club",
   "/reader",
   "/profile",
 ]);
@@ -18,6 +19,7 @@ const PROTECTED_ROUTES = new Set([
   "/library",
   "/social",
   "/clubs",
+  "/club",
   "/reader",
   "/profile",
 ]);
@@ -1090,6 +1092,200 @@ function renderClubCardFooter(c, { myRole, requestStatus, atCapacity }) {
   return `<button type="button" class="btn" data-club-request="${escapeHtml(c.id)}">${t("route.clubs.requestToJoin", "Request to join")}</button>`;
 }
 
+/** Create / join forms — used on Profile → Book clubs tab (not on /clubs browse). */
+function renderClubSetupFormsHtml() {
+  return `
+      <div class="app-grid app-grid-2 pw-club-forms">
+        <article class="app-panel">
+          <h3>${t("route.clubs.createTitle", "Create a club")}</h3>
+          <form id="pw-club-create-form" class="form-stack">
+            <label><span>${t("route.clubs.clubName", "Club name")}</span><input id="pw-club-name" type="text" maxlength="120" value="${escapeHtml(
+              clubsDraft.name,
+            )}" required /></label>
+            <label><span>${t("route.clubs.clubDescription", "Description")}</span><textarea id="pw-club-description" rows="3" maxlength="500">${escapeHtml(
+              clubsDraft.description,
+            )}</textarea></label>
+            <label><span>${t("route.clubs.clubEmoji", "Emoji")}</span><input id="pw-club-emoji" type="text" maxlength="2" value="${escapeHtml(
+              clubsDraft.emoji,
+            )}" /></label>
+            <label><span>${t("route.clubs.maxMembers", "Max members")}</span><select id="pw-club-max-members" class="pw-select"><option value="5"${clubsDraft.maxMembers === "5" ? " selected" : ""}>5</option><option value="10"${clubsDraft.maxMembers === "10" ? " selected" : ""}>10</option><option value="20"${clubsDraft.maxMembers === "20" ? " selected" : ""}>20</option></select></label>
+            <label class="pw-checkbox">
+              <input type="checkbox" id="pw-club-directory" checked />
+              <span>${t("route.clubs.listInDirectory", "List in directory (others can request to join)")}</span>
+            </label>
+            <button type="submit" class="btn">${t("route.clubs.createAction", "Create club")}</button>
+          </form>
+        </article>
+        <article class="app-panel">
+          <h3>${t("route.clubs.joinTitle", "Join with invite code")}</h3>
+          <form id="pw-club-join-form" class="form-stack">
+            <label><span>${t("route.clubs.inviteCode", "Invite code")}</span><input id="pw-club-invite-code" type="text" maxlength="30" value="${escapeHtml(
+              clubsDraft.inviteCode,
+            )}" placeholder="A1B2C3D4" required /></label>
+            <button type="submit" class="btn btn-outline">${t("route.clubs.joinAction", "Join club")}</button>
+          </form>
+        </article>
+      </div>
+      <p class="muted pw-profile-club-hint">${t("route.profile.clubSetupHint", "Then open Clubs in the app menu to browse and enter your club’s forum.")}</p>
+  `;
+}
+
+function bindProfileTabActions() {
+  const buttons = document.querySelectorAll("[data-profile-tab]");
+  const acc = document.getElementById("pw-profile-panel-account");
+  const cl = document.getElementById("pw-profile-panel-clubs");
+  for (let i = 0; i < buttons.length; i += 1) {
+    buttons[i].addEventListener("click", () => {
+      const tab = buttons[i].getAttribute("data-profile-tab") || "account";
+      const u = new URL(window.location.href);
+      if (tab === "clubs") u.searchParams.set("tab", "clubs");
+      else u.searchParams.delete("tab");
+      const qs = u.searchParams.toString();
+      window.history.pushState({}, "", u.pathname + (qs ? `?${qs}` : ""));
+      for (let j = 0; j < buttons.length; j += 1) {
+        const id = buttons[j].getAttribute("data-profile-tab");
+        buttons[j].setAttribute("aria-selected", id === tab ? "true" : "false");
+      }
+      if (acc) acc.hidden = tab !== "account";
+      if (cl) cl.hidden = tab !== "clubs";
+    });
+  }
+}
+
+async function renderClubDetail(supabase, session) {
+  if (!session?.user) {
+    return `<section class="app-panel"><h2>${t("route.clubs.title", "Book clubs")}</h2><p>${t("route.authRequired", "Please sign in to view this section.")}</p></section>`;
+  }
+  const params = new URLSearchParams(window.location.search);
+  const clubId = String(params.get("id") || "").trim();
+  if (!clubId) {
+    return `<section class="app-panel"><h2>${t("route.clubs.clubForum", "Club")}</h2><p class="muted">${t("route.clubs.missingId", "Missing club. Go back to Clubs.")}</p><p><a href="/clubs" data-link-route="/clubs">${t("route.clubs.backToClubs", "Back to clubs")}</a></p></section>`;
+  }
+  const { data: club, error: clubErr } = await supabase
+    .from("book_clubs")
+    .select("id, name, description, cover_emoji, invite_code, max_members, created_by, is_private, current_book_id, member_count, created_at")
+    .eq("id", clubId)
+    .maybeSingle();
+  if (clubErr || !club) {
+    return `<section class="app-panel"><h2>${t("route.clubs.clubForum", "Club")}</h2><p>${t("route.clubs.loadFailed", "We could not load this club.")}</p><p><a href="/clubs" data-link-route="/clubs">${t("route.clubs.backToClubs", "Back to clubs")}</a></p></section>`;
+  }
+  const { data: myMember } = await supabase
+    .from("book_club_members")
+    .select("role")
+    .eq("club_id", clubId)
+    .eq("user_id", session.user.id)
+    .maybeSingle();
+  const isMember = Boolean(myMember);
+  const isCreator = club.created_by === session.user.id;
+
+  const { data: msgRows, error: msgErr } = await supabase
+    .from("book_club_messages")
+    .select("id, user_id, content, message_type, chapter_ref, created_at, contains_spoiler")
+    .eq("club_id", clubId)
+    .order("created_at", { ascending: false })
+    .limit(60);
+  if (msgErr) {
+    return `<section class="app-panel"><h2>${escapeHtml(club.name || "Club")}</h2><p>${t("appShell.missingData", "Something went wrong.")}</p></section>`;
+  }
+  const messages = msgRows || [];
+  const uids = [...new Set(messages.map((m) => m.user_id))];
+  let nameBy = {};
+  if (uids.length) {
+    const { data: profs } = await supabase.from("profiles").select("id, display_name, username").in("id", uids);
+    nameBy = Object.fromEntries((profs || []).map((p) => [p.id, p.display_name || p.username || String(p.id).slice(0, 6)]));
+  }
+  const back = `<p class="pw-club-detail__back"><a href="/clubs" data-link-route="/clubs">← ${t("route.clubs.backToClubs", "Back to clubs")}</a></p>`;
+  const head = `
+    <header class="pw-club-detail__head app-panel">
+      <p class="pw-club-detail__emoji">${escapeHtml(club.cover_emoji || "📚")}</p>
+      <h2>${escapeHtml(club.name || t("route.clubs.unnamed", "Club"))}</h2>
+      <p class="pw-club-detail__desc">${escapeHtml(club.description || "")}</p>
+      <p class="metric">${t("route.clubs.members", "Members")}: ${Number(club.member_count || 0)}/${Number(club.max_members || 20)}</p>
+      ${isCreator || isMember ? `<p class="muted">${t("route.clubs.code", "Code")}: ${escapeHtml(club.invite_code || "—")}</p>` : ""}
+    </header>
+  `;
+  if (!isMember) {
+    return `
+      <section class="app-panel pw-club-detail">
+        ${back}
+        ${head}
+        <p class="muted">${t("route.clubs.forumMemberOnly", "Join this club to read and post in the book forum. Use Profile → Book clubs to join with a code, or request access from the club card on Browse.")}</p>
+      </section>
+    `;
+  }
+  const msgList = messages.length
+    ? `<ul class="pw-club-forum__list">
+        ${messages
+          .map(
+            (m) => `
+          <li class="pw-club-forum__item">
+            <div class="pw-club-forum__meta">
+              <strong>${escapeHtml(nameBy[m.user_id] || "?")}</strong>
+              <span class="muted">${escapeHtml(m.created_at || "")}</span>
+              ${m.chapter_ref != null ? `<span class="pw-club-forum__chip">${t("route.clubs.chapter", "Ch.")} ${escapeHtml(String(m.chapter_ref))}</span>` : ""}
+            </div>
+            <p class="pw-club-forum__body">${m.contains_spoiler ? `<em>${t("route.clubs.spoiler", "Spoiler")}</em> ` : ""}${escapeHtml(m.content || "")}</p>
+          </li>`,
+          )
+          .join("")}
+      </ul>`
+    : `<p class="muted">${t("route.clubs.forumEmpty", "No messages yet. Start a thread about the book you are reading together.")}</p>`;
+  return `
+    <section class="app-panel pw-club-detail">
+      ${back}
+      ${head}
+      <h3 class="pw-club-forum__title">${t("route.clubs.forumTitle", "Book forum & discussion")}</h3>
+      <p class="muted pw-club-forum__lede">${t(
+        "route.clubs.forumLede",
+        "Talk about chapters, share reactions, and coordinate what you are reading next.",
+      )}</p>
+      ${msgList}
+      <form id="pw-club-forum-form" class="form-stack pw-club-forum__composer">
+        <label><span>${t("route.clubs.forumMessage", "Message")}</span><textarea id="pw-club-forum-body" rows="3" maxlength="2000" required placeholder=""></textarea></label>
+        <label><span>${t("route.clubs.chapterRef", "Chapter (optional)")}</span><input id="pw-club-forum-chapter" type="number" min="0" step="1" placeholder="0" /></label>
+        <label class="pw-checkbox">
+          <input type="checkbox" id="pw-club-forum-spoiler" />
+          <span>${t("route.clubs.markSpoiler", "Mark as spoiler")}</span>
+        </label>
+        <input type="hidden" id="pw-club-forum-club-id" value="${escapeHtml(clubId)}" />
+        <button type="submit" class="btn">${t("route.clubs.postToForum", "Post to forum")}</button>
+      </form>
+    </section>
+  `;
+}
+
+function bindClubDetailActions(supabase, session, rerender) {
+  const form = document.getElementById("pw-club-forum-form");
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const clubId = document.getElementById("pw-club-forum-club-id")?.value || "";
+    const body = String(document.getElementById("pw-club-forum-body")?.value || "").trim();
+    const chRaw = document.getElementById("pw-club-forum-chapter")?.value;
+    const chapterRef = chRaw === "" || chRaw == null ? null : Math.max(0, parseInt(chRaw, 10) || 0);
+    const spoiler = Boolean(document.getElementById("pw-club-forum-spoiler")?.checked);
+    if (!clubId || !body) return;
+    try {
+      const { data: freshAuth, error: se } = await supabase.auth.getSession();
+      if (se) throw se;
+      const uid = freshAuth?.session?.user?.id;
+      if (!uid) throw new Error("sign_in");
+      const { error } = await supabase.from("book_club_messages").insert({
+        club_id: clubId,
+        user_id: uid,
+        content: body,
+        message_type: "text",
+        contains_spoiler: spoiler,
+        chapter_ref: chapterRef,
+      });
+      if (error) throw error;
+      showBanner("success", t("route.clubs.posted", "Posted."));
+      rerender();
+    } catch (error) {
+      showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
+    }
+  });
+}
+
 async function renderClubs(supabase, session) {
   if (!session?.user) {
     return `<section class="app-panel"><h2>${t("route.clubs.title", "Book clubs")}</h2><p>${t("route.authRequired", "Please sign in to view this section.")}</p></section>`;
@@ -1232,7 +1428,10 @@ async function renderClubs(supabase, session) {
                 <p>${escapeHtml(c.description || "")}</p>
                 <p class="metric">${t("route.clubs.members", "Members")}: ${mcount}/${escapeHtml(String(maxM))}</p>
                 ${showCode ? `<p class="muted">${t("route.clubs.code", "Code")}: ${escapeHtml(c.invite_code || "—")}</p>` : ""}
-                <div class="pw-club-card__actions">${renderClubCardFooter(c, { myRole, requestStatus: req, atCapacity })}</div>
+                <div class="pw-club-card__ctas">
+                  <a class="btn" href="/club?id=${encodeURIComponent(c.id)}" data-link-route="/club">${t("route.clubs.openClub", "Open club")}</a>
+                  <div class="pw-club-card__actions">${renderClubCardFooter(c, { myRole, requestStatus: req, atCapacity })}</div>
+                </div>
               </article>
             `;
                 })
@@ -1243,37 +1442,7 @@ async function renderClubs(supabase, session) {
         }
         ${clubs[0]?.__error ? `<article class="app-panel"><p>${escapeHtml(clubs[0].text)}</p></article>` : ""}
       </div>
-      <div class="app-grid app-grid-2 pw-club-forms">
-        <article class="app-panel">
-          <h3>${t("route.clubs.createTitle", "Create a club")}</h3>
-          <form id="pw-club-create-form" class="form-stack">
-            <label><span>${t("route.clubs.clubName", "Club name")}</span><input id="pw-club-name" type="text" maxlength="120" value="${escapeHtml(
-              clubsDraft.name,
-            )}" required /></label>
-            <label><span>${t("route.clubs.clubDescription", "Description")}</span><textarea id="pw-club-description" rows="3" maxlength="500">${escapeHtml(
-              clubsDraft.description,
-            )}</textarea></label>
-            <label><span>${t("route.clubs.clubEmoji", "Emoji")}</span><input id="pw-club-emoji" type="text" maxlength="2" value="${escapeHtml(
-              clubsDraft.emoji,
-            )}" /></label>
-            <label><span>${t("route.clubs.maxMembers", "Max members")}</span><select id="pw-club-max-members" class="pw-select"><option value="5"${clubsDraft.maxMembers === "5" ? " selected" : ""}>5</option><option value="10"${clubsDraft.maxMembers === "10" ? " selected" : ""}>10</option><option value="20"${clubsDraft.maxMembers === "20" ? " selected" : ""}>20</option></select></label>
-            <label class="pw-checkbox">
-              <input type="checkbox" id="pw-club-directory" checked />
-              <span>${t("route.clubs.listInDirectory", "List in directory (others can request to join)")}</span>
-            </label>
-            <button type="submit" class="btn">${t("route.clubs.createAction", "Create club")}</button>
-          </form>
-        </article>
-        <article class="app-panel">
-          <h3>${t("route.clubs.joinTitle", "Join with invite code")}</h3>
-          <form id="pw-club-join-form" class="form-stack">
-            <label><span>${t("route.clubs.inviteCode", "Invite code")}</span><input id="pw-club-invite-code" type="text" maxlength="30" value="${escapeHtml(
-              clubsDraft.inviteCode,
-            )}" placeholder="A1B2C3D4" required /></label>
-            <button type="submit" class="btn btn-outline">${t("route.clubs.joinAction", "Join club")}</button>
-          </form>
-        </article>
-      </div>
+      <p class="muted pw-clubs-footer-hint">${t("route.clubs.browseSetupHint", "To create a club or join with a code, go to Profile and open the Book clubs tab.")}</p>
     </section>
   `;
 }
@@ -1439,8 +1608,20 @@ async function renderProfile(supabase, session) {
   const letterFallback = escapeHtml(
     (profile.display_name || profile.username || session.user.email || "?").trim().charAt(0) || "?",
   ).toUpperCase();
+  const profileTab = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("tab") === "clubs" ? "clubs" : "account";
+  const showClubsTab = profileTab === "clubs";
   return `
     ${authPanel}
+    <div class="pw-profile-tabs" role="tablist" aria-label="${t("route.profile.tablistLabel", "Profile sections")}">
+      <button type="button" class="pw-profile-tab" role="tab" id="pw-profile-tab-btn-account" data-profile-tab="account" aria-selected="${!showClubsTab ? "true" : "false"}" aria-controls="pw-profile-panel-account">${t("route.profile.tabAccount", "Account")}</button>
+      <button type="button" class="pw-profile-tab" role="tab" id="pw-profile-tab-btn-clubs" data-profile-tab="clubs" aria-selected="${showClubsTab ? "true" : "false"}" aria-controls="pw-profile-panel-clubs">${t("route.profile.tabClubs", "Book clubs")}</button>
+    </div>
+    <div id="pw-profile-panel-clubs" class="pw-profile-panel" role="tabpanel" aria-labelledby="pw-profile-tab-btn-clubs" ${showClubsTab ? "" : "hidden"}>
+      <h2 class="visually-hidden">${t("route.profile.tabClubs", "Book clubs")}</h2>
+      <p class="muted">${t("route.profile.clubTabLede", "Start a new club or join with an invite code. Then use Clubs in the menu to open your club and use the book forum.")}</p>
+      ${renderClubSetupFormsHtml()}
+    </div>
+    <div id="pw-profile-panel-account" class="pw-profile-panel" role="tabpanel" aria-labelledby="pw-profile-tab-btn-account" ${showClubsTab ? "hidden" : ""}>
     <section class="app-panel">
         <h2>${t("route.profile.title", "Profile")}</h2>
         <div class="pw-profile-photo-section">
@@ -1498,6 +1679,7 @@ async function renderProfile(supabase, session) {
         </div>
       </article>
     </section>
+    </div>
   `;
 }
 
@@ -2102,9 +2284,16 @@ function bindClubsActions(supabase, session, rerender) {
         showBanner("error", t("route.clubs.invalidCode", "Invite code not found."));
         return;
       }
+      const { data: jAuth, error: jSessErr } = await supabase.auth.getSession();
+      if (jSessErr) throw jSessErr;
+      const joinUid = jAuth?.session?.user?.id;
+      if (!joinUid) {
+        showBanner("error", t("route.clubs.signInToCreate", "Sign in to create a club."));
+        return;
+      }
       const { error: joinErr } = await supabase
         .from("book_club_members")
-        .upsert({ club_id: club.id, user_id: session.user.id, role: "member" }, { onConflict: "club_id,user_id" });
+        .upsert({ club_id: club.id, user_id: joinUid, role: "member" }, { onConflict: "club_id,user_id" });
       if (joinErr) throw joinErr;
       clubsDraft = { ...clubsDraft, inviteCode: "" };
       showBanner("success", t("route.clubs.joined", "Joined club successfully."));
@@ -2213,6 +2402,7 @@ async function renderCurrentRoute(supabase, session, route) {
   if (route === "/library") return renderLibrary(supabase, session);
   if (route === "/social") return renderSocial(supabase, session);
   if (route === "/clubs") return renderClubs(supabase, session);
+  if (route === "/club") return renderClubDetail(supabase, session);
   if (route === "/reader") return renderReader(supabase, session);
   if (route === "/profile") return renderProfile(supabase, session);
   return "";
@@ -2220,7 +2410,8 @@ async function renderCurrentRoute(supabase, session, route) {
 
 async function renderRoute(supabase, session) {
   const route = APP_ROUTES.has(window.location.pathname) ? window.location.pathname : "/";
-  setActiveRoute(route);
+  const pathForNav = window.location.pathname === "/club" ? "/clubs" : route;
+  setActiveRoute(pathForNav);
   const root = document.getElementById("pw-route-content");
   if (!root) return;
 
@@ -2240,6 +2431,11 @@ async function renderRoute(supabase, session) {
   if (route === "/social") bindSocialActions(supabase, session, rerender);
   if (route === "/reader") bindReaderActions(supabase, session, rerender);
   if (route === "/clubs") bindClubsActions(supabase, session, rerender);
+  if (route === "/club") bindClubDetailActions(supabase, session, rerender);
+  if (route === "/profile" && session?.user) {
+    bindClubsActions(supabase, session, rerender);
+    bindProfileTabActions();
+  }
   if (route === "/profile") {
     const signInBtn = document.getElementById("pw-profile-signin");
     const signUpBtn = document.getElementById("pw-profile-signup");
@@ -2330,7 +2526,8 @@ async function boot() {
   const appDrawer = initAppDrawer();
   window.pwSyncNav = function pwSyncNav() {
     const route = APP_ROUTES.has(window.location.pathname) ? window.location.pathname : "/";
-    setActiveRoute(route);
+    const pathForNav = window.location.pathname === "/club" ? "/clubs" : route;
+    setActiveRoute(pathForNav);
   };
 
   const render = async () => {

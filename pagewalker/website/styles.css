@@ -1956,6 +1956,125 @@ html[data-theme="dark"] .pw-auth-nudge {
   margin-top: 0.5rem;
 }
 
+.pw-clubs-footer-hint,
+.pw-profile-club-hint {
+  margin-top: 1rem;
+  max-width: 40rem;
+}
+
+.pw-profile-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.pw-profile-tab {
+  font: inherit;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pw-profile-tab[aria-selected="true"] {
+  background: var(--primary-soft);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.pw-profile-panel {
+  margin-bottom: 0.5rem;
+}
+
+.pw-club-card__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.pw-club-card__ctas .btn {
+  width: 100%;
+  text-align: center;
+}
+
+.pw-club-detail__back {
+  margin: 0 0 0.8rem;
+}
+
+.pw-club-detail__back a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pw-club-detail__back a:hover {
+  text-decoration: underline;
+}
+
+.pw-club-detail__head {
+  margin-bottom: 1rem;
+}
+
+.pw-club-detail__emoji {
+  font-size: 2.25rem;
+  margin: 0 0 0.2rem;
+}
+
+.pw-club-forum__title {
+  margin-top: 0.2rem;
+}
+
+.pw-club-forum__list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pw-club-forum__item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.9rem;
+  background: var(--card);
+}
+
+.pw-club-forum__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  font-size: 0.86rem;
+  margin-bottom: 0.4rem;
+}
+
+.pw-club-forum__chip {
+  font-size: 0.78rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 6px;
+  background: var(--primary-soft);
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.pw-club-forum__body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
+.pw-club-forum__composer {
+  max-width: 36rem;
+}
+
 .pw-checkbox {
   display: flex;
   align-items: flex-start;
