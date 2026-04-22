@@ -902,6 +902,27 @@ function renderProtectedRouteGate(route) {
   `;
 }
 
+function renderRouteSkeleton(route) {
+  if (route === "/") {
+    return `
+      <section class="app-panel pw-shimmer-block" style="height: 180px;"></section>
+      <section class="pw-poster-grid">
+        ${Array.from({ length: 6 }).map(() => `<article class="pw-poster-card"><div class="pw-poster-media pw-shimmer-block"></div><div class="pw-poster-copy"><div class="pw-shimmer-line"></div><div class="pw-shimmer-line short"></div></div></article>`).join("")}
+      </section>
+    `;
+  }
+  return `
+    <section class="app-panel">
+      <div class="pw-shimmer-line"></div>
+      <div class="pw-shimmer-line"></div>
+      <div class="pw-shimmer-line short"></div>
+      <div class="pw-poster-grid">
+        ${Array.from({ length: 8 }).map(() => `<article class="pw-poster-card"><div class="pw-poster-media pw-shimmer-block"></div><div class="pw-poster-copy"><div class="pw-shimmer-line"></div><div class="pw-shimmer-line short"></div></div></article>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function bindLockedGateActions() {
   const signInBtn = document.getElementById("pw-locked-signin");
   const signUpBtn = document.getElementById("pw-locked-signup");
@@ -1346,6 +1367,7 @@ async function renderRoute(supabase, session) {
     bindLockedGateActions();
     return;
   }
+  root.innerHTML = renderRouteSkeleton(route);
   root.innerHTML = await renderCurrentRoute(supabase, session, route);
   const rerender = () => renderRoute(supabase, session);
   if (route === "/discover") bindDiscoverActions(supabase, session, rerender);

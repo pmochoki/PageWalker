@@ -1128,6 +1128,13 @@ html[data-theme="dark"] .form-stack input {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.pw-poster-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
 }
 
 .pw-poster-media {
@@ -1176,6 +1183,12 @@ html[data-theme="dark"] .form-stack input {
   border-radius: 12px;
   padding: 0.65rem 0.8rem;
   background: var(--surface);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.pw-review-row:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
 }
 
 .pw-review-row p {
@@ -1184,6 +1197,15 @@ html[data-theme="dark"] .form-stack input {
 
 .pw-review-card .btn.btn-outline {
   margin-top: 0.35rem;
+}
+
+.pw-review-card {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.pw-review-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
 }
 
 .pw-review-actions {
@@ -1234,4 +1256,80 @@ html[data-theme="dark"] .form-stack input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.pw-shimmer-block,
+.pw-shimmer-line {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.pw-shimmer-line {
+  height: 12px;
+  border-radius: 999px;
+  margin: 0.55rem 0;
+}
+
+.pw-shimmer-line.short {
+  width: 52%;
+}
+
+.pw-shimmer-block::after,
+.pw-shimmer-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.36) 50%, transparent 100%);
+  animation: pw-shimmer 1.2s infinite;
+}
+
+html[data-theme="dark"] .pw-shimmer-block::after,
+html[data-theme="dark"] .pw-shimmer-line::after {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.11) 50%, transparent 100%);
+}
+
+@keyframes pw-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@media (max-width: 780px) {
+  .web-app-main {
+    padding: 1rem 0 2.6rem;
+  }
+
+  .hero {
+    padding: 2.2rem 0 1.8rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 7vw, 2.4rem);
+  }
+
+  .pw-poster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .pw-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pw-favorites-grid {
+    gap: 0.4rem;
+  }
+
+  .cta-actions {
+    justify-content: flex-start;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .btn.btn-outline {
+    width: 100%;
+  }
 }
