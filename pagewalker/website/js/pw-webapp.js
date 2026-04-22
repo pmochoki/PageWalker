@@ -1,5 +1,6 @@
 import { getSupabase } from "./pw-supabase.js";
 import { initUserMenu } from "./pw-user-menu.js";
+import { closeAuthNudge, guardAuthAction } from "./pw-auth-nudge.js";
 
 const APP_ROUTES = new Set([
   "/",
@@ -11,8 +12,8 @@ const APP_ROUTES = new Set([
   "/reader",
   "/profile",
 ]);
+/* /discover is public so guests can browse; library actions use auth nudge. */
 const PROTECTED_ROUTES = new Set([
-  "/discover",
   "/library",
   "/social",
   "/clubs",
@@ -611,7 +612,7 @@ async function renderDiscover(supabase, session) {
         <h3>🔥 ${t("route.discover.trendingTitle", "Trending now")}</h3>
         <div class="pw-poster-grid">
           ${trendingRows.map((book) => renderBookPosterCard(book, {
-            actionHtml: `<div class="cta-actions"><button class="btn btn-outline" data-discover-add data-status="tbr" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addTbr", "Add to TBR")}</button></div>`,
+            actionHtml: `<div class="cta-actions"><button type="button" class="btn btn-outline" data-require-auth data-discover-add data-status="tbr" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addTbr", "Add to TBR")}</button></div>`,
           })).join("")}
         </div>
         ${trendingBooks?.hasMore ? `<div class="cta-actions"><button class="btn btn-outline" data-discover-more="trending">Load more</button></div>` : ""}
@@ -627,8 +628,8 @@ async function renderDiscover(supabase, session) {
           activeRows.map((book) => {
             return renderBookPosterCard(book, {
               actionHtml: `<div class="cta-actions">
-                <button class="btn btn-outline" data-discover-add data-status="tbr" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addTbr", "Add to TBR")}</button>
-                <button class="btn btn-outline" data-discover-add data-status="reading" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addReading", "Mark Reading")}</button>
+                <button type="button" class="btn btn-outline" data-require-auth data-discover-add data-status="tbr" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addTbr", "Add to TBR")}</button>
+                <button type="button" class="btn btn-outline" data-require-auth data-discover-add data-status="reading" data-book='${escapeHtml(JSON.stringify(book))}'>${t("route.discover.addReading", "Mark Reading")}</button>
               </div>`,
             });
           }).join("")
@@ -644,7 +645,11 @@ async function renderDiscover(supabase, session) {
         </div>
         ${freeClassics?.hasMore ? `<div class="cta-actions"><button class="btn btn-outline" data-discover-more="classics">Load more</button></div>` : ""}
       </article>
-      <p class="muted">${t("route.discover.noteAuthed", "You are signed in. Use discover + library together.")}</p>
+      <p class="muted">${
+        session?.user
+          ? t("route.discover.noteAuthed", "You are signed in. Use discover + library together.")
+          : t("route.discover.noteGuest", "Sign in to save books to your TBR and library.")
+      }</p>
     </section>
   `;
 }
@@ -1316,11 +1321,13 @@ function bindDiscoverActions(supabase, session, rerender) {
   });
   const addButtons = document.querySelectorAll("[data-discover-add]");
   for (let i = 0; i < addButtons.length; i += 1) {
-    addButtons[i].addEventListener("click", async () => {
+    addButtons[i].addEventListener("click", async (event) => {
+      event.stopPropagation();
+      if (!guardAuthAction(addButtons[i], session)) return;
       try {
         const raw = addButtons[i].getAttribute("data-book");
         const status = addButtons[i].getAttribute("data-status") || "tbr";
-        if (!raw || !session?.user?.id) return;
+        if (!raw) return;
         const parsed = JSON.parse(raw);
         await upsertUserBookStatus(supabase, session.user.id, parsed, status);
         showBanner("success", t("route.discover.saved", "Saved to your library."));
@@ -1838,6 +1845,7 @@ async function boot() {
 
   const render = async () => {
     userMenu.close();
+    closeAuthNudge();
     await renderRoute(supabase, session);
   };
 

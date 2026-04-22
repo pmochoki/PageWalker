@@ -1133,6 +1133,49 @@ html[data-theme="dark"] .form-stack input {
   text-decoration: none;
 }
 
+/* ───── Auth nudge (guests on Add to TBR, etc.) ───── */
+.pw-auth-nudge {
+  box-sizing: border-box;
+  pointer-events: auto;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.12));
+}
+html[data-theme="dark"] .pw-auth-nudge {
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.55));
+}
+
+.pw-auth-nudge__box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.pw-auth-nudge__msg {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pw-auth-nudge__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.pw-auth-nudge__actions .btn {
+  flex: 1 1 42%;
+  min-width: 6.5rem;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.86rem;
+  padding: 0.42rem 0.7rem;
+}
+
 .app-nav a[data-active=""] {
   color: var(--primary);
   border-bottom-color: var(--primary);

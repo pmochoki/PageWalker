@@ -280,6 +280,8 @@
       "toolbar.userMenu": "Account menu",
       "userMenu.profileSettings": "Profile settings",
       "userMenu.ariaNav": "Account",
+      "authNudge.addToLibrary": "Sign in to add books to your lists",
+      "authNudge.default": "Sign in to use this action",
 
       "home.title": "Pagewalker — Reading, together",
       "home.metaDescription": "Pagewalker — discover books, track reading, join book clubs, and connect with readers. Official site.",
@@ -432,7 +434,7 @@
       "route.discover.title": "Discover & search",
       "route.discover.body": "Browse catalog books and use app search from web.",
       "route.discover.noteAuthed": "You are signed in. Use discover + library together.",
-      "route.discover.noteGuest": "Sign in to save discoveries to your library.",
+      "route.discover.noteGuest": "Sign in to save books to your TBR and library.",
       "route.discover.searchLabel": "Search books",
       "route.discover.searchPlaceholder": "Search by title",
       "route.discover.searchAction": "Search",
@@ -578,6 +580,8 @@
       "toolbar.userMenu": "Fiók menü",
       "userMenu.profileSettings": "Profil beállítások",
       "userMenu.ariaNav": "Fiók",
+      "authNudge.addToLibrary": "Jelentkezz be, hogy könyveket adhass a listáidhoz",
+      "authNudge.default": "Jelentkezz be a művelethez",
 
       "home.title": "Pagewalker — Olvass velünk",
       "home.metaDescription": "Pagewalker — könyvek felfedezése, olvasáskövetés, könyvklubok és olvasók egy helyen. Hivatalos oldal.",
