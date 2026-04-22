@@ -68,26 +68,14 @@ CREATE POLICY "book_clubs_select"
     OR is_private = false
   );
 
--- 4) book_club_members: avoid recursive RLS with a stable helper
-CREATE OR REPLACE FUNCTION public.is_book_club_member(p_club uuid, p_user uuid)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.book_club_members
-    WHERE club_id = p_club AND user_id = p_user
-  );
-$$;
-
+-- 4) book_club_members: SELECT only own rows (no self-referential subquery — avoids infinite recursion)
+DROP FUNCTION IF EXISTS public.is_book_club_member(uuid, uuid);
 DROP POLICY IF EXISTS "book_club_members_select" ON public.book_club_members;
 CREATE POLICY "book_club_members_select"
   ON public.book_club_members
   FOR SELECT
   TO authenticated
-  USING (user_id = auth.uid() OR public.is_book_club_member(club_id, auth.uid()));
+  USING (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "book_club_members_insert_self" ON public.book_club_members;
 CREATE POLICY "book_club_members_insert_self"
