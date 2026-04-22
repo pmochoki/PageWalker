@@ -170,6 +170,20 @@ a:focus-visible {
   box-shadow: 0 0 12px var(--primary);
 }
 
+.logo.logo-has-image::before {
+  display: none;
+}
+
+.pw-logo-image {
+  height: 52px;
+  width: auto;
+  display: block;
+}
+
+.pw-logo-fallback {
+  display: none;
+}
+
 .logo:hover {
   color: var(--primary);
   text-decoration: none;
@@ -918,6 +932,9 @@ html[data-theme="dark"] .form-stack input {
 
 /* ───── Small screens ───── */
 @media (max-width: 640px) {
+  .pw-logo-image {
+    height: 42px;
+  }
   .site-header .inner {
     justify-content: center;
   }
