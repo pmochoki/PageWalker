@@ -559,27 +559,27 @@ html[data-theme="dark"] .pw-theme-toggle[data-mode="system"] [data-icon="system"
   align-items: center;
 }
 
-.cta-actions .btn {
+.cta-band .cta-actions .btn {
   min-width: 10rem;
   background: #ffffff;
   color: var(--primary);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.cta-actions .btn:hover {
+.cta-band .cta-actions .btn:hover {
   background: #ffffff;
   color: var(--primary-light);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
 }
 
-.cta-actions .btn-outline {
+.cta-band .cta-actions .btn-outline {
   background: transparent;
   color: #ffffff;
   border: 2px solid #ffffff;
   box-shadow: none;
 }
 
-.cta-actions .btn-outline:hover {
+.cta-band .cta-actions .btn-outline:hover {
   background: #ffffff;
   color: var(--primary);
 }
