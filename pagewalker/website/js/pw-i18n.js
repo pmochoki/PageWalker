@@ -277,6 +277,9 @@
       "toolbar.themeMode.light": "Light mode",
       "toolbar.themeMode.dark": "Dark mode",
       "toolbar.themeMode.system": "System mode",
+      "toolbar.userMenu": "Account menu",
+      "userMenu.profileSettings": "Profile settings",
+      "userMenu.ariaNav": "Account",
 
       "home.title": "Pagewalker — Reading, together",
       "home.metaDescription": "Pagewalker — discover books, track reading, join book clubs, and connect with readers. Official site.",
@@ -572,6 +575,9 @@
       "toolbar.themeMode.light": "Világos mód",
       "toolbar.themeMode.dark": "Sötét mód",
       "toolbar.themeMode.system": "Rendszer mód",
+      "toolbar.userMenu": "Fiók menü",
+      "userMenu.profileSettings": "Profil beállítások",
+      "userMenu.ariaNav": "Fiók",
 
       "home.title": "Pagewalker — Olvass velünk",
       "home.metaDescription": "Pagewalker — könyvek felfedezése, olvasáskövetés, könyvklubok és olvasók egy helyen. Hivatalos oldal.",

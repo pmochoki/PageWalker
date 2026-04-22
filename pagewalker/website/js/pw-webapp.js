@@ -1,4 +1,5 @@
 import { getSupabase } from "./pw-supabase.js";
+import { initUserMenu } from "./pw-user-menu.js";
 
 const APP_ROUTES = new Set([
   "/",
@@ -1829,15 +1830,24 @@ async function boot() {
     session = null;
   }
 
+  const userMenu = initUserMenu(supabase);
+  window.pwSyncNav = function pwSyncNav() {
+    const route = APP_ROUTES.has(window.location.pathname) ? window.location.pathname : "/";
+    setActiveRoute(route);
+  };
+
   const render = async () => {
+    userMenu.close();
     await renderRoute(supabase, session);
   };
 
   initLinks(render);
+  await userMenu.refresh(session);
   await render();
 
   supabase.auth.onAuthStateChange(async (_evt, newSession) => {
     session = newSession;
+    await userMenu.refresh(session);
     await render();
   });
 }
