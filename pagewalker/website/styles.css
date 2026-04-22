@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=UnifrakturCook:wght@700&display=swap");
 
 /* ───── Palette (mirrors the app's Classic theme) ───── */
 :root {
@@ -36,6 +36,7 @@
   --radius-lg: 22px;
   --font: "Nunito", system-ui, -apple-system, sans-serif;
   --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-wordmark: "UnifrakturCook", "Times New Roman", serif;
 }
 
 html[data-theme="dark"] {
@@ -182,11 +183,11 @@ a:focus-visible {
 
 .pw-logo-fallback {
   display: inline-block;
-  font-family: var(--font-display);
+  font-family: var(--font-wordmark);
   font-weight: 700;
   font-size: 2rem;
-  font-style: italic;
-  letter-spacing: 0.02em;
+  font-style: normal;
+  letter-spacing: 0.015em;
   color: var(--primary);
   text-shadow: 0 2px 10px rgba(255, 107, 26, 0.2);
   margin-left: 0.35rem;
