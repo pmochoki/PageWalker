@@ -1441,8 +1441,7 @@ async function renderProfile(supabase, session) {
   ).toUpperCase();
   return `
     ${authPanel}
-    <section class="app-grid app-grid-2">
-      <article class="app-panel">
+    <section class="app-panel">
         <h2>${t("route.profile.title", "Profile")}</h2>
         <div class="pw-profile-photo-section">
           <div class="pw-profile-photo-wrap">
@@ -1465,18 +1464,6 @@ async function renderProfile(supabase, session) {
           <div><span class="muted">${t("route.profile.fullName", "Name")}</span><p>${escapeHtml(profile.full_name || profile.display_name || "-")}</p></div>
         </div>
         <p>${escapeHtml(profile.bio || t("route.profile.bioEmpty", "No bio yet."))}</p>
-      </article>
-      <article class="app-panel">
-        <h3>${t("route.profile.featuresTitle", "Your app sections")}</h3>
-        <p>${t("route.profile.featuresBody", "Open deep product sections from Profile after signing in.")}</p>
-        <div class="cta-actions">
-          <a class="btn btn-outline" href="/discover" data-link-route="/discover">${t("appNav.discover", "Discover")}</a>
-          <a class="btn btn-outline" href="/library" data-link-route="/library">${t("appNav.library", "Library")}</a>
-          <a class="btn btn-outline" href="/social" data-link-route="/social">${t("appNav.social", "Social")}</a>
-          <a class="btn btn-outline" href="/clubs" data-link-route="/clubs">${t("appNav.clubs", "Clubs")}</a>
-          <a class="btn btn-outline" href="/reader" data-link-route="/reader">${t("appNav.reader", "Reader")}</a>
-        </div>
-      </article>
     </section>
     <section class="app-panel">
       <h3>Top 4 favorites</h3>
