@@ -43,6 +43,7 @@ let discoverPaging = {
 };
 let libraryPage = 1;
 let socialDraft = { title: "", body: "", rating: "5" };
+let socialComposerExpanded = false;
 let clubsDraft = { name: "", description: "", inviteCode: "", emoji: "📚", maxMembers: "20" };
 let readerTimer = {
   running: false,
@@ -654,6 +655,30 @@ async function upsertUserBookStatus(supabase, userId, book, status) {
   if (insertErr) throw insertErr;
 }
 
+/** Loads reviews, then profiles in a second query (avoids nested select issues with RLS). */
+async function fetchReviewsWithAuthorRows(supabase, limit) {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("id, user_id, title, review_text, rating, content, star_rating, created_at, book_title, book_author")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  if (!data?.length) return [];
+  const userIds = [...new Set(data.map((r) => r.user_id).filter(Boolean))];
+  if (!userIds.length) {
+    return data.map((r) => ({ ...r, profiles: null }));
+  }
+  const { data: profs, error: pErr } = await supabase
+    .from("profiles")
+    .select("id, username, display_name, avatar_url")
+    .in("id", userIds);
+  if (pErr) {
+    return data.map((r) => ({ ...r, profiles: null }));
+  }
+  const byId = Object.fromEntries((profs || []).map((p) => [p.id, p]));
+  return data.map((r) => ({ ...r, profiles: byId[r.user_id] || null }));
+}
+
 async function renderHome(_supabase, _session) {
   const [trendingBooks, latestReviews] = await Promise.all([
     runSafeQuery(async () => {
@@ -662,13 +687,7 @@ async function renderHome(_supabase, _session) {
     }, "Trending unavailable."),
     runSafeQuery(async () => {
       const supabase = await getSupabase();
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("title, review_text, rating, book_title, profiles(display_name,username)")
-        .order("created_at", { ascending: false })
-        .limit(4);
-      if (error) throw error;
-      return data || [];
+      return fetchReviewsWithAuthorRows(supabase, 4);
     }, "Reviews unavailable."),
   ]);
   const trendRows = trendingBooks.filter((x) => !x.__error);
@@ -708,6 +727,10 @@ async function renderHome(_supabase, _session) {
         <h3>Reader buzz</h3>
         <a href="/social" data-link-route="/social">Go to Social</a>
       </div>
+      <p class="muted pw-section-note">${t(
+        "home.readerBuzzExplainer",
+        "Recent reviews from other readers. Open Social for the full feed. Trending books and search are on Discover.",
+      )}</p>
       <div class="pw-review-feed">
         ${reviewRows.length ? reviewRows.map((review) => `
           <article class="pw-review-row">
@@ -951,15 +974,15 @@ async function renderSocial(supabase, session) {
   if (!session?.user) {
     return `<section class="app-panel"><h2>${t("route.social.title", "Reviews & social")}</h2><p>${t("route.authRequired", "Please sign in to view this section.")}</p></section>`;
   }
-  const reviews = await runSafeQuery(async () => {
-    const { data, error } = await supabase
-      .from("reviews")
-      .select("id, user_id, title, review_text, rating, content, star_rating, created_at, book_title, book_author, profiles(username, display_name, avatar_url)")
-      .order("created_at", { ascending: false })
-      .limit(25);
-    if (error) throw error;
-    return data || [];
-  }, t("appShell.missingReviews", "Could not load reviews."));
+  const reviews = await runSafeQuery(
+    () => fetchReviewsWithAuthorRows(supabase, 25),
+    t("appShell.missingReviews", "Could not load reviews."),
+  );
+  const hasDraft = Boolean(
+    (socialDraft.title && String(socialDraft.title).trim()) ||
+      (socialDraft.body && String(socialDraft.body).trim()),
+  );
+  const showComposer = socialComposerExpanded || hasDraft;
   const cards = reviews.map((r) => {
     if (r.__error) return `<article class="app-panel"><p>${escapeHtml(r.text)}</p></article>`;
     const title = r.title || r.book_title || t("route.social.reviewTitle", "Review");
@@ -989,26 +1012,53 @@ async function renderSocial(supabase, session) {
   return `
     <section class="app-panel">
       <h2>${t("route.social.title", "Reviews & social")}</h2>
-      <form id="pw-social-form" class="form-stack">
-        <label>
-          <span>${t("route.social.formTitle", "Book or review title")}</span>
-          <input id="pw-social-title" type="text" value="${escapeHtml(socialDraft.title)}" maxlength="140" required />
-        </label>
-        <label>
-          <span>${t("route.social.formBody", "Your review")}</span>
-          <textarea id="pw-social-body" rows="4" maxlength="1000" required>${escapeHtml(socialDraft.body)}</textarea>
-        </label>
-        <label>
-          <span>${t("route.social.formRating", "Rating")}</span>
-          <select id="pw-social-rating" class="pw-select">
-            ${[1, 2, 3, 4, 5].map((x) => `<option value="${x}"${String(x) === String(socialDraft.rating) ? " selected" : ""}>${x}</option>`).join("")}
-          </select>
-        </label>
-        <div class="cta-actions">
-          <button type="submit" class="btn">${t("route.social.publish", "Publish review")}</button>
-          <input id="pw-social-edit-id" type="hidden" value="" />
+      <p class="muted pw-social-feed-intro">${t(
+        "route.social.feedIntro",
+        "Member reviews below (newest first). Discover has trending and search. Home shows a short preview in Reader buzz. No per-book page on web yet.",
+      )}</p>
+      <div class="pw-social-composer">
+        <button
+          type="button"
+          id="pw-social-composer-toggle"
+          class="btn btn-outline pw-social-composer__toggle"
+          aria-expanded="${showComposer ? "true" : "false"}"
+          aria-controls="pw-social-composer-panel"
+        >
+          ${t("route.social.writeReviewToggle", "Write a review")}
+        </button>
+        <div id="pw-social-composer-panel" class="pw-social-composer__panel" ${showComposer ? "" : "hidden"}>
+          <p class="muted pw-social-composer__hint">${t(
+            "route.social.composerHint",
+            "Choose the book, add stars, and write your take.",
+          )}</p>
+          <form id="pw-social-form" class="form-stack">
+            <label>
+              <span>${t("route.social.formTitle", "Book or review title")}</span>
+              <input id="pw-social-title" type="text" value="${escapeHtml(socialDraft.title)}" maxlength="140" required />
+            </label>
+            <label>
+              <span>${t("route.social.formBody", "Your review")}</span>
+              <textarea id="pw-social-body" rows="4" maxlength="1000" required>${escapeHtml(socialDraft.body)}</textarea>
+            </label>
+            <label>
+              <span>${t("route.social.formRating", "Rating")}</span>
+              <select id="pw-social-rating" class="pw-select">
+                ${[1, 2, 3, 4, 5]
+                  .map(
+                    (x) =>
+                      `<option value="${x}"${String(x) === String(socialDraft.rating) ? " selected" : ""}>${x}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </label>
+            <div class="cta-actions">
+              <button type="submit" class="btn">${t("route.social.publish", "Publish review")}</button>
+              <input id="pw-social-edit-id" type="hidden" value="" />
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
+      <h3 class="pw-social-feed__heading">${t("route.social.feedSectionTitle", "From readers")}</h3>
       <div class="app-grid app-grid-3">
         ${cards.join("")}
       </div>
@@ -1592,6 +1642,7 @@ function bindBookPageActions(supabase, session, rerender) {
     }
     const bookTitle = parsed.title || "Untitled";
     socialDraft = { title: bookTitle, body: "", rating: "5" };
+    socialComposerExpanded = true;
     if (window.location.pathname !== "/social") {
       window.history.pushState({}, "", "/social");
     }
@@ -1632,6 +1683,20 @@ function bindSocialActions(supabase, session, rerender) {
   const bodyInput = document.getElementById("pw-social-body");
   const ratingInput = document.getElementById("pw-social-rating");
   const editIdInput = document.getElementById("pw-social-edit-id");
+  const compToggle = document.getElementById("pw-social-composer-toggle");
+  const compPanel = document.getElementById("pw-social-composer-panel");
+
+  function setComposerOpen(open) {
+    if (!compPanel || !compToggle) return;
+    compPanel.hidden = !open;
+    compToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    socialComposerExpanded = open;
+  }
+
+  compToggle?.addEventListener("click", () => {
+    if (!compPanel) return;
+    setComposerOpen(!!compPanel.hidden);
+  });
 
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1641,6 +1706,7 @@ function bindSocialActions(supabase, session, rerender) {
     const editId = String(editIdInput?.value || "");
     socialDraft = { title, body, rating: String(rating || 5) };
     if (!title || !body) {
+      setComposerOpen(true);
       showBanner("error", t("route.social.validation", "Title and review text are required."));
       return;
     }
@@ -1682,6 +1748,8 @@ function bindSocialActions(supabase, session, rerender) {
         showBanner("success", t("route.social.published", "Review published."));
       }
       socialDraft = { title: "", body: "", rating: "5" };
+      socialComposerExpanded = false;
+      setComposerOpen(false);
       rerender();
     } catch (error) {
       showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
@@ -1700,8 +1768,9 @@ function bindSocialActions(supabase, session, rerender) {
       if (ratingInput) ratingInput.value = rating;
       if (editIdInput) editIdInput.value = id;
       socialDraft = { title, body, rating };
+      setComposerOpen(true);
+      compPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
       showBanner("success", t("route.social.editing", "Editing review. Save to apply changes."));
-      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 

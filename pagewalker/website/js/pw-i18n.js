@@ -302,6 +302,8 @@
       "home.heroLede": "Pagewalker is your reading home on web and app - discover your next book, track your progress, and share honest reviews with people who love stories as much as you do.",
       "home.playAlt": "Get it on Google Play",
       "home.heroTagline": "Free on Google Play · same login here & in the app",
+      "home.readerBuzzExplainer":
+        "Recent reviews from other readers. Open Social for the full feed. Trending books and search are on Discover.",
       "home.whatsNew": "What's new",
       "home.signInWeb": "Sign in on the web",
       "home.featuresHeading": "Your reading universe",
@@ -475,6 +477,11 @@
       "route.library.explainer": "This is your reading shelf. Add books from Discover, then move them across TBR, Reading, Read, and DNF.",
       "route.library.emptyHint": "No books in this shelf yet. Add one from Discover.",
       "route.social.title": "Reviews & social",
+      "route.social.feedIntro":
+        "Below you’ll see reviews from the community (newest first). Discover is for trending books and search. Home has a small “Reader buzz” preview. There’s no per-book review thread on web yet.",
+      "route.social.writeReviewToggle": "Write a review",
+      "route.social.composerHint": "Choose the book, add stars, and write your take.",
+      "route.social.feedSectionTitle": "From readers",
       "route.social.reviewTitle": "Review",
       "route.social.rating": "Rating",
       "route.social.authed": "Use the mobile app and web together with the same account.",
@@ -624,6 +631,8 @@
       "home.heroLede": "A Pagewalker az olvasás otthona weben és appban - fedezd fel a következő könyvedet, kövesd a haladásodat, és oszd meg őszinte értékeléseidet más történetrajongókkal.",
       "home.playAlt": "Letöltés a Google Play-ről",
       "home.heroTagline": "Ingyenes a Google Play-en · ugyanaz a fiók itt és az appban",
+      "home.readerBuzzExplainer":
+        "Más olvasók friss értékelései. A teljes hírfolyamért nyisd meg a Közösséget. A trendi könyvek és a keresés a Felfedezésnél vannak.",
       "home.whatsNew": "Mi az újdonság",
       "home.signInWeb": "Bejelentkezés a weben",
       "home.featuresHeading": "Az olvasási univerzumod",
@@ -797,6 +806,11 @@
       "route.library.explainer": "Ez az olvasási polcod. Adj hozzá könyveket a Felfedezésből, majd mozgasd őket TBR, Olvasás alatt, Elolvasott és DNF között.",
       "route.library.emptyHint": "Ebben a polcban még nincs könyv. Adj hozzá egyet a Felfedezésből.",
       "route.social.title": "Értékelések és közösség",
+      "route.social.feedIntro":
+        "Itt a közösség értelmezései jelennek meg (a legfrissebb felül). A trendi könyvekért és a keresésért a Felfedezésre menj. A kezdőlapon egy rövid „Reader buzz” előnézet van. Egyelőre nincs könyvenkénti fórum a weben.",
+      "route.social.writeReviewToggle": "Új értékelés",
+      "route.social.composerHint": "Add meg a könyvet, a csillagokat, és írd le a véleményed.",
+      "route.social.feedSectionTitle": "Az olvasóktól",
       "route.social.reviewTitle": "Értékelés",
       "route.social.rating": "Értékelés",
       "route.social.authed": "Használd együtt a mobilappot és a webet ugyanazzal a fiókkal.",

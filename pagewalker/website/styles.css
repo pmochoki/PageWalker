@@ -1728,6 +1728,12 @@ html[data-theme="dark"] .pw-auth-nudge {
   margin-bottom: 0.75rem;
 }
 
+.pw-section-note {
+  margin: -0.15rem 0 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
 .pw-poster-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
@@ -1813,6 +1819,45 @@ html[data-theme="dark"] .pw-auth-nudge {
 
 .pw-review-row p {
   margin: 0.2rem 0;
+}
+
+.pw-social-feed-intro {
+  margin: 0.35rem 0 0.9rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.pw-social-composer {
+  margin-bottom: 1rem;
+}
+
+.pw-social-composer__toggle {
+  width: 100%;
+  justify-content: center;
+}
+
+.pw-social-composer__panel {
+  margin-top: 0.65rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.pw-social-composer__panel[hidden] {
+  display: none !important;
+}
+
+.pw-social-composer__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+}
+
+.pw-social-feed__heading {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .pw-review-card .btn.btn-outline {
