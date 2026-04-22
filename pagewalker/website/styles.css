@@ -2026,53 +2026,208 @@ html[data-theme="dark"] .pw-auth-nudge {
   margin: 0 0 0.2rem;
 }
 
-.pw-club-forum__title {
+.pw-club-chat__title {
   margin-top: 0.2rem;
 }
 
-.pw-club-forum__list {
-  list-style: none;
-  margin: 0 0 1rem;
-  padding: 0;
+.pw-club-chat__hint {
+  margin: 0 0 0.75rem;
+  max-width: 36rem;
+  font-size: 0.92rem;
+}
+
+.pw-club-chat {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.6rem;
+  max-width: 36rem;
 }
 
-.pw-club-forum__item {
+.pw-club-chat__scroll {
+  min-height: 12rem;
+  max-height: min(52dvh, 28rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.5rem 0.25rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.75rem 0.9rem;
-  background: var(--card);
+  background: var(--bg-soft);
+  -webkit-overflow-scrolling: touch;
 }
 
-.pw-club-forum__meta {
+.pw-club-chat__empty {
+  margin: 1rem 0.75rem;
+  line-height: 1.5;
+}
+
+.pw-club-chat__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pw-club-chat__row {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.pw-club-chat__row--me {
+  justify-content: flex-end;
+}
+
+.pw-club-chat__bubble {
+  max-width: 92%;
+  border-radius: 14px 14px 14px 4px;
+  padding: 0.5rem 0.75rem 0.55rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.pw-club-chat__row--me .pw-club-chat__bubble {
+  border-radius: 14px 14px 4px 14px;
+  background: var(--primary-soft);
+  border-color: var(--border-strong);
+}
+
+.pw-club-chat__bubble-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem 0.75rem;
-  font-size: 0.86rem;
-  margin-bottom: 0.4rem;
+  gap: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.3rem;
+  color: var(--text-muted);
 }
 
-.pw-club-forum__chip {
-  font-size: 0.78rem;
-  padding: 0.12rem 0.5rem;
+.pw-club-chat__who {
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.pw-club-chat__row--me .pw-club-chat__who {
+  color: var(--text);
+}
+
+.pw-club-chat__time {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+}
+
+.pw-club-chat__chip {
+  font-size: 0.68rem;
+  padding: 0.08rem 0.4rem;
   border-radius: 6px;
-  background: var(--primary-soft);
+  background: var(--card-alt);
   color: var(--text-secondary);
   font-weight: 700;
 }
 
-.pw-club-forum__body {
+.pw-club-chat__row--me .pw-club-chat__chip {
+  background: var(--card);
+}
+
+.pw-club-chat__text {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.45;
+  font-size: 0.95rem;
 }
 
-.pw-club-forum__composer {
-  max-width: 36rem;
+.pw-club-chat__spoiler-flag {
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--error-text);
+  margin-right: 0.25rem;
+}
+
+.pw-club-chat__composer {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.pw-club-chat__input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.2rem 0.2rem 0.9rem;
+  background: var(--card);
+}
+
+.pw-club-chat__textarea {
+  flex: 1;
+  min-height: 2.4rem;
+  max-height: 6rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  resize: none;
+  padding: 0.45rem 0;
+  line-height: 1.4;
+  field-sizing: content;
+  min-width: 0;
+}
+
+@supports not (field-sizing: content) {
+  .pw-club-chat__textarea {
+    min-height: 2.5rem;
+  }
+}
+
+.pw-club-chat__send {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.pw-club-chat__options {
+  margin-top: 0.35rem;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.pw-club-chat__options summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-muted);
+  list-style: none;
+}
+
+.pw-club-chat__options summary::-webkit-details-marker {
+  display: none;
+}
+
+.pw-club-chat__options-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0 0;
+}
+
+.pw-club-chat__options-row label span {
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 0.2rem;
+}
+
+.pw-club-chat__options-row input[type="number"] {
+  max-width: 5rem;
 }
 
 .pw-checkbox {

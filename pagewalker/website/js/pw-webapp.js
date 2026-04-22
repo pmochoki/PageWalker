@@ -1182,8 +1182,8 @@ async function renderClubDetail(supabase, session) {
     .from("book_club_messages")
     .select("id, user_id, content, message_type, chapter_ref, created_at, contains_spoiler")
     .eq("club_id", clubId)
-    .order("created_at", { ascending: false })
-    .limit(60);
+    .order("created_at", { ascending: true })
+    .limit(200);
   if (msgErr) {
     return `<section class="app-panel"><h2>${escapeHtml(club.name || "Club")}</h2><p>${t("appShell.missingData", "Something went wrong.")}</p></section>`;
   }
@@ -1213,43 +1213,81 @@ async function renderClubDetail(supabase, session) {
       </section>
     `;
   }
-  const msgList = messages.length
-    ? `<ul class="pw-club-forum__list">
-        ${messages
-          .map(
-            (m) => `
-          <li class="pw-club-forum__item">
-            <div class="pw-club-forum__meta">
-              <strong>${escapeHtml(nameBy[m.user_id] || "?")}</strong>
-              <span class="muted">${escapeHtml(m.created_at || "")}</span>
-              ${m.chapter_ref != null ? `<span class="pw-club-forum__chip">${t("route.clubs.chapter", "Ch.")} ${escapeHtml(String(m.chapter_ref))}</span>` : ""}
+  const meId = session.user.id;
+  const fmtTime = (iso) => {
+    try {
+      return new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    } catch (_) {
+      return String(iso || "");
+    }
+  };
+  const msgBubbles = messages.length
+    ? messages
+        .map((m) => {
+          const isMe = m.user_id === meId;
+          const who = escapeHtml(nameBy[m.user_id] || "?");
+          const time = escapeHtml(fmtTime(m.created_at));
+          const chip =
+            m.chapter_ref != null
+              ? `<span class="pw-club-chat__chip">${t("route.clubs.chapter", "Ch.")} ${escapeHtml(String(m.chapter_ref))}</span>`
+              : "";
+          return `
+        <li class="pw-club-chat__row${isMe ? " pw-club-chat__row--me" : ""}">
+          <div class="pw-club-chat__bubble">
+            <div class="pw-club-chat__bubble-meta">
+              <span class="pw-club-chat__who">${isMe ? t("route.clubs.chatYou", "You") : who}</span>
+              ${chip}
+              <time class="pw-club-chat__time" datetime="${escapeHtml(m.created_at || "")}">${time}</time>
             </div>
-            <p class="pw-club-forum__body">${m.contains_spoiler ? `<em>${t("route.clubs.spoiler", "Spoiler")}</em> ` : ""}${escapeHtml(m.content || "")}</p>
-          </li>`,
-          )
-          .join("")}
-      </ul>`
-    : `<p class="muted">${t("route.clubs.forumEmpty", "No messages yet. Start a thread about the book you are reading together.")}</p>`;
+            <p class="pw-club-chat__text">${m.contains_spoiler ? `<em class="pw-club-chat__spoiler-flag">${t("route.clubs.spoiler", "Spoiler")}</em> ` : ""}${escapeHtml(m.content || "")}</p>
+          </div>
+        </li>`;
+        })
+        .join("")
+    : "";
   return `
     <section class="app-panel pw-club-detail">
       ${back}
       ${head}
-      <h3 class="pw-club-forum__title">${t("route.clubs.forumTitle", "Book forum & discussion")}</h3>
-      <p class="muted pw-club-forum__lede">${t(
-        "route.clubs.forumLede",
-        "Talk about chapters, share reactions, and coordinate what you are reading next.",
+      <h3 class="pw-club-chat__title">${t("route.clubs.chatTitle", "Group chat")}</h3>
+      <p class="muted pw-club-chat__hint">${t(
+        "route.clubs.chatHint",
+        "Everyone in the club can read and post here. New messages appear at the bottom—scroll up for older ones.",
       )}</p>
-      ${msgList}
-      <form id="pw-club-forum-form" class="form-stack pw-club-forum__composer">
-        <label><span>${t("route.clubs.forumMessage", "Message")}</span><textarea id="pw-club-forum-body" rows="3" maxlength="2000" required placeholder=""></textarea></label>
-        <label><span>${t("route.clubs.chapterRef", "Chapter (optional)")}</span><input id="pw-club-forum-chapter" type="number" min="0" step="1" placeholder="0" /></label>
-        <label class="pw-checkbox">
-          <input type="checkbox" id="pw-club-forum-spoiler" />
-          <span>${t("route.clubs.markSpoiler", "Mark as spoiler")}</span>
-        </label>
-        <input type="hidden" id="pw-club-forum-club-id" value="${escapeHtml(clubId)}" />
-        <button type="submit" class="btn">${t("route.clubs.postToForum", "Post to forum")}</button>
-      </form>
+      <div class="pw-club-chat" aria-label="${t("route.clubs.chatTitle", "Group chat")}">
+        <div id="pw-club-chat-scroll" class="pw-club-chat__scroll" tabindex="0" role="log" aria-relevant="additions" aria-live="polite">
+          ${
+            messages.length
+              ? `<ol class="pw-club-chat__list">${msgBubbles}</ol>`
+              : `<p class="pw-club-chat__empty muted">${t("route.clubs.chatEmpty", "No messages yet. Say hi below—others will see it here, like a group chat.")}</p>`
+          }
+        </div>
+        <form id="pw-club-forum-form" class="pw-club-chat__composer" autocomplete="off">
+          <div class="pw-club-chat__input-wrap">
+            <label class="visually-hidden" for="pw-club-forum-body">${t("route.clubs.forumMessage", "Message")}</label>
+            <textarea
+              id="pw-club-forum-body"
+              class="pw-club-chat__textarea"
+              rows="1"
+              maxlength="2000"
+              required
+              placeholder="${t("route.clubs.chatPlaceholder", "Message the group…")}"
+            ></textarea>
+            <button type="submit" class="btn pw-club-chat__send" aria-label="${t("route.clubs.send", "Send")}">${t("route.clubs.send", "Send")}</button>
+          </div>
+          <details class="pw-club-chat__options">
+            <summary>${t("route.clubs.chatOptions", "Chapter & spoiler")}</summary>
+            <div class="pw-club-chat__options-row">
+              <label><span>${t("route.clubs.chapterRef", "Chapter (optional)")}</span><input id="pw-club-forum-chapter" type="number" min="0" step="1" placeholder="0" /></label>
+              <label class="pw-checkbox">
+                <input type="checkbox" id="pw-club-forum-spoiler" />
+                <span>${t("route.clubs.markSpoiler", "Mark as spoiler")}</span>
+              </label>
+            </div>
+          </details>
+          <input type="hidden" id="pw-club-forum-club-id" value="${escapeHtml(clubId)}" />
+        </form>
+      </div>
     </section>
   `;
 }
@@ -1278,7 +1316,6 @@ function bindClubDetailActions(supabase, session, rerender) {
         chapter_ref: chapterRef,
       });
       if (error) throw error;
-      showBanner("success", t("route.clubs.posted", "Posted."));
       rerender();
     } catch (error) {
       showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
@@ -2424,7 +2461,13 @@ async function renderRoute(supabase, session) {
   root.classList.remove("pw-route-enter");
   root.innerHTML = renderRouteSkeleton(route);
   root.innerHTML = await renderCurrentRoute(supabase, session, route);
-  requestAnimationFrame(() => root.classList.add("pw-route-enter"));
+  requestAnimationFrame(() => {
+    root.classList.add("pw-route-enter");
+    if (route === "/club") {
+      const sc = document.getElementById("pw-club-chat-scroll");
+      if (sc) sc.scrollTop = sc.scrollHeight;
+    }
+  });
   const rerender = () => renderRoute(supabase, session);
   if (route === "/discover") bindDiscoverActions(supabase, session, rerender);
   if (route === "/library") bindLibraryActions(supabase, session, rerender);
