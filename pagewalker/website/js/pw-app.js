@@ -16,12 +16,21 @@ function hideBanner(el) {
   if (el) el.hidden = true;
 }
 
+function getAuthRedirectBase() {
+  const url = new URL(window.location.href);
+  // Keep Supabase redirect host aligned with the configured production domain.
+  if (url.hostname === "www.pagewalker.org") {
+    url.hostname = "pagewalker.org";
+  }
+  return url.origin;
+}
+
 async function initOAuthButtons() {
   const buttons = document.querySelectorAll("[data-pw-oauth]");
   if (!buttons.length) return;
   const err = document.getElementById("pw-err");
   const supabase = await getSupabase();
-  const redirectTo = new URL("/", window.location.origin).href;
+  const redirectTo = new URL("/profile", getAuthRedirectBase()).href;
   for (let i = 0; i < buttons.length; i += 1) {
     const btn = buttons[i];
     btn.addEventListener("click", async () => {
@@ -32,7 +41,13 @@ async function initOAuthButtons() {
         provider,
         options: { redirectTo },
       });
-      if (error) showBanner(err, "error", error.message || tr("app.oauthFailed"));
+      if (error) {
+        const msg = String(error.message || "");
+        const hint = msg.toLowerCase().includes("redirect")
+          ? " (check Supabase Auth URL allow-list for pagewalker.org and www.pagewalker.org)"
+          : "";
+        showBanner(err, "error", (msg || tr("app.oauthFailed")) + hint);
+      }
     });
   }
 }
@@ -104,7 +119,7 @@ async function initForgot() {
   const err = document.getElementById("pw-err");
   const ok = document.getElementById("pw-ok");
   const supabase = await getSupabase();
-  const redirectTo = new URL("/auth/update-password", window.location.origin).href;
+  const redirectTo = new URL("/auth/update-password", getAuthRedirectBase()).href;
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     hideBanner(err);
