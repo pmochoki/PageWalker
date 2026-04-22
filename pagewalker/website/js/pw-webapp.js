@@ -26,6 +26,7 @@ const STATUS_LABELS = {
 };
 let discoverQuery = "";
 let libraryFilter = "all";
+let socialDraft = { title: "", body: "", rating: "5" };
 
 function t(key, fallback) {
   if (window.pwT) return window.pwT(key);
@@ -291,30 +292,61 @@ async function renderLibrary(supabase, session) {
 }
 
 async function renderSocial(supabase, session) {
+  if (!session?.user) {
+    return `<section class="app-panel"><h2>${t("route.social.title", "Reviews & social")}</h2><p>${t("route.authRequired", "Please sign in to view this section.")}</p></section>`;
+  }
   const reviews = await runSafeQuery(async () => {
     const { data, error } = await supabase
       .from("reviews")
-      .select("title, review_text, rating")
+      .select("id, user_id, title, review_text, rating, content, star_rating, created_at, book_title")
       .order("created_at", { ascending: false })
-      .limit(10);
+      .limit(25);
     if (error) throw error;
     return data || [];
   }, t("appShell.missingReviews", "Could not load reviews."));
-
-  const items = reviews.map((r) => {
-    if (r.__error) return `<span>${escapeHtml(r.text)}</span>`;
-    return `<strong>${escapeHtml(r.title || "Review")}</strong><span>${escapeHtml(r.review_text || "")}</span><span>${t("route.social.rating", "Rating")}: ${escapeHtml(r.rating ?? "-")}</span>`;
+  const cards = reviews.map((r) => {
+    if (r.__error) return `<article class="app-panel"><p>${escapeHtml(r.text)}</p></article>`;
+    const title = r.title || r.book_title || t("route.social.reviewTitle", "Review");
+    const body = r.review_text || r.content || "";
+    const ratingValue = r.rating ?? r.star_rating ?? "-";
+    const isMine = r.user_id && r.user_id === session.user.id;
+    return `
+      <article class="app-panel">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(body)}</p>
+        <p class="metric">${t("route.social.rating", "Rating")}: ${escapeHtml(ratingValue)}</p>
+        ${isMine ? `<div class="cta-actions"><button class="btn btn-outline" data-social-edit="${escapeHtml(r.id)}" data-social-title="${escapeHtml(title)}" data-social-body="${escapeHtml(body)}" data-social-rating="${escapeHtml(String(ratingValue === "-" ? 5 : ratingValue))}">${t("route.social.edit", "Edit")}</button><button class="btn btn-outline" data-social-delete="${escapeHtml(r.id)}">${t("route.social.delete", "Delete")}</button></div>` : ""}
+      </article>
+    `;
   });
 
   return `
     <section class="app-panel">
       <h2>${t("route.social.title", "Reviews & social")}</h2>
-      ${listToHtml(items)}
-      ${
-        session?.user
-          ? `<p class="muted">${t("route.social.authed", "Use the mobile app and web together with the same account.")}</p>`
-          : `<p class="muted">${t("route.social.guest", "Sign in to write and manage your own reviews.")}</p>`
-      }
+      <form id="pw-social-form" class="form-stack">
+        <label>
+          <span>${t("route.social.formTitle", "Book or review title")}</span>
+          <input id="pw-social-title" type="text" value="${escapeHtml(socialDraft.title)}" maxlength="140" required />
+        </label>
+        <label>
+          <span>${t("route.social.formBody", "Your review")}</span>
+          <textarea id="pw-social-body" rows="4" maxlength="1000" required>${escapeHtml(socialDraft.body)}</textarea>
+        </label>
+        <label>
+          <span>${t("route.social.formRating", "Rating")}</span>
+          <select id="pw-social-rating" class="pw-select">
+            ${[1, 2, 3, 4, 5].map((x) => `<option value="${x}"${String(x) === String(socialDraft.rating) ? " selected" : ""}>${x}</option>`).join("")}
+          </select>
+        </label>
+        <div class="cta-actions">
+          <button type="submit" class="btn">${t("route.social.publish", "Publish review")}</button>
+          <input id="pw-social-edit-id" type="hidden" value="" />
+        </div>
+      </form>
+      <div class="app-grid app-grid-3">
+        ${cards.join("")}
+      </div>
+      <p class="muted">${t("route.social.authed", "Use the mobile app and web together with the same account.")}</p>
     </section>
   `;
 }
@@ -533,6 +565,106 @@ function bindLibraryActions(supabase, session, rerender) {
   }
 }
 
+function bindSocialActions(supabase, session, rerender) {
+  const form = document.getElementById("pw-social-form");
+  const titleInput = document.getElementById("pw-social-title");
+  const bodyInput = document.getElementById("pw-social-body");
+  const ratingInput = document.getElementById("pw-social-rating");
+  const editIdInput = document.getElementById("pw-social-edit-id");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const title = String(titleInput?.value || "").trim();
+    const body = String(bodyInput?.value || "").trim();
+    const rating = Number(ratingInput?.value || 5);
+    const editId = String(editIdInput?.value || "");
+    socialDraft = { title, body, rating: String(rating || 5) };
+    if (!title || !body) {
+      showBanner("error", t("route.social.validation", "Title and review text are required."));
+      return;
+    }
+    try {
+      if (editId) {
+        const { error } = await supabase
+          .from("reviews")
+          .update({
+            title,
+            review_text: body,
+            rating,
+            content: body,
+            star_rating: rating,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", editId)
+          .eq("user_id", session.user.id);
+        if (error) throw error;
+        showBanner("success", t("route.social.updated", "Review updated."));
+      } else {
+        const payload = {
+          user_id: session.user.id,
+          title,
+          review_text: body,
+          rating,
+          content: body,
+          star_rating: rating,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        let { error } = await supabase.from("reviews").insert(payload);
+        if (error && String(error.message || "").toLowerCase().includes("book_id")) {
+          const retry = await supabase
+            .from("reviews")
+            .insert({ ...payload, book_id: "web-review" });
+          error = retry.error;
+        }
+        if (error) throw error;
+        showBanner("success", t("route.social.published", "Review published."));
+      }
+      socialDraft = { title: "", body: "", rating: "5" };
+      rerender();
+    } catch (error) {
+      showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
+    }
+  });
+
+  const editButtons = document.querySelectorAll("[data-social-edit]");
+  for (let i = 0; i < editButtons.length; i += 1) {
+    editButtons[i].addEventListener("click", () => {
+      const id = editButtons[i].getAttribute("data-social-edit") || "";
+      const title = editButtons[i].getAttribute("data-social-title") || "";
+      const body = editButtons[i].getAttribute("data-social-body") || "";
+      const rating = editButtons[i].getAttribute("data-social-rating") || "5";
+      if (titleInput) titleInput.value = title;
+      if (bodyInput) bodyInput.value = body;
+      if (ratingInput) ratingInput.value = rating;
+      if (editIdInput) editIdInput.value = id;
+      socialDraft = { title, body, rating };
+      showBanner("success", t("route.social.editing", "Editing review. Save to apply changes."));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  const deleteButtons = document.querySelectorAll("[data-social-delete]");
+  for (let i = 0; i < deleteButtons.length; i += 1) {
+    deleteButtons[i].addEventListener("click", async () => {
+      const id = deleteButtons[i].getAttribute("data-social-delete");
+      if (!id) return;
+      try {
+        const { error } = await supabase
+          .from("reviews")
+          .delete()
+          .eq("id", id)
+          .eq("user_id", session.user.id);
+        if (error) throw error;
+        showBanner("success", t("route.social.deleted", "Review deleted."));
+        rerender();
+      } catch (error) {
+        showBanner("error", error?.message || t("appShell.missingData", "Something went wrong."));
+      }
+    });
+  }
+}
+
 async function renderCurrentRoute(supabase, session, route) {
   if (route === "/") return renderHome(supabase, session);
   if (route === "/discover") return renderDiscover(supabase, session);
@@ -560,6 +692,7 @@ async function renderRoute(supabase, session) {
   const rerender = () => renderRoute(supabase, session);
   if (route === "/discover") bindDiscoverActions(supabase, session, rerender);
   if (route === "/library") bindLibraryActions(supabase, session, rerender);
+  if (route === "/social") bindSocialActions(supabase, session, rerender);
   if (route === "/profile") {
     const signInBtn = document.getElementById("pw-profile-signin");
     const signUpBtn = document.getElementById("pw-profile-signup");
