@@ -135,7 +135,6 @@ export function initUserMenu(supabase) {
       <nav class="pw-user-menu__nav" aria-label="${escapeHtml(t("userMenu.ariaNav", "Account"))}">
         <a class="pw-user-menu__link" href="/profile" data-link-route="/profile">${escapeHtml(t("userMenu.profileSettings", "Profile settings"))}</a>
         <a class="pw-user-menu__link" href="/library" data-link-route="/library">${escapeHtml(t("appNav.library", "Library"))}</a>
-        <a class="pw-user-menu__link" href="/discover" data-link-route="/discover">${escapeHtml(t("appNav.discover", "Discover"))}</a>
       </nav>
       <div class="pw-user-menu__hr" role="separator"></div>
       <button type="button" class="pw-user-menu__signout" id="pw-user-menu-signout">${escapeHtml(t("appShell.signOut", "Sign out"))}</button>
