@@ -496,7 +496,7 @@ async function renderDiscover(supabase, session) {
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
     runSafeQuery(async () => {
       const json = await fetchJson("/api/books?type=classics");
-      return (json.results || []).slice(0, 10).map(parseGutendexBook);
+      return (json.results || []).slice(0, 24).map(parseGutendexBook);
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
   ]);
   const activeBooks = safeQuery ? searchBooks : genreBooks;
@@ -580,7 +580,7 @@ async function renderLibrary(supabase, session) {
       .select("id, status, title, author, book_id, created_at, books(id,title,author,cover_url,description,page_count,genre)")
       .eq("user_id", session.user.id)
       .order("updated_at", { ascending: false })
-      .limit(40);
+      .limit(120);
     if (error) throw error;
     return data || [];
   }, t("appShell.missingUserBooks", "Could not load user_books."));
@@ -921,7 +921,7 @@ async function renderProfile(supabase, session) {
         .select("title,author,status,created_at,books(cover_url)")
         .eq("user_id", session.user.id)
         .order("updated_at", { ascending: false })
-        .limit(40);
+        .limit(120);
       if (error) throw error;
       return data || [];
     }, "Books unavailable."),

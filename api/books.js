@@ -100,17 +100,17 @@ module.exports = async (req, res) => {
     if (type === "trending") {
       url =
         `https://www.googleapis.com/books/v1/volumes` +
-        `?q=subject:fiction&orderBy=relevance&maxResults=12&langRestrict=en&key=${googleKey}`;
+        `?q=subject:fiction&orderBy=relevance&maxResults=30&langRestrict=en&key=${googleKey}`;
     } else if (type === "genre") {
       const genre = encodeURIComponent(String(req.query?.genre || "romance"));
       url =
         `https://www.googleapis.com/books/v1/volumes` +
-        `?q=subject:${genre}&orderBy=relevance&maxResults=12&langRestrict=en&key=${googleKey}`;
+        `?q=subject:${genre}&orderBy=relevance&maxResults=30&langRestrict=en&key=${googleKey}`;
     } else if (type === "search") {
       const q = encodeURIComponent(String(req.query?.q || ""));
       url =
         `https://www.googleapis.com/books/v1/volumes` +
-        `?q=${q}&maxResults=20&langRestrict=en&key=${googleKey}`;
+        `?q=${q}&maxResults=40&langRestrict=en&key=${googleKey}`;
     } else {
       return res.status(400).json({ error: "Invalid books type" });
     }
