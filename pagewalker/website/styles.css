@@ -1349,6 +1349,14 @@ body.pw-modal-open {
   overflow: hidden;
 }
 
+.pw-book-page-hero {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 0.8rem;
+}
+
 .pw-shimmer-block,
 .pw-shimmer-line {
   position: relative;
@@ -1429,6 +1437,10 @@ html[data-theme="dark"] .pw-shimmer-line::after {
   }
 
   .pw-modal-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .pw-book-page-hero {
     grid-template-columns: 1fr;
   }
 }

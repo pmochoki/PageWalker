@@ -2,6 +2,7 @@ import { getSupabase } from "./pw-supabase.js";
 
 const APP_ROUTES = new Set([
   "/",
+  "/book",
   "/discover",
   "/library",
   "/social",
@@ -218,7 +219,7 @@ function renderBookPosterCard(book, opts = {}) {
   const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} ★` : "";
   const footer = [year, genre, rating].filter(Boolean).join(" · ");
   const action = opts.actionHtml || "";
-  const modalBook = escapeHtml(JSON.stringify({
+  const routeBook = {
     title: book.title || "Untitled",
     author: book.author || "Unknown Author",
     coverUrl: cover,
@@ -227,7 +228,9 @@ function renderBookPosterCard(book, opts = {}) {
     publisher: book.publisher || "",
     genres: Array.isArray(book.genres) ? book.genres : [],
     googleRating: book.googleRating ?? null,
-  }));
+  };
+  const modalBook = escapeHtml(JSON.stringify(routeBook));
+  const shareLink = escapeHtml(buildBookShareUrl(routeBook));
   return `
     <article class="pw-poster-card">
       <button class="pw-poster-media pw-poster-hit" data-book-modal='${modalBook}'>
@@ -237,10 +240,35 @@ function renderBookPosterCard(book, opts = {}) {
         <h4>${title}</h4>
         <p>${author}</p>
         ${footer ? `<p class="muted">${footer}</p>` : ""}
+        <a href="${shareLink}" data-link-route="/book">Open details</a>
         ${action}
       </div>
     </article>
   `;
+}
+
+function encodeBookPayload(book) {
+  try {
+    return encodeURIComponent(JSON.stringify(book));
+  } catch (_) {
+    return "";
+  }
+}
+
+function decodeBookPayload(payload) {
+  try {
+    const parsed = JSON.parse(decodeURIComponent(String(payload || "")));
+    if (!parsed || typeof parsed !== "object") return null;
+    return parsed;
+  } catch (_) {
+    return null;
+  }
+}
+
+function buildBookShareUrl(book) {
+  const encoded = encodeBookPayload(book);
+  const origin = window.location.origin || "";
+  return `${origin}/book?data=${encoded}`;
 }
 
 function ensureBookModal() {
@@ -275,6 +303,7 @@ function openBookModal(book) {
     Array.isArray(book.genres) && book.genres.length ? escapeHtml(book.genres.slice(0, 3).join(", ")) : "",
   ].filter(Boolean).join(" · ");
   const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} / 5` : "No rating yet";
+  const shareUrl = buildBookShareUrl(book);
   body.innerHTML = `
     <section class="pw-modal-hero">
       <div class="pw-modal-cover">${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />` : "<div class=\"pw-poster-fallback\">PW</div>"}</div>
@@ -292,8 +321,21 @@ function openBookModal(book) {
     <section class="app-panel">
       <h4>Where to find it</h4>
       <p>Use Discover search for editions and external links, then add it to your shelf.</p>
+      <div class="cta-actions">
+        <a class="btn btn-outline" href="${escapeHtml(shareUrl)}" data-link-route="/book">Open full page</a>
+        <button class="btn btn-outline" id="pw-book-copy-link">Copy share link</button>
+      </div>
     </section>
   `;
+  const copyBtn = body.querySelector("#pw-book-copy-link");
+  copyBtn?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showBanner("success", "Book link copied.");
+    } catch (_) {
+      showBanner("error", "Could not copy link.");
+    }
+  });
   modal.hidden = false;
   document.body.classList.add("pw-modal-open");
 }
@@ -952,6 +994,53 @@ async function renderProfile(supabase, session) {
   `;
 }
 
+async function renderBookRoute() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("data");
+  const book = decodeBookPayload(raw);
+  if (!book) {
+    return `
+      <section class="app-panel">
+        <h2>Book details</h2>
+        <p class="muted">This link is missing data. Open a book from Discover or Library first.</p>
+        <p><a href="/discover" data-link-route="/discover">Go to Discover</a></p>
+      </section>
+    `;
+  }
+  const cover = fixCoverUrl(book.coverUrl);
+  const title = escapeHtml(book.title || "Untitled");
+  const author = escapeHtml(book.author || "Unknown Author");
+  const meta = [
+    book.publishedYear ? escapeHtml(String(book.publishedYear)) : "",
+    book.publisher ? escapeHtml(String(book.publisher)) : "",
+    Array.isArray(book.genres) && book.genres.length ? escapeHtml(book.genres.slice(0, 3).join(", ")) : "",
+  ].filter(Boolean).join(" · ");
+  const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} / 5` : "No rating yet";
+  const shareUrl = buildBookShareUrl(book);
+  return `
+    <section class="app-panel">
+      <p><a class="btn btn-outline" href="/discover" data-link-route="/discover">← Back to Discover</a></p>
+      <section class="pw-book-page-hero">
+        <div class="pw-modal-cover">${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />` : "<div class=\"pw-poster-fallback\">PW</div>"}</div>
+        <div>
+          <h2>${title}</h2>
+          <p>${author}</p>
+          ${meta ? `<p class="muted">${meta}</p>` : ""}
+          <p class="metric">Community rating: ${escapeHtml(rating)}</p>
+          <div class="cta-actions">
+            <button class="btn btn-outline" id="pw-book-page-copy">Copy share link</button>
+            <a class="btn btn-outline" href="${escapeHtml(shareUrl)}">Open original link</a>
+          </div>
+        </div>
+      </section>
+      <article class="app-panel">
+        <h3>About this book</h3>
+        <p>${escapeHtml(book.description || "No description yet.")}</p>
+      </article>
+    </section>
+  `;
+}
+
 function renderProtectedRouteGate(route) {
   const routeNameMap = {
     "/discover": t("appNav.discover", "Discover"),
@@ -1445,6 +1534,7 @@ function bindClubsActions(supabase, session, rerender) {
 
 async function renderCurrentRoute(supabase, session, route) {
   if (route === "/") return renderHome(supabase, session);
+  if (route === "/book") return renderBookRoute();
   if (route === "/discover") return renderDiscover(supabase, session);
   if (route === "/library") return renderLibrary(supabase, session);
   if (route === "/social") return renderSocial(supabase, session);
@@ -1495,6 +1585,17 @@ async function renderRoute(supabase, session) {
       showBanner("success", t("appShell.signedOut", "You are signed out."));
     });
   }
+  if (route === "/book") {
+    const copyBtn = document.getElementById("pw-book-page-copy");
+    copyBtn?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showBanner("success", "Book link copied.");
+      } catch (_) {
+        showBanner("error", "Could not copy link.");
+      }
+    });
+  }
   bindBookModalActions();
 }
 
@@ -1506,9 +1607,15 @@ function initLinks(render) {
     if (!link) return;
     event.preventDefault();
     const route = link.getAttribute("data-link-route") || "/";
-    if (!APP_ROUTES.has(route)) return;
-    if (window.location.pathname !== route) {
-      window.history.pushState({}, "", route);
+    const href = link.getAttribute("href") || route;
+    let targetUrl = href;
+    try {
+      targetUrl = new URL(href, window.location.origin).pathname + new URL(href, window.location.origin).search;
+    } catch (_) {}
+    const targetPath = targetUrl.split("?")[0] || "/";
+    if (!APP_ROUTES.has(targetPath)) return;
+    if (`${window.location.pathname}${window.location.search}` !== targetUrl) {
+      window.history.pushState({}, "", targetUrl);
     }
     render();
   });
