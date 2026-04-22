@@ -70,21 +70,30 @@ CREATE POLICY "book_clubs_select"
 
 -- 4) book_club_members: SELECT only own rows (no self-referential subquery — avoids infinite recursion)
 DROP FUNCTION IF EXISTS public.is_book_club_member(uuid, uuid);
-DROP POLICY IF EXISTS "book_club_members_select" ON public.book_club_members;
+DO $$
+DECLARE
+  p record;
+BEGIN
+  FOR p IN
+    SELECT pol.polname
+    FROM pg_policy pol
+    JOIN pg_class c ON c.oid = pol.polrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = 'book_club_members'
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON public.book_club_members', p.polname);
+  END LOOP;
+END $$;
 CREATE POLICY "book_club_members_select"
   ON public.book_club_members
   FOR SELECT
   TO authenticated
   USING (user_id = auth.uid());
-
-DROP POLICY IF EXISTS "book_club_members_insert_self" ON public.book_club_members;
 CREATE POLICY "book_club_members_insert_self"
   ON public.book_club_members
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = auth.uid());
-
-DROP POLICY IF EXISTS "book_club_members_insert_creator" ON public.book_club_members;
 CREATE POLICY "book_club_members_insert_creator"
   ON public.book_club_members
   FOR INSERT
