@@ -120,10 +120,6 @@ async function fetchJson(url) {
   return response.json();
 }
 
-function getGoogleBooksKey() {
-  return window.PAGEWALKER_PUBLIC_CONFIG?.googleBooksApiKey || "";
-}
-
 function parseGoogleBook(item) {
   const info = item?.volumeInfo || {};
   const images = info?.imageLinks || {};
@@ -278,27 +274,24 @@ async function renderHome(_supabase, _session) {
 
 async function renderDiscover(supabase, session) {
   const safeQuery = discoverQuery.trim();
-  const googleKey = getGoogleBooksKey();
   const [trendingBooks, genreBooks, searchBooks, freeClassics] = await Promise.all([
     runSafeQuery(async () => {
-      if (!googleKey) return [];
-      const json = await fetchJson(`https://www.googleapis.com/books/v1/volumes?q=subject:fiction&orderBy=relevance&maxResults=12&langRestrict=en&key=${googleKey}`);
+      const json = await fetchJson("/api/books?type=trending");
       return (json.items || []).map(parseGoogleBook);
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
     runSafeQuery(async () => {
-      if (!googleKey) return [];
       const g = encodeURIComponent(discoverGenre);
-      const json = await fetchJson(`https://www.googleapis.com/books/v1/volumes?q=subject:${g}&orderBy=relevance&maxResults=12&langRestrict=en&key=${googleKey}`);
+      const json = await fetchJson(`/api/books?type=genre&genre=${g}`);
       return (json.items || []).map(parseGoogleBook);
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
     runSafeQuery(async () => {
-      if (!googleKey || !safeQuery) return [];
+      if (!safeQuery) return [];
       const q = encodeURIComponent(safeQuery);
-      const json = await fetchJson(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=20&langRestrict=en&key=${googleKey}`);
+      const json = await fetchJson(`/api/books?type=search&q=${q}`);
       return (json.items || []).map(parseGoogleBook);
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
     runSafeQuery(async () => {
-      const json = await fetchJson("https://gutendex.com/books?languages=en&copyright=false");
+      const json = await fetchJson("/api/books?type=classics");
       return (json.results || []).slice(0, 10).map(parseGutendexBook);
     }, t("route.discover.trendingFallback", "Trending data is not available yet.")),
   ]);

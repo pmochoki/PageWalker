@@ -10,10 +10,7 @@ module.exports = async (req, res) => {
   }
 
   const openAiKey = process.env.OPENAI_API_KEY || "";
-  const googleBooksApiKey =
-    process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY ||
-    process.env.GOOGLE_BOOKS_API_KEY ||
-    "";
+  const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY || "";
 
   if (!openAiKey) {
     return res.status(500).json({ error: "OPENAI_API_KEY is missing" });

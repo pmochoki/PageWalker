@@ -8,7 +8,6 @@ function configFromWindow() {
     return {
       supabaseUrl: w.supabaseUrl,
       supabaseAnonKey: w.supabaseAnonKey,
-      googleBooksApiKey: w.googleBooksApiKey || "",
     };
   }
   return null;
@@ -23,7 +22,6 @@ export async function loadPublicConfig() {
         return {
           supabaseUrl: data.supabaseUrl,
           supabaseAnonKey: data.supabaseAnonKey,
-          googleBooksApiKey: data.googleBooksApiKey || "",
         };
       }
     }

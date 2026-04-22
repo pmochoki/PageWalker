@@ -13,9 +13,5 @@ module.exports = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   const supabaseUrl = process.env.SUPABASE_URL || "";
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
-  const googleBooksApiKey =
-    process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY ||
-    process.env.GOOGLE_BOOKS_API_KEY ||
-    "";
-  res.status(200).json({ supabaseUrl, supabaseAnonKey, googleBooksApiKey });
+  res.status(200).json({ supabaseUrl, supabaseAnonKey });
 };
