@@ -1,4 +1,9 @@
+const { withRequestContext, applyRateLimit, sendError } = require("./_utils");
+
 module.exports = async (req, res) => {
+  const ctx = withRequestContext(req, res, "mood-recommendations");
+  if (!applyRateLimit(res, ctx, { windowMs: 60000, max: 20 })) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -7,6 +12,9 @@ module.exports = async (req, res) => {
   const mood = String(req.body?.mood || "").trim();
   if (!mood) {
     return res.status(400).json({ error: "Mood is required" });
+  }
+  if (mood.length > 160) {
+    return res.status(400).json({ error: "Mood is too long" });
   }
 
   const openAiKey = process.env.OPENAI_API_KEY || "";
@@ -85,9 +93,6 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({ recommendations: withCovers });
   } catch (error) {
-    return res.status(500).json({
-      error: "Failed to get recommendations",
-      details: String(error?.message || error),
-    });
+    return sendError(res, ctx, 500, "Failed to get recommendations", error);
   }
 };

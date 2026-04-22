@@ -1,4 +1,8 @@
+const { withRequestContext, applyRateLimit, sendError } = require("./_utils");
+
 module.exports = async (req, res) => {
+  const ctx = withRequestContext(req, res, "books");
+  if (!applyRateLimit(res, ctx, { windowMs: 60000, max: 90 })) return;
   const type = String(req.query?.type || "").trim();
   const googleKey = process.env.GOOGLE_BOOKS_API_KEY || "";
   const toInt = (value, fallback) => {
@@ -126,9 +130,6 @@ module.exports = async (req, res) => {
     const data = await response.json();
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({
-      error: "books_proxy_failed",
-      details: String(error?.message || error),
-    });
+    return sendError(res, ctx, 500, "books_proxy_failed", error);
   }
 };
