@@ -110,9 +110,21 @@ function listToHtml(items) {
     .join("")}</ul>`;
 }
 
-async function runSafeQuery(work, emptyText) {
+const DEFAULT_QUERY_TIMEOUT_MS = 20000;
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("query_timeout")), ms);
+    }),
+  ]);
+}
+
+/** Supabase/PostgREST can hang without rejecting; this caps wait time. */
+async function runSafeQuery(work, emptyText, timeoutMs = DEFAULT_QUERY_TIMEOUT_MS) {
   try {
-    const rows = await work();
+    const rows = await withTimeout(work(), timeoutMs);
     return rows;
   } catch (_) {
     return [{ __error: true, text: emptyText || t("appShell.missingData") }];
@@ -985,11 +997,14 @@ async function renderProfile(supabase, session) {
         .split("@")[0]
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "");
-      await supabase.from("profiles").upsert({
-        id: session.user.id,
-        username: emailPrefix || "reader",
-        display_name: emailPrefix || "reader",
-      });
+      await withTimeout(
+        supabase.from("profiles").upsert({
+          id: session.user.id,
+          username: emailPrefix || "reader",
+          display_name: emailPrefix || "reader",
+        }),
+        12000,
+      );
       profile.username = emailPrefix || "reader";
       profile.display_name = emailPrefix || "reader";
     } catch (_) {}
@@ -1800,7 +1815,23 @@ async function boot() {
     return;
   }
 
-  let session = (await supabase.auth.getSession()).data.session;
+  let session;
+  try {
+    const { data, error } = await withTimeout(supabase.auth.getSession(), 15000);
+    if (error) {
+      showBanner("error", error.message);
+    }
+    session = data?.session ?? null;
+  } catch (_) {
+    showBanner(
+      "error",
+      t(
+        "app.sessionTimeout",
+        "Session is taking too long. Check your connection and try refreshing the page.",
+      ),
+    );
+    session = null;
+  }
 
   const render = async () => {
     await renderRoute(supabase, session);
