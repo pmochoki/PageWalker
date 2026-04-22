@@ -14,9 +14,12 @@ FROM (
 ) sub
 WHERE bc.id = sub.club_id;
 
+-- member_count: SECURITY DEFINER so UPDATE on book_clubs works under RLS (any user may join a club)
 CREATE OR REPLACE FUNCTION public.sync_book_club_member_count()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
   IF TG_OP = 'INSERT' THEN
@@ -67,6 +70,15 @@ CREATE POLICY "book_clubs_select"
     OR id IN (SELECT club_id FROM public.book_club_members WHERE user_id = auth.uid())
     OR is_private = false
   );
+
+-- 3b) Create clubs (replaces "Anyone can create club" if present; safe for fresh or upgraded DBs)
+DROP POLICY IF EXISTS "Anyone can create club" ON public.book_clubs;
+DROP POLICY IF EXISTS "book_clubs_insert" ON public.book_clubs;
+CREATE POLICY "book_clubs_insert"
+  ON public.book_clubs
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (created_by = auth.uid());
 
 -- 4) book_club_members: SELECT only own rows (no self-referential subquery — avoids infinite recursion)
 DROP FUNCTION IF EXISTS public.is_book_club_member(uuid, uuid);
