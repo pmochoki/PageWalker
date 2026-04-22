@@ -2040,6 +2040,7 @@ html[data-theme="dark"] .pw-auth-nudge {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  width: 100%;
   max-width: 36rem;
 }
 
@@ -2154,44 +2155,65 @@ html[data-theme="dark"] .pw-auth-nudge {
   background: transparent;
 }
 
+/* Rounded rect — not a full pill — avoids iOS/WebKit rendering a huge “ring” when height ≈ width */
 .pw-club-chat__input-wrap {
   display: flex;
-  align-items: flex-end;
-  gap: 0.4rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.2rem 0.2rem 0.2rem 0.9rem;
+  border-radius: var(--radius);
+  padding: 0.55rem 0.65rem;
   background: var(--card);
 }
 
 .pw-club-chat__textarea {
-  flex: 1;
-  min-height: 2.4rem;
-  max-height: 6rem;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 4.5rem;
+  max-height: 9rem;
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
-  resize: none;
-  padding: 0.45rem 0;
-  line-height: 1.4;
-  field-sizing: content;
-  min-width: 0;
-}
-
-@supports not (field-sizing: content) {
-  .pw-club-chat__textarea {
-    min-height: 2.5rem;
-  }
+  resize: vertical;
+  padding: 0.35rem 0.15rem;
+  line-height: 1.45;
 }
 
 .pw-club-chat__send {
+  align-self: stretch;
   flex-shrink: 0;
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  padding: 0.55rem 1rem;
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 800;
+}
+
+@media (min-width: 520px) {
+  .pw-club-chat__input-wrap {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.45rem 0.5rem 0.45rem 0.65rem;
+  }
+
+  .pw-club-chat__textarea {
+    flex: 1;
+    min-width: 0;
+    min-height: 3rem;
+    max-height: 7rem;
+    resize: none;
+  }
+
+  .pw-club-chat__send {
+    align-self: flex-end;
+    width: auto;
+  }
 }
 
 .pw-club-chat__options {

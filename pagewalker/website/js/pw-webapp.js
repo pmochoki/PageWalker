@@ -1268,7 +1268,7 @@ async function renderClubDetail(supabase, session) {
             <textarea
               id="pw-club-forum-body"
               class="pw-club-chat__textarea"
-              rows="1"
+              rows="3"
               maxlength="2000"
               required
               placeholder="${t("route.clubs.chatPlaceholder", "Message the group…")}"
