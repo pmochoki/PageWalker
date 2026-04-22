@@ -218,11 +218,21 @@ function renderBookPosterCard(book, opts = {}) {
   const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} ★` : "";
   const footer = [year, genre, rating].filter(Boolean).join(" · ");
   const action = opts.actionHtml || "";
+  const modalBook = escapeHtml(JSON.stringify({
+    title: book.title || "Untitled",
+    author: book.author || "Unknown Author",
+    coverUrl: cover,
+    description: book.description || "",
+    publishedYear: book.publishedYear || "",
+    publisher: book.publisher || "",
+    genres: Array.isArray(book.genres) ? book.genres : [],
+    googleRating: book.googleRating ?? null,
+  }));
   return `
     <article class="pw-poster-card">
-      <div class="pw-poster-media">
+      <button class="pw-poster-media pw-poster-hit" data-book-modal='${modalBook}'>
         ${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" loading="lazy" />` : `<div class="pw-poster-fallback">PW</div>`}
-      </div>
+      </button>
       <div class="pw-poster-copy">
         <h4>${title}</h4>
         <p>${author}</p>
@@ -231,6 +241,68 @@ function renderBookPosterCard(book, opts = {}) {
       </div>
     </article>
   `;
+}
+
+function ensureBookModal() {
+  let modal = document.getElementById("pw-book-modal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "pw-book-modal";
+  modal.className = "pw-modal";
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="pw-modal-backdrop" data-modal-close></div>
+    <article class="pw-modal-card" role="dialog" aria-modal="true" aria-label="Book details">
+      <button class="btn btn-outline pw-modal-close" data-modal-close>Close</button>
+      <div class="pw-modal-body" id="pw-modal-body"></div>
+    </article>
+  `;
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function openBookModal(book) {
+  const modal = ensureBookModal();
+  const body = modal.querySelector("#pw-modal-body");
+  if (!body) return;
+  const title = escapeHtml(book.title || "Untitled");
+  const author = escapeHtml(book.author || "Unknown Author");
+  const cover = fixCoverUrl(book.coverUrl);
+  const description = escapeHtml(book.description || "No description yet.");
+  const meta = [
+    book.publishedYear ? escapeHtml(String(book.publishedYear)) : "",
+    book.publisher ? escapeHtml(String(book.publisher)) : "",
+    Array.isArray(book.genres) && book.genres.length ? escapeHtml(book.genres.slice(0, 3).join(", ")) : "",
+  ].filter(Boolean).join(" · ");
+  const rating = book.googleRating != null ? `${Number(book.googleRating).toFixed(1)} / 5` : "No rating yet";
+  body.innerHTML = `
+    <section class="pw-modal-hero">
+      <div class="pw-modal-cover">${cover ? `<img src="${escapeHtml(cover)}" alt="${title} cover" />` : "<div class=\"pw-poster-fallback\">PW</div>"}</div>
+      <div>
+        <h3>${title}</h3>
+        <p>${author}</p>
+        ${meta ? `<p class="muted">${meta}</p>` : ""}
+        <p class="metric">Community rating: ${escapeHtml(rating)}</p>
+      </div>
+    </section>
+    <section class="app-panel">
+      <h4>About this book</h4>
+      <p>${description}</p>
+    </section>
+    <section class="app-panel">
+      <h4>Where to find it</h4>
+      <p>Use Discover search for editions and external links, then add it to your shelf.</p>
+    </section>
+  `;
+  modal.hidden = false;
+  document.body.classList.add("pw-modal-open");
+}
+
+function closeBookModal() {
+  const modal = document.getElementById("pw-book-modal");
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.classList.remove("pw-modal-open");
 }
 
 async function upsertUserBookStatus(supabase, userId, book, status) {
@@ -386,14 +458,14 @@ async function renderDiscover(supabase, session) {
       ${renderBackToProfile()}
       <h2>${t("route.discover.title", "Discover & search")}</h2>
       <p>${t("route.discover.body", "Browse catalog books and use app search from web.")}</p>
-      <form id="pw-discover-search" class="form-stack">
+      <form id="pw-discover-search" class="form-stack pw-sticky-bar">
         <label>
           <span>${t("route.discover.searchLabel", "Search books")}</span>
           <input id="pw-discover-query" type="text" value="${escapeHtml(safeQuery)}" placeholder="${t("route.discover.searchPlaceholder", "Search by title")}" />
         </label>
         <button type="submit" class="btn">${t("route.discover.searchAction", "Search")}</button>
       </form>
-      <article class="app-panel">
+      <article class="app-panel pw-sticky-bar">
         <h3>${t("route.discover.moodTitle", "What's your vibe?")}</h3>
         <div class="cta-actions">
           ${["Make me cry", "Dark & twisted", "Cozy", "Slow burn", "Magic", "Mystery"].map((m) => `<button class="btn btn-outline" data-mood-chip="${escapeHtml(m)}">${escapeHtml(m)}</button>`).join("")}
@@ -482,7 +554,7 @@ async function renderLibrary(supabase, session) {
       ${renderBackToProfile()}
       <h2>${t("route.library.title", "Library")}</h2>
       <p class="muted">${t("route.library.explainer", "This is your reading shelf. Add books from Discover, then move them across TBR, Reading, Read, and DNF.")}</p>
-      <div class="cta-actions">
+      <div class="cta-actions pw-sticky-bar">
         <button class="btn btn-outline" data-library-filter="all">${t("route.library.filterAll", "All")} (${cleanRows.length})</button>
         ${LIBRARY_STATUSES.map((status) => `<button class="btn btn-outline" data-library-filter="${status}">${STATUS_LABELS[status]} (${counts[status] || 0})</button>`).join("")}
       </div>
@@ -1035,6 +1107,33 @@ function bindLibraryActions(supabase, session, rerender) {
   }
 }
 
+function bindBookModalActions() {
+  const hitAreas = document.querySelectorAll("[data-book-modal]");
+  for (let i = 0; i < hitAreas.length; i += 1) {
+    hitAreas[i].addEventListener("click", () => {
+      const raw = hitAreas[i].getAttribute("data-book-modal");
+      if (!raw) return;
+      try {
+        openBookModal(JSON.parse(raw));
+      } catch (_) {}
+    });
+  }
+
+  const modal = ensureBookModal();
+  const closers = modal.querySelectorAll("[data-modal-close]");
+  for (let i = 0; i < closers.length; i += 1) {
+    if (closers[i].dataset.bound === "true") continue;
+    closers[i].addEventListener("click", closeBookModal);
+    closers[i].dataset.bound = "true";
+  }
+  if (!document.body.dataset.modalEscBound) {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeBookModal();
+    });
+    document.body.dataset.modalEscBound = "true";
+  }
+}
+
 function bindSocialActions(supabase, session, rerender) {
   const form = document.getElementById("pw-social-form");
   const titleInput = document.getElementById("pw-social-title");
@@ -1367,8 +1466,10 @@ async function renderRoute(supabase, session) {
     bindLockedGateActions();
     return;
   }
+  root.classList.remove("pw-route-enter");
   root.innerHTML = renderRouteSkeleton(route);
   root.innerHTML = await renderCurrentRoute(supabase, session, route);
+  requestAnimationFrame(() => root.classList.add("pw-route-enter"));
   const rerender = () => renderRoute(supabase, session);
   if (route === "/discover") bindDiscoverActions(supabase, session, rerender);
   if (route === "/library") bindLibraryActions(supabase, session, rerender);
@@ -1394,6 +1495,7 @@ async function renderRoute(supabase, session) {
       showBanner("success", t("appShell.signedOut", "You are signed out."));
     });
   }
+  bindBookModalActions();
 }
 
 function initLinks(render) {
