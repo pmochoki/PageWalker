@@ -1305,8 +1305,8 @@ a.pw-drawer__sublink[data-active] {
   box-shadow: inset 2px 0 0 var(--primary);
 }
 
-.pw-discover-page__lede {
-  margin-bottom: 0.35rem;
+.pw-discover-page > h2 {
+  margin-bottom: 0.45rem;
 }
 
 .pw-discover-tabstrip {

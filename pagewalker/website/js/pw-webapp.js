@@ -966,7 +966,6 @@ async function renderDiscover(supabase, session) {
   return `
     <section class="app-panel pw-discover-page" id="pw-discover-root" data-pw-active="trending">
       <h2>${t("route.discover.title", "Discover & search")}</h2>
-      <p class="pw-discover-page__lede">${t("route.discover.body", "Browse catalog books and use app search from web.")}</p>
       <nav class="pw-discover-tabstrip" aria-label="${t("route.discover.tabstripLabel", "Discover areas")}">
         <a
           class="btn btn-outline pw-discover-tablink"
