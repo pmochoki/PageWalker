@@ -95,6 +95,14 @@ function ensureAppPath() {
 
 const DISCOVER_TAB_IDS = ["trending", "genre", "classics", "search"];
 
+/** No hash (or invalid) → hub landing; else one of the four sections. */
+function getDiscoverView() {
+  const raw = String(window.location.hash || "").replace(/^#/, "");
+  if (!raw) return "hub";
+  if (DISCOVER_TAB_IDS.includes(raw)) return raw;
+  return "hub";
+}
+
 function setActiveRoute(route) {
   const mainLinks = document.querySelectorAll("a.pw-drawer__item[data-link-route]");
   for (let i = 0; i < mainLinks.length; i += 1) {
@@ -104,15 +112,14 @@ function setActiveRoute(route) {
   const discoverGroup = document.getElementById("pw-drawer-discover");
   discoverGroup?.toggleAttribute("data-nav-active", route === "/discover");
   const discoverJumpLinks = document.querySelectorAll("a.pw-drawer__sublink, a.pw-discover-tablink");
-  const hash = String(window.location.hash || "").replace(/^#/, "");
-  const effectiveDiscoverTab = hash && DISCOVER_TAB_IDS.includes(hash) ? hash : "trending";
+  const v = getDiscoverView();
   for (let i = 0; i < discoverJumpLinks.length; i += 1) {
     const jump = discoverJumpLinks[i].getAttribute("data-discover-jump") || "";
-    const active = route === "/discover" && Boolean(jump) && jump === effectiveDiscoverTab;
+    const active = route === "/discover" && Boolean(jump) && jump === v;
     discoverJumpLinks[i].toggleAttribute("data-active", active);
   }
   const otherNav = document.querySelectorAll(
-    "[data-link-route]:not(a.pw-drawer__item):not(a.pw-drawer__sublink):not(a.pw-discover-tablink)",
+    "[data-link-route]:not(a.pw-drawer__item):not(a.pw-drawer__sublink):not(a.pw-discover-tablink):not(a.pw-discover-hub-card)",
   );
   for (let i = 0; i < otherNav.length; i += 1) {
     const path = otherNav[i].getAttribute("data-link-route");
@@ -120,17 +127,11 @@ function setActiveRoute(route) {
   }
 }
 
-function discoverTabFromHash() {
-  const raw = String(window.location.hash || "").replace(/^#/, "");
-  if (DISCOVER_TAB_IDS.includes(raw)) return raw;
-  return "trending";
-}
-
-/** One panel visible at a time; driven by /discover#(trending|genre|classics|search). */
+/** Hub vs one section: /discover vs /discover#… */
 function applyDiscoverPanelFromHash() {
   const root = document.getElementById("pw-discover-root");
   if (!root) return;
-  root.setAttribute("data-pw-active", discoverTabFromHash());
+  root.setAttribute("data-pw-active", getDiscoverView());
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -906,6 +907,7 @@ async function renderHome(_supabase, _session) {
 }
 
 async function renderDiscover(supabase, session) {
+  const discoverView = getDiscoverView();
   const safeQuery = discoverQuery.trim();
   const loadGooglePages = async (baseUrl, pages) => {
     const reqs = [];
@@ -964,9 +966,21 @@ async function renderDiscover(supabase, session) {
   const moodCustomValue = !moodInPreset && discoverMood ? discoverMood : "";
 
   return `
-    <section class="app-panel pw-discover-page" id="pw-discover-root" data-pw-active="trending">
-      <h2>${t("route.discover.title", "Discover & search")}</h2>
+    <section class="app-panel pw-discover-page" id="pw-discover-root" data-pw-active="${discoverView}">
+      <h2 class="pw-discover-title">${t("route.discover.heading", "Discover")}</h2>
       <nav class="pw-discover-tabstrip" aria-label="${t("route.discover.tabstripLabel", "Discover areas")}">
+        <a
+          class="btn btn-outline pw-discover-tablink"
+          data-link-route="/discover"
+          href="/discover"
+          data-discover-jump="hub"
+        >${t("route.discover.overview", "Overview")}</a>
+        <a
+          class="btn btn-outline pw-discover-tablink"
+          data-link-route="/discover"
+          href="/discover#search"
+          data-discover-jump="search"
+        >${t("drawer.discover.search", "Search & mood")}</a>
         <a
           class="btn btn-outline pw-discover-tablink"
           data-link-route="/discover"
@@ -985,14 +999,45 @@ async function renderDiscover(supabase, session) {
           href="/discover#classics"
           data-discover-jump="classics"
         >${t("drawer.discover.classics", "Classics")}</a>
-        <a
-          class="btn btn-outline pw-discover-tablink"
-          data-link-route="/discover"
-          href="/discover#search"
-          data-discover-jump="search"
-        >${t("drawer.discover.search", "Search & mood")}</a>
       </nav>
-      <div class="pw-discover-panels" role="tabpanel" aria-label="${t("route.discover.title", "Discover & search")}">
+      <div class="pw-discover-hub" data-pw-discover-panel="hub" aria-label="${t("route.discover.hubLabel", "Discover overview")}">
+        <p class="pw-discover-page__lede muted">${t("route.discover.hubSubtitle", "Search, explore moods, trending books, genres & classics")}</p>
+        <div class="pw-discover-hub__grid">
+          <a
+            class="app-panel pw-discover-hub-card"
+            data-link-route="/discover"
+            href="/discover#search"
+          >
+            <h3 class="pw-discover-hub-card__title">${t("drawer.discover.search", "Search & mood")}</h3>
+            <p class="pw-discover-hub-card__desc muted">${t("route.discover.hubCardSearch", "Search the catalog and find reads by mood.")}</p>
+          </a>
+          <a
+            class="app-panel pw-discover-hub-card"
+            data-link-route="/discover"
+            href="/discover#trending"
+          >
+            <h3 class="pw-discover-hub-card__title">🔥 ${t("drawer.discover.trending", "Trending")}</h3>
+            <p class="pw-discover-hub-card__desc muted">${t("route.discover.hubCardTrending", "See what’s hot right now.")}</p>
+          </a>
+          <a
+            class="app-panel pw-discover-hub-card"
+            data-link-route="/discover"
+            href="/discover#genre"
+          >
+            <h3 class="pw-discover-hub-card__title">${t("drawer.discover.genre", "Genre exploration")}</h3>
+            <p class="pw-discover-hub-card__desc muted">${t("route.discover.hubCardGenre", "Browse books by genre.")}</p>
+          </a>
+          <a
+            class="app-panel pw-discover-hub-card"
+            data-link-route="/discover"
+            href="/discover#classics"
+          >
+            <h3 class="pw-discover-hub-card__title">📖 ${t("drawer.discover.classics", "Classics")}</h3>
+            <p class="pw-discover-hub-card__desc muted">${t("route.discover.hubCardClassics", "Explore free classic literature.")}</p>
+          </a>
+        </div>
+      </div>
+      <div class="pw-discover-panels" role="region" aria-label="${t("route.discover.sectionsLabel", "Discover content")}">
         <section
           class="app-panel pw-discover-panel"
           data-pw-discover-panel="trending"

@@ -127,15 +127,15 @@
           <span class="pw-drawer__label" data-i18n="appNav.home">Home</span>
           <span class="pw-drawer__desc" data-i18n="drawer.desc.home">Landing, hero, and what’s new</span>
         </a>
-        <details class="pw-drawer__group" id="pw-drawer-discover" aria-label="Discover">
-          <summary class="pw-drawer__summary" aria-label="Show or hide Discover subsections">
-            <span class="pw-drawer__summary-text">
-              <span class="pw-drawer__label" data-i18n="appNav.discover">Discover</span>
-              <span class="pw-drawer__desc" data-i18n="drawer.desc.discover">Search, mood, trending & genres</span>
-            </span>
-            <span class="pw-drawer__chevron" aria-hidden="true">▾</span>
-          </summary>
+        <div class="pw-drawer__group pw-drawer__discover-block" id="pw-drawer-discover" aria-label="Discover">
+          <a class="pw-drawer__item" href="/discover" data-link-route="/discover">
+            <span class="pw-drawer__label" data-i18n="appNav.discover">Discover</span>
+            <span class="pw-drawer__desc" data-i18n="drawer.desc.discover">Search, explore moods, trending, genres &amp; classics</span>
+          </a>
           <div class="pw-drawer__sub" role="group" aria-label="Discover sections">
+            <a class="pw-drawer__sublink" href="/discover#search" data-link-route="/discover" data-discover-jump="search">
+              <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.search">Search &amp; mood</span>
+            </a>
             <a class="pw-drawer__sublink" href="/discover#trending" data-link-route="/discover" data-discover-jump="trending">
               <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.trending">Trending</span>
             </a>
@@ -145,11 +145,8 @@
             <a class="pw-drawer__sublink" href="/discover#classics" data-link-route="/discover" data-discover-jump="classics">
               <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.classics">Classics</span>
             </a>
-            <a class="pw-drawer__sublink" href="/discover#search" data-link-route="/discover" data-discover-jump="search">
-              <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.search">Search &amp; mood</span>
-            </a>
           </div>
-        </details>
+        </div>
         <a class="pw-drawer__item" href="/library" data-link-route="/library">
           <span class="pw-drawer__label" data-i18n="appNav.library">Library</span>
           <span class="pw-drawer__desc" data-i18n="drawer.desc.library">TBR, reading, read & DNF</span>
