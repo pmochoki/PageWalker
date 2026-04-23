@@ -129,13 +129,16 @@
         </a>
         <details class="pw-drawer__group pw-drawer__discover-block" id="pw-drawer-discover">
           <summary class="pw-drawer__summary">
-            <a class="pw-drawer__item pw-drawer__summary-main" href="/discover" data-link-route="/discover">
+            <span class="pw-drawer__summary-toggle">
               <span class="pw-drawer__label" data-i18n="appNav.discover">Discover</span>
               <span class="pw-drawer__desc" data-i18n="drawer.desc.discover">Search, explore moods, trending, genres &amp; classics</span>
-            </a>
-            <span class="pw-drawer__chevron" data-i18n-attr="title:drawer.discover.chevronTitle" title="Show or hide sections" aria-hidden="true">▾</span>
+            </span>
+            <span class="pw-drawer__chevron" aria-hidden="true">▾</span>
           </summary>
           <div class="pw-drawer__sub" role="group" aria-label="Discover sections">
+            <a class="pw-drawer__sublink" href="/discover" data-link-route="/discover" data-discover-jump="hub">
+              <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.overview">Overview</span>
+            </a>
             <a class="pw-drawer__sublink" href="/discover#search" data-link-route="/discover" data-discover-jump="search">
               <span class="pw-drawer__sublink-label" data-i18n="drawer.discover.search">Search &amp; mood</span>
             </a>

@@ -1285,15 +1285,27 @@ details.pw-drawer__discover-block > .pw-drawer__summary {
   justify-content: flex-start;
   gap: 0.25rem;
   padding: 0;
-  cursor: default;
+  cursor: pointer;
   user-select: none;
+  border-radius: 12px;
+  transition: background 0.1s ease;
 }
 
-details.pw-drawer__discover-block > .pw-drawer__summary .pw-drawer__summary-main {
+details.pw-drawer__discover-block > .pw-drawer__summary:hover {
+  background: var(--primary-soft);
+}
+
+details.pw-drawer__discover-block > .pw-drawer__summary .pw-drawer__summary-toggle {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.75rem 0.25rem 0.75rem 0.7rem;
   margin: 0;
-  cursor: pointer;
+  pointer-events: none;
+  color: inherit;
 }
 
 details.pw-drawer__discover-block > .pw-drawer__summary .pw-drawer__chevron {
@@ -1301,18 +1313,14 @@ details.pw-drawer__discover-block > .pw-drawer__summary .pw-drawer__chevron {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 0.5rem 0.75rem 0.2rem;
+  padding: 0.75rem 0.5rem 0.75rem 0;
   margin: 0.1rem 0.2rem 0.1rem 0;
   border-radius: 8px;
   font-size: 0.8rem;
   line-height: 1;
   opacity: 0.9;
-  transition: transform 0.15s ease, background 0.1s ease, opacity 0.1s ease;
-  cursor: pointer;
-}
-
-details.pw-drawer__discover-block > .pw-drawer__summary .pw-drawer__chevron:hover {
-  background: var(--primary-soft);
+  pointer-events: none;
+  transition: transform 0.15s ease, opacity 0.1s ease;
 }
 
 .pw-drawer__sub {
