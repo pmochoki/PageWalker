@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
+import '../../core/services/guest_mode_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/dynamic_sky_background.dart';
+import '../../core/widgets/themed_background.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -25,8 +29,26 @@ class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
+  StreamSubscription<AuthState>? _authSub;
 
   SupabaseClient get _client => SupabaseConfig.client;
+  @override
+  void initState() {
+    super.initState();
+    _authSub = _client.auth.onAuthStateChange.listen((state) {
+      final event = state.event;
+      if (!mounted) return;
+      if ((event == AuthChangeEvent.signedIn ||
+              event == AuthChangeEvent.tokenRefreshed) &&
+          _client.auth.currentSession != null) {
+        GuestModeService.setGuestMode(false);
+        context.go('/home');
+      }
+    });
+  }
+
+  static const String _mobileRedirectUrl =
+      'com.pagewalker.app://login-callback';
 
   Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
@@ -45,13 +67,29 @@ class _SignupScreenState extends State<SignupScreen> {
       );
       final user = authRes.user;
       if (user != null) {
-        await _client.from('profiles').insert({
-          'id': user.id,
-          'username': _usernameController.text.trim(),
-          'display_name': _displayNameController.text.trim(),
-        });
+        try {
+          await _client.from('profiles').upsert({
+            'id': user.id,
+            'username': _usernameController.text.trim(),
+            'display_name': _displayNameController.text.trim(),
+          }, onConflict: 'id');
+        } catch (_) {
+          // Ignore profile upsert failures here to avoid blocking successful auth.
+        }
         if (!mounted) return;
-        context.go('/home');
+        if (authRes.session != null) {
+          await GuestModeService.setGuestMode(false);
+          if (!mounted) return;
+          context.go('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Account created. Check your email to confirm, then sign in.'),
+            ),
+          );
+          context.go('/auth/login');
+        }
       } else {
         setState(() {
           _errorMessage = 'Could not create account. Please try again.';
@@ -59,7 +97,14 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } on AuthException catch (e) {
       setState(() {
-        _errorMessage = e.message;
+        final msg = e.message.toLowerCase();
+        if (msg.contains('already registered') ||
+            msg.contains('already exists')) {
+          _errorMessage =
+              'This email already has an account. Please sign in instead.';
+        } else {
+          _errorMessage = e.message;
+        }
       });
     } catch (_) {
       setState(() {
@@ -72,8 +117,41 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
+  Future<void> _continueWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      await _client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: kIsWeb ? null : _mobileRedirectUrl,
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+    } on AuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (_) {
+      setState(() {
+        _errorMessage = 'Google sign-up failed. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _continueAsGuest() async {
+    await GuestModeService.setGuestMode(true);
+    if (!mounted) return;
+    context.go('/home');
+  }
+
   @override
   void dispose() {
+    _authSub?.cancel();
     _displayNameController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
@@ -84,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DynamicSkyBackground(
+      body: ThemedBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -121,7 +199,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (_errorMessage != null)
                     GlassCard(
                       padding: const EdgeInsets.all(12),
-                      borderColor: Colors.red.withOpacity(0.5),
+                      borderColor: Colors.red.withValues(alpha: 0.5),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -252,6 +330,15 @@ class _SignupScreenState extends State<SignupScreen> {
                               .animate()
                               .fadeIn(delay: 280.ms, duration: 400.ms)
                               .slideY(begin: 0.1, end: 0),
+                          const SizedBox(height: 10),
+                          OutlinedButton.icon(
+                            onPressed: _isLoading ? null : _continueWithGoogle,
+                            icon: const Icon(Icons.login_rounded),
+                            label: const Text('Continue with Google'),
+                          )
+                              .animate()
+                              .fadeIn(delay: 300.ms, duration: 400.ms)
+                              .slideY(begin: 0.1, end: 0),
                           const SizedBox(height: 12),
                           GestureDetector(
                             onTap: () {
@@ -267,6 +354,17 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ).animate().fadeIn(delay: 320.ms, duration: 400.ms),
+                          TextButton(
+                            onPressed: _isLoading
+                                ? null
+                                : () => context.push('/auth/forgot-password'),
+                            child: const Text('Forgot password?'),
+                          ),
+                          const SizedBox(height: 4),
+                          TextButton(
+                            onPressed: _isLoading ? null : _continueAsGuest,
+                            child: const Text('Continue as Guest'),
+                          ),
                         ],
                       ),
                     ),

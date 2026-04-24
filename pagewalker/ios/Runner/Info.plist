@@ -47,5 +47,18 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Pagewalker needs camera access to scan book barcodes</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.pagewalker.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.pagewalker.app</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

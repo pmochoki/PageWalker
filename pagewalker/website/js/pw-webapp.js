@@ -1836,6 +1836,7 @@ async function renderProfile(supabase, session) {
         <button id="pw-profile-signup" class="btn btn-outline"${signedIn ? " hidden" : ""}>${t("appShell.signUp", "Sign up")}</button>
         <button id="pw-profile-signout" class="btn btn-outline"${signedIn ? "" : " hidden"}>${t("appShell.signOut", "Sign out")}</button>
       </div>
+      ${signedIn ? "" : `<p class="muted" style="margin-top:10px;text-align:center"><a href="/forgot-password">${t("signin.forgot", "Forgot password?")}</a></p>`}
     </section>
   `;
 
@@ -2058,6 +2059,9 @@ function renderProtectedRouteGate(route) {
         <button id="pw-locked-signin" class="btn">${t("appShell.signIn", "Sign in")}</button>
         <button id="pw-locked-signup" class="btn btn-outline">${t("appShell.signUp", "Sign up")}</button>
       </div>
+      <p class="muted" style="margin-top:12px;text-align:center">
+        <a href="/forgot-password">${t("signin.forgot", "Forgot password?")}</a>
+      </p>
     </section>
   `;
 }
@@ -2091,6 +2095,11 @@ function bindLockedGateActions() {
   });
   signUpBtn?.addEventListener("click", () => {
     window.location.href = "/sign-up";
+  });
+  const forgot = document.querySelector('a[href="/forgot-password"]');
+  forgot?.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "/forgot-password";
   });
 }
 

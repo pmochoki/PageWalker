@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
+import '../../core/services/guest_mode_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/gradient_button.dart';
-import '../../core/widgets/dynamic_sky_background.dart';
+import '../../core/widgets/themed_background.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,8 +27,26 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
+  StreamSubscription<AuthState>? _authSub;
 
   SupabaseClient get _client => SupabaseConfig.client;
+  @override
+  void initState() {
+    super.initState();
+    _authSub = _client.auth.onAuthStateChange.listen((state) {
+      final event = state.event;
+      if (!mounted) return;
+      if ((event == AuthChangeEvent.signedIn ||
+              event == AuthChangeEvent.tokenRefreshed) &&
+          _client.auth.currentSession != null) {
+        GuestModeService.setGuestMode(false);
+        context.go('/home');
+      }
+    });
+  }
+
+  static const String _mobileRedirectUrl =
+      'com.pagewalker.app://login-callback';
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -38,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
       if (res.session != null) {
+        await GuestModeService.setGuestMode(false);
         if (!mounted) return;
         context.go('/home');
       } else {
@@ -47,7 +70,15 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on AuthException catch (e) {
       setState(() {
-        _errorMessage = e.message;
+        final msg = e.message.toLowerCase();
+        if (msg.contains('email not confirmed')) {
+          _errorMessage = 'Please confirm your email first, then sign in.';
+        } else if (msg.contains('invalid login credentials')) {
+          _errorMessage =
+              'Incorrect email or password. If you signed up with Google, use Continue with Google.';
+        } else {
+          _errorMessage = e.message;
+        }
       });
     } catch (_) {
       setState(() {
@@ -60,8 +91,41 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _continueWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      await _client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: kIsWeb ? null : _mobileRedirectUrl,
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+    } on AuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (_) {
+      setState(() {
+        _errorMessage = 'Google sign-in failed. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _continueAsGuest() async {
+    await GuestModeService.setGuestMode(true);
+    if (!mounted) return;
+    context.go('/home');
+  }
+
   @override
   void dispose() {
+    _authSub?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -70,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DynamicSkyBackground(
+      body: ThemedBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -109,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_errorMessage != null)
                     GlassCard(
                       padding: const EdgeInsets.all(12),
-                      borderColor: Colors.red.withOpacity(0.5),
+                      borderColor: Colors.red.withValues(alpha: 0.5),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -202,6 +266,25 @@ class _LoginScreenState extends State<LoginScreen> {
                               .animate()
                               .fadeIn(delay: 250.ms, duration: 400.ms)
                               .slideY(begin: 0.1, end: 0),
+                          const SizedBox(height: 6),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => context.push('/auth/forgot-password'),
+                              child: const Text('Forgot password?'),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          OutlinedButton.icon(
+                            onPressed: _isLoading ? null : _continueWithGoogle,
+                            icon: const Icon(Icons.login_rounded),
+                            label: const Text('Continue with Google'),
+                          )
+                              .animate()
+                              .fadeIn(delay: 280.ms, duration: 400.ms)
+                              .slideY(begin: 0.1, end: 0),
                           const SizedBox(height: 12),
                           GestureDetector(
                             onTap: () {
@@ -217,6 +300,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: _isLoading ? null : _continueAsGuest,
+                            child: const Text('Continue as Guest'),
+                          ),
                         ],
                       ),
                     ),

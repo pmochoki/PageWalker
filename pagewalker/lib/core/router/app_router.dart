@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/pagewalker_theme_extension.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
+import '../../features/auth/forgot_password_screen.dart';
+import '../../features/auth/update_password_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/library/library_screen.dart';
 import '../../features/discover/discover_screen.dart';
 import '../../features/social/social_screen.dart';
+import '../../features/social/book_discussion_room_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/profile/profile_settings_screen.dart';
 import '../../features/book_detail/book_detail_screen.dart';
@@ -27,6 +30,7 @@ import '../../features/book_club/join_club_screen.dart';
 import '../../features/book_club/club_detail_screen.dart';
 import '../../features/book_club/club_chat_screen.dart';
 import '../../features/book_club/club_members_screen.dart';
+import '../../features/reader/book_search_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -51,6 +55,18 @@ final appRouter = GoRouter(
       path: '/auth/signup',
       pageBuilder: (context, state) => _fadePage(
         const SignupScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/auth/forgot-password',
+      pageBuilder: (context, state) => _fadePage(
+        const ForgotPasswordScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/auth/update-password',
+      pageBuilder: (context, state) => _fadePage(
+        const UpdatePasswordScreen(),
       ),
     ),
     GoRoute(
@@ -97,10 +113,26 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
-      path: '/book/:id',
+      path: '/search',
+      pageBuilder: (context, state) => _fadePage(
+        BookSearchScreen(
+          initialTopic: state.uri.queryParameters['topic'],
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/book/:bookId',
       pageBuilder: (context, state) => _fadePage(
         BookDetailScreen(
-          bookId: state.pathParameters['id']!,
+          bookId: state.pathParameters['bookId']!,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/book/:bookId/room',
+      pageBuilder: (context, state) => _fadePage(
+        BookDiscussionRoomScreen(
+          bookId: state.pathParameters['bookId']!,
         ),
       ),
     ),
@@ -190,14 +222,21 @@ final appRouter = GoRouter(
         ),
       ),
     ),
+    GoRoute(
+      path: '/free-books',
+      pageBuilder: (context, state) => _fadePage(
+        BookSearchScreen(
+          initialTopic: state.uri.queryParameters['topic'],
+        ),
+      ),
+    ),
   ],
 );
 
 CustomTransitionPage _fadePage(Widget child) {
   return CustomTransitionPage(
     child: child,
-    transitionsBuilder:
-        (context, animation, secondaryAnimation, child) {
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(
         opacity: animation,
         child: SlideTransition(
@@ -262,36 +301,27 @@ class _PagewalkerNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = context.pwColors;
     final items = [
       (Icons.home_rounded, Icons.home_outlined, 'Home'),
-      (
-        Icons.local_library_rounded,
-        Icons.local_library_outlined,
-        'Library'
-      ),
-      (Icons.auto_awesome_rounded,
-          Icons.auto_awesome_outlined, 'Discover'),
-      (
-        Icons.chat_bubble_rounded,
-        Icons.chat_bubble_outline_rounded,
-        'Social'
-      ),
+      (Icons.local_library_rounded, Icons.local_library_outlined, 'Library'),
+      (Icons.auto_awesome_rounded, Icons.auto_awesome_outlined, 'Discover'),
+      (Icons.chat_bubble_rounded, Icons.chat_bubble_outline_rounded, 'Social'),
       (Icons.person_rounded, Icons.person_outline_rounded, 'Profile'),
     ];
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkBg : AppColors.lightBg,
+        color: tc.bg,
         border: Border(
           top: BorderSide(
-            color: AppColors.orangePrimary.withOpacity(0.2),
+            color: tc.primary.withValues(alpha: 0.15),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.orangePrimary.withOpacity(0.1),
+            color: tc.primary.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -316,7 +346,7 @@ class _PagewalkerNavBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: selected
-                        ? AppColors.orangePrimary.withOpacity(0.12)
+                        ? tc.primary.withValues(alpha: 0.1)
                         : Colors.transparent,
                   ),
                   child: Column(
@@ -324,34 +354,17 @@ class _PagewalkerNavBar extends StatelessWidget {
                     children: [
                       Icon(
                         selected ? items[i].$1 : items[i].$2,
-                        color: selected
-                            ? AppColors.orangePrimary
-                            : (isDark
-                                ? AppColors.darkTextMuted
-                                : AppColors.lightTextMuted),
+                        color: selected ? tc.primary : tc.textMuted,
                         size: 24,
-                        shadows: selected
-                            ? const [
-                                Shadow(
-                                  color: Color(0xFFC084FC),
-                                  blurRadius: 8,
-                                )
-                              ]
-                            : null,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         items[i].$3,
                         style: TextStyle(
                           fontSize: 10,
-                          color: selected
-                              ? AppColors.orangePrimary
-                              : (isDark
-                                  ? AppColors.darkTextMuted
-                                  : AppColors.lightTextMuted),
-                          fontWeight: selected
-                              ? FontWeight.w700
-                              : FontWeight.w400,
+                          color: selected ? tc.primary : tc.textMuted,
+                          fontWeight:
+                              selected ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                     ],
@@ -365,4 +378,3 @@ class _PagewalkerNavBar extends StatelessWidget {
     );
   }
 }
-
