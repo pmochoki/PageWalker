@@ -82,21 +82,10 @@
           ctx.drawImage(img, 0, 0);
           var data = ctx.getImageData(0, 0, canvas.width, canvas.height);
           var p = data.data;
-          var w = canvas.width;
-          var h = canvas.height;
-          // Strip baked-in "PAGEWALKER" (all-caps) under the left mark only — keep the script wordmark on the right.
-          var stripRightX = Math.floor(w * 0.5);
-          var stripTopY = Math.floor(h * 0.52);
           for (var i = 0; i < p.length; i += 4) {
-            var px = (i / 4) % w;
-            var py = Math.floor(i / 4 / w);
             var r = p[i];
             var g = p[i + 1];
             var b = p[i + 2];
-            if (px < stripRightX && py >= stripTopY) {
-              p[i + 3] = 0;
-              continue;
-            }
             // Chroma key: treat near-black as transparent.
             if (r < 26 && g < 26 && b < 26) {
               p[i + 3] = 0;
