@@ -56,7 +56,7 @@ class BookCoverWidget extends StatelessWidget {
                   color: const Color(0xFF1C1C1C),
                   child: const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFFFF6B1A),
+                      color: AppColors.webLogoOrange,
                       strokeWidth: 2,
                     ),
                   ),

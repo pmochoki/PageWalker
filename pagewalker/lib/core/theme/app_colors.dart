@@ -27,6 +27,12 @@ class AppColors {
   static const Color classicPrimaryLight = Color(0xFFFF8C42);
   static const Color classicAccent = Color(0xFFFFAA55);
 
+  /// Website `styles.css` `--primary` / `js/pw-theme.js` BRAND_ORANGE — **#ff6b1a** (same as [classicPrimary]).
+  static const Color webLogoOrange = classicPrimary;
+
+  /// Website `styles.css` light `--text` / `js/pw-theme.js` LOGO_INK — **#0a0a0a** (same as [classicLightTextPrimary]).
+  static const Color webLogoInk = classicLightTextPrimary;
+
   // ═══ THEME 2 — MIDNIGHT LIBRARY ═══
   static const Color midnightDarkBg = Color(0xFF0A0A14);
   static const Color midnightDarkSurface = Color(0xFF0F0F1E);
@@ -133,10 +139,10 @@ class AppColors {
   static List<Color> get gradientButton => gradientOrange;
   static const List<Color> gradientMystic = gradientEmber;
 
-  /// Web header parity: logo mark is **orange** in dark mode, **ink** in light (`onSurface`).
+  /// Web header parity: **#ff6b1a** in dark, **#0a0a0a** in light (not [ColorScheme.onSurface], so all app themes match the site).
   static Color logoMarkColor(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return dark ? orangePrimary : Theme.of(context).colorScheme.onSurface;
+    return dark ? webLogoOrange : webLogoInk;
   }
 
   /// Subtle fill behind logo-shaped placeholders (empty covers, etc.).
@@ -151,7 +157,7 @@ class AppColors {
     if (Theme.of(context).brightness == Brightness.dark) {
       return gradientOrange;
     }
-    final ink = Theme.of(context).colorScheme.onSurface;
+    final ink = webLogoInk;
     final hi = Color.lerp(ink, Colors.white, 0.12) ?? ink;
     return [hi, ink];
   }

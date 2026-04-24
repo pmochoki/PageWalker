@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap");
 
-/* ───── Palette (mirrors the app's Classic theme) ───── */
+/* ───── Palette (mirrors Flutter `AppColors` Classic + webLogo* tokens) ───── */
 :root {
   /* Light (default) */
   --bg: #ffffff;
